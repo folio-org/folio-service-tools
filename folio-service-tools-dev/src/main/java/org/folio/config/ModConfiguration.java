@@ -158,5 +158,5 @@ public class ModConfiguration implements Configuration {
   private static <T> Function<Optional<String>, Optional<T>> convert(Function<String, T> conversion) {
     return s -> s.map(conversion);
   }
-  
+
 }

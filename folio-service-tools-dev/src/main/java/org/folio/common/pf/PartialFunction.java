@@ -7,7 +7,7 @@ import java.util.function.Function;
 /**
  * Inspired by <a href="https://www.scala-lang.org/api/current/scala/PartialFunction.html">Scala implementation</a>
  * of partial functions.
- * 
+ *
  * @param <T> the type of the input to the function
  * @param <R> the type of the result of the function
  */
