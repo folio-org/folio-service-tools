@@ -13,7 +13,7 @@ public final class DbUtils {
   @SuppressWarnings("squid:S2386")
   public static final String[] ALL_FIELDS = {"*"};
 
-  
+
   private DbUtils() {}
 
   public static CQLWrapper getCQLWrapper(String tableName, String query, int limit, int offset) throws FieldException {

@@ -7,11 +7,11 @@
     <artifactId>folio-service-tools</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>folio-service-tools-dev</artifactId>
   <description />
   <name>folio-service-tools-dev</name>
-    
+
   <dependencies>
     <dependency>
       <groupId>org.folio</groupId>

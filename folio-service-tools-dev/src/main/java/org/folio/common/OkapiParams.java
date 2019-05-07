@@ -50,7 +50,7 @@ public class OkapiParams {
     for (Map.Entry<String, String> header : headers) {
       result.put(header.getKey(), header.getValue());
     }
-    
+
     return result;
   }
 
