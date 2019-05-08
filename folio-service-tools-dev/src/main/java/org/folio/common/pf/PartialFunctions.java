@@ -3,6 +3,7 @@ package org.folio.common.pf;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.folio.common.log.LogHandler;
 
 public final class PartialFunctions {
 
@@ -27,6 +28,10 @@ public final class PartialFunctions {
 
   public static <T, R, V> PartialFunction<T, V> andThen(PartialFunction<T, R> pf, Function<? super R, ? extends V> after) {
     return new AndThen<>(pf, after);
+  }
+
+  public static <V, T, R> PartialFunction<V, R> compose(PartialFunction<T, R> pf, Function<? super V, ? extends T> before) {
+    return new Compose<>(pf, before);
   }
 
   public static <T, R> PartialFunction<T, R> logged(PartialFunction<T, R> pf, LogHandler<? super T> logger) {

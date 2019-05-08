@@ -1,5 +1,7 @@
 package org.folio.common.pf;
 
+import org.folio.common.log.LogHandler;
+
 final class LoggedApplication<T, R> implements PartialFunction<T, R> {
 
   private PartialFunction<T, R> pf;

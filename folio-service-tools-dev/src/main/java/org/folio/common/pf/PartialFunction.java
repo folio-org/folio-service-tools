@@ -32,6 +32,12 @@ public interface PartialFunction<T, R> extends Function<T, R> {
    */
   R applySuccessfully(T t);
 
+  @Override
+  default <V> PartialFunction<V, R> compose(Function<? super V, ? extends T> before) {
+    Objects.requireNonNull(before);
+    return PartialFunctions.compose(this, before);
+  }
+
   default PartialFunction<T, R> orElse(PartialFunction<T, R> fallback) {
     Objects.requireNonNull(fallback);
     return PartialFunctions.orElse(this, fallback);
