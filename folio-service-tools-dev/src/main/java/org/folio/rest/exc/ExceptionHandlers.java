@@ -1,26 +1,24 @@
 package org.folio.rest.exc;
 
 import static org.folio.common.pf.PartialFunctions.pf;
-
-import java.util.function.Predicate;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
 import io.vertx.core.Future;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import java.util.concurrent.CompletionException;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.z3950.zing.cql.cql2pgjson.CQL2PgJSONException;
-
-import org.folio.rest.persist.cql.CQLQueryValidationException;
-import org.folio.rest.tools.utils.ValidationHelper;
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
+import org.folio.rest.persist.cql.CQLQueryValidationException;
+import org.folio.rest.tools.utils.ValidationHelper;
+import org.z3950.zing.cql.cql2pgjson.CQL2PgJSONException;
 
 public class ExceptionHandlers {
 
@@ -52,6 +50,23 @@ public class ExceptionHandlers {
 
   public static PartialFunction<Throwable, Response> logged(PartialFunction<Throwable, Response> pf) {
     return PartialFunctions.logged(pf, t -> LOGGER.error("Execution failed with: " + t.getMessage(), t));
+  }
+
+  /**
+   * In case of Completable Futures the errors are usually wrapped inside of CompletionException,
+   * opposite to Vert.x Futures where the original exceptions simply stored inside the Future as is.
+   *
+   * So to get to the cause this function examines the type of exception and extract the cause from CompletionException
+   * if it's not null. Otherwise the given exception returned as cause.
+   *
+   * This function is supposed to be used before any handlers (via compose) to normalize the exception.
+   *
+   * @return the cause of CompletionException
+   */
+  public Function<Throwable, Throwable> completionCause() {
+    return t -> (t instanceof CompletionException) && t.getCause() != null
+              ? t.getCause()
+              : t;
   }
 
   private static Response status(int status, String msg) {
