@@ -26,6 +26,7 @@
   <properties>
     <vertx.version>3.5.4</vertx.version>
     <junit.version>4.12</junit.version>
+    <jmockit.version>1.46</jmockit.version>
     <folio-service-tools.version>0.0.1-SNAPSHOT</folio-service-tools.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -68,10 +69,16 @@
         <version>2.19.0</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
+      <!--<dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>2.24.5</version>
+        <scope>test</scope>
+      </dependency>-->
+      <dependency>
+        <groupId>org.jmockit</groupId>
+        <artifactId>jmockit</artifactId>
+        <version>${jmockit.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -116,7 +123,10 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.1</version>
         <configuration>
-         <useSystemClassLoader>false</useSystemClassLoader>
+          <argLine>
+            -javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar
+          </argLine>
+          <useSystemClassLoader>false</useSystemClassLoader>
           <systemPropertyVariables>
             <vertx.logger-delegate-factory-class-name>
               io.vertx.core.logging.Log4j2LogDelegateFactory

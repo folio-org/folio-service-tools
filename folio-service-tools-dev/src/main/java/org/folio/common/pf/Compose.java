@@ -13,11 +13,10 @@ public class Compose<V, T, R> implements PartialFunction<V, R> {
     this.before = before;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public boolean isDefinedAt(V v) {
-    return (!(before instanceof PartialFunction)) ||
-              ((PartialFunction) before).isDefinedAt(v);
+    T b = before.apply(v); // have to apply 'before' function to apply its result to isDefinedAt() of partial function
+    return pf.isDefinedAt(b);
   }
 
   @Override

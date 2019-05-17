@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import static org.folio.test.util.TestUtil.mockGet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +20,13 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import mockit.Mock;
+import mockit.MockUp;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,8 +36,9 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
-import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.common.OkapiParams;
+import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.rest.client.ConfigurationsClient;
 
 @RunWith(VertxUnitRunner.class)
 public class ModConfigurationTest {
@@ -135,7 +140,7 @@ public class ModConfigurationTest {
   }
 
   @Test
-  public void shouldReturnDefaultInCaseOfFailure(TestContext context) {
+  public void shouldReturnDefaultStringInCaseOfFailure(TestContext context) {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
 
     Handler<AsyncResult<String>> verify = context.asyncAssertSuccess(result -> {
@@ -144,6 +149,54 @@ public class ModConfigurationTest {
     });
 
     configuration.getString(CONFIG_PROP_CODE, "10", okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultIntInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Integer>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertEquals(Integer.MAX_VALUE, result.intValue());
+    });
+
+    configuration.getInt(CONFIG_PROP_CODE, Integer.MAX_VALUE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultLongInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Long>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertEquals(Long.MAX_VALUE, result.longValue());
+    });
+
+    configuration.getLong(CONFIG_PROP_CODE, Long.MAX_VALUE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultDoubleInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Double>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertEquals(Double.MAX_VALUE, result, 0);
+    });
+
+    configuration.getDouble(CONFIG_PROP_CODE, Double.MAX_VALUE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultBooleanInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Boolean>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertTrue(result);
+    });
+
+    configuration.getBoolean(CONFIG_PROP_CODE, true, okapiParams).setHandler(verify);
   }
 
   @Test
@@ -205,5 +258,36 @@ public class ModConfigurationTest {
     });
 
     configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void failIfConfigurationClientFailed(TestContext context) {
+    new FakeFailingConfigurationClient("Failed");
+
+    Handler<AsyncResult<String>> verify = context.asyncAssertFailure(t -> {
+      assertTrue(t instanceof ConfigurationException);
+
+      Throwable cause = t.getCause();
+      assertTrue(cause instanceof UnsupportedEncodingException);
+
+      assertEquals("Failed", cause.getMessage());
+    });
+
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+  }
+
+  private static class FakeFailingConfigurationClient extends MockUp<ConfigurationsClient> {
+
+    private String failMessage;
+
+    FakeFailingConfigurationClient(String failMessage) {
+      this.failMessage = failMessage;
+    }
+
+    @Mock
+    public void getEntries(String query, int offset, int limit, String[] facets, String lang,
+        Handler<HttpClientResponse> responseHandler) throws UnsupportedEncodingException {
+      throw new UnsupportedEncodingException(failMessage);
+    }
   }
 }
