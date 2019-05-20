@@ -24,9 +24,10 @@ import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
+import mockit.Injectable;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Tested;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,15 +40,15 @@ import org.junit.runner.RunWith;
 import org.folio.common.OkapiParams;
 import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.rest.client.ConfigurationsClient;
+import org.folio.test.junit.vertx.MVertxUnitRunner;
 
-@RunWith(VertxUnitRunner.class)
+@RunWith(MVertxUnitRunner.class)
 public class ModConfigurationTest {
 
   private static final String STUB_TENANT = "testlib";
   private static final String STUB_TOKEN = "TEST_OKAPI_TOKEN";
   private static final String HOST = "http://127.0.0.1";
 
-  private static final String CONFIG_MODULE = "NOTES";
   private static final String CONFIG_PROP_CODE = "note.types.number.limit";
   private static final RegexPattern CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN =
     new RegexPattern("/configurations/entries.*");
@@ -72,6 +73,9 @@ public class ModConfigurationTest {
       .notifier(new Slf4jNotifier(true)));
 
   private OkapiParams okapiParams;
+  @Injectable(value = "NOTES")
+  private String configModule;
+  @Tested
   private ModConfiguration configuration;
 
 
@@ -83,7 +87,7 @@ public class ModConfigurationTest {
     headers.put(XOkapiHeaders.URL, HOST + ":" + mockServer.port());
 
     okapiParams = new OkapiParams(headers);
-    configuration = new ModConfiguration(CONFIG_MODULE);
+    //configuration = new ModConfiguration(CONFIG_MODULE);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -262,7 +266,13 @@ public class ModConfigurationTest {
 
   @Test
   public void failIfConfigurationClientFailed(TestContext context) {
-    new FakeFailingConfigurationClient("Failed");
+    new MockUp<ConfigurationsClient>() {
+      @Mock
+      public void getEntries(String query, int offset, int limit, String[] facets, String lang,
+                             Handler<HttpClientResponse> responseHandler) throws UnsupportedEncodingException {
+        throw new UnsupportedEncodingException("Failed");
+      }
+    };
 
     Handler<AsyncResult<String>> verify = context.asyncAssertFailure(t -> {
       assertTrue(t instanceof ConfigurationException);
@@ -276,18 +286,4 @@ public class ModConfigurationTest {
     configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
   }
 
-  private static class FakeFailingConfigurationClient extends MockUp<ConfigurationsClient> {
-
-    private String failMessage;
-
-    FakeFailingConfigurationClient(String failMessage) {
-      this.failMessage = failMessage;
-    }
-
-    @Mock
-    public void getEntries(String query, int offset, int limit, String[] facets, String lang,
-        Handler<HttpClientResponse> responseHandler) throws UnsupportedEncodingException {
-      throw new UnsupportedEncodingException(failMessage);
-    }
-  }
 }
