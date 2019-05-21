@@ -1,5 +1,7 @@
 package org.folio.common.pf;
 
+import java.util.Objects;
+
 import org.folio.common.log.LogHandler;
 
 final class LoggedApplication<T, R> implements PartialFunction<T, R> {
@@ -9,6 +11,9 @@ final class LoggedApplication<T, R> implements PartialFunction<T, R> {
 
 
   LoggedApplication(PartialFunction<T, R> pf, LogHandler<? super T> logHandler) {
+    Objects.requireNonNull(pf, "Partial function is null");
+    Objects.requireNonNull(logHandler, "Log handler is null");
+
     this.pf = pf;
     this.logHandler = logHandler;
   }

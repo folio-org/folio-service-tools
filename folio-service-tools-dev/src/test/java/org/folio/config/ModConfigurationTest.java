@@ -19,20 +19,17 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.TestContext;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
 import org.folio.common.OkapiParams;
 import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.test.junit.TestStartLoggingRule;
 import org.folio.test.junit.vertx.MVertxUnitRunner;
 
 @RunWith(MVertxUnitRunner.class)
@@ -47,18 +44,8 @@ public class ModConfigurationTest {
   private static final RegexPattern CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN =
     new RegexPattern("/configurations/entries.*");
 
-  private static final Logger logger = LoggerFactory.getLogger(ModConfigurationTest.class);
-
   @Rule
-  public TestRule watcher = new TestWatcher() {
-
-    @Override
-    protected void starting(Description description) {
-      logger.info("********** Running test method: {}.{} ********** ", description.getClassName(),
-        description.getMethodName());
-    }
-
-  };
+  public TestRule startLogger = new TestStartLoggingRule();
 
   @Rule
   public WireMockRule mockServer = new WireMockRule(

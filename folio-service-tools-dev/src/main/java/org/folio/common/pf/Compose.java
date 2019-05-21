@@ -1,5 +1,6 @@
 package org.folio.common.pf;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 public class Compose<V, T, R> implements PartialFunction<V, R> {
@@ -9,6 +10,9 @@ public class Compose<V, T, R> implements PartialFunction<V, R> {
 
 
   Compose(PartialFunction<T, R> pf, Function<? super V, ? extends T> before) {
+    Objects.requireNonNull(pf, "Partial function is null");
+    Objects.requireNonNull(before, "Before is null");
+
     this.pf = pf;
     this.before = before;
   }

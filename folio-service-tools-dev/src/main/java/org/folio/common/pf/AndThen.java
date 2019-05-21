@@ -1,5 +1,6 @@
 package org.folio.common.pf;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 final class AndThen<T, R, V> implements PartialFunction<T, V> {
@@ -9,6 +10,9 @@ final class AndThen<T, R, V> implements PartialFunction<T, V> {
 
 
   AndThen(PartialFunction<T, R> pf, Function<? super R, ? extends V> after) {
+    Objects.requireNonNull(pf, "Partial function is null");
+    Objects.requireNonNull(after, "After is null");
+
     this.pf = pf;
     this.after = after;
   }
