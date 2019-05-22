@@ -45,7 +45,7 @@ public class ModConfigurationTest {
     new RegexPattern("/configurations/entries.*");
 
   @Rule
-  public TestRule startLogger = new TestStartLoggingRule();
+  public TestRule startLogger = TestStartLoggingRule.instance();
 
   @Rule
   public WireMockRule mockServer = new WireMockRule(

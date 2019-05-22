@@ -3,7 +3,7 @@ package org.folio.common.pf;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class Compose<V, T, R> implements PartialFunction<V, R> {
+final class Compose<V, T, R> implements PartialFunction<V, R> {
 
   private PartialFunction<T, R> pf;
   private Function<? super V, ? extends T> before;
