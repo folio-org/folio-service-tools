@@ -1,5 +1,6 @@
 package org.folio.common.pf;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -10,6 +11,9 @@ class PartialFunctionImpl<T, R> implements PartialFunction<T, R> {
 
 
   PartialFunctionImpl(Predicate<? super T> isDefinedAt, Function<? super T, ? extends R> function) {
+    Objects.requireNonNull(isDefinedAt, "Predicate is null");
+    Objects.requireNonNull(function, "Function is null");
+
     this.function = function;
     this.isDefinedAt = isDefinedAt;
   }

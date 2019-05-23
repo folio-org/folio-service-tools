@@ -19,23 +19,20 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
-import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.common.OkapiParams;
+import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.test.junit.TestStartLoggingRule;
+import org.folio.test.junit.vertx.MVertxUnitRunner;
 
-@RunWith(VertxUnitRunner.class)
+@RunWith(MVertxUnitRunner.class)
 public class ModConfigurationTest {
 
   private static final String STUB_TENANT = "testlib";
@@ -47,18 +44,8 @@ public class ModConfigurationTest {
   private static final RegexPattern CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN =
     new RegexPattern("/configurations/entries.*");
 
-  private static final Logger logger = LoggerFactory.getLogger(ModConfigurationTest.class);
-
   @Rule
-  public TestRule watcher = new TestWatcher() {
-
-    @Override
-    protected void starting(Description description) {
-      logger.info("********** Running test method: {}.{} ********** ", description.getClassName(),
-        description.getMethodName());
-    }
-
-  };
+  public TestRule startLogger = TestStartLoggingRule.instance();
 
   @Rule
   public WireMockRule mockServer = new WireMockRule(
@@ -135,7 +122,7 @@ public class ModConfigurationTest {
   }
 
   @Test
-  public void shouldReturnDefaultInCaseOfFailure(TestContext context) {
+  public void shouldReturnDefaultStringInCaseOfFailure(TestContext context) {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
 
     Handler<AsyncResult<String>> verify = context.asyncAssertSuccess(result -> {
@@ -144,6 +131,54 @@ public class ModConfigurationTest {
     });
 
     configuration.getString(CONFIG_PROP_CODE, "10", okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultIntInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Integer>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertEquals(Integer.MAX_VALUE, result.intValue());
+    });
+
+    configuration.getInt(CONFIG_PROP_CODE, Integer.MAX_VALUE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultLongInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Long>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertEquals(Long.MAX_VALUE, result.longValue());
+    });
+
+    configuration.getLong(CONFIG_PROP_CODE, Long.MAX_VALUE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultDoubleInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Double>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertEquals(Double.MAX_VALUE, result, 0);
+    });
+
+    configuration.getDouble(CONFIG_PROP_CODE, Double.MAX_VALUE, okapiParams).setHandler(verify);
+  }
+
+  @Test
+  public void shouldReturnDefaultBooleanInCaseOfFailure(TestContext context) {
+    mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
+
+    Handler<AsyncResult<Boolean>> verify = context.asyncAssertSuccess(result -> {
+      assertNotNull(result);
+      assertTrue(result);
+    });
+
+    configuration.getBoolean(CONFIG_PROP_CODE, true, okapiParams).setHandler(verify);
   }
 
   @Test

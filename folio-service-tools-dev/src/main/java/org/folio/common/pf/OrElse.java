@@ -1,5 +1,7 @@
 package org.folio.common.pf;
 
+import java.util.Objects;
+
 final class OrElse<T, R> implements PartialFunction<T, R> {
 
   private PartialFunction<T, R> f1;
@@ -7,6 +9,9 @@ final class OrElse<T, R> implements PartialFunction<T, R> {
 
 
   OrElse(PartialFunction<T, R> f1, PartialFunction<T, R> f2) {
+    Objects.requireNonNull(f1, "Partial function f1 is null");
+    Objects.requireNonNull(f2, "Partial function f2 is null");
+
     this.f1 = f1;
     this.f2 = f2;
   }
