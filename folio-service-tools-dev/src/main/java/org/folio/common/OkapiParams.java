@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.vertx.core.http.CaseInsensitiveHeaders;
+import java.util.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import org.folio.okapi.common.XOkapiHeaders;
@@ -21,11 +22,11 @@ public class OkapiParams {
 
 
   public OkapiParams(Map<String, String> headers) {
-    this.headers = new CaseInsensitiveHeaders();
-    this.headers.addAll(headers);
+    Objects.requireNonNull(headers, "Headers map is null");
 
-    this.token = headers.get(XOkapiHeaders.TOKEN);
-    this.tenant = headers.get(XOkapiHeaders.TENANT);
+    if (headers.get(XOkapiHeaders.URL) == null) {
+      throw new IllegalArgumentException(XOkapiHeaders.URL + " header is missing");
+    }
 
     URL url;
     try {
@@ -33,6 +34,13 @@ public class OkapiParams {
     } catch (MalformedURLException e) {
       throw new IllegalArgumentException("Okapi url header contains invalid value: " + headers.get(XOkapiHeaders.URL));
     }
+
+    this.headers = new CaseInsensitiveHeaders();
+    this.headers.addAll(headers);
+
+    this.token = headers.get(XOkapiHeaders.TOKEN);
+    this.tenant = headers.get(XOkapiHeaders.TENANT);
+
     this.host = url.getHost();
     this.port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
   }
