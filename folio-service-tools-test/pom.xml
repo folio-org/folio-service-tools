@@ -12,6 +12,10 @@
   <description />
   <name>folio-service-tools-test</name>
 
+  <properties>
+    <sonar.exclusions>src/main/**/*</sonar.exclusions>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
