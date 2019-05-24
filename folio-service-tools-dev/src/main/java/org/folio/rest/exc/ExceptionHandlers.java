@@ -1,24 +1,28 @@
 package org.folio.rest.exc;
 
 import static org.folio.common.pf.PartialFunctions.pf;
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import io.vertx.core.Future;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import io.vertx.core.Future;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.z3950.zing.cql.cql2pgjson.CQL2PgJSONException;
+
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 import org.folio.rest.tools.utils.ValidationHelper;
-import org.z3950.zing.cql.cql2pgjson.CQL2PgJSONException;
 
 public class ExceptionHandlers {
 
@@ -63,7 +67,7 @@ public class ExceptionHandlers {
    *
    * @return the cause of CompletionException
    */
-  public Function<Throwable, Throwable> completionCause() {
+  public static Function<Throwable, Throwable> completionCause() {
     return t -> (t instanceof CompletionException) && t.getCause() != null
               ? t.getCause()
               : t;
