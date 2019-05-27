@@ -26,7 +26,6 @@
   <properties>
     <vertx.version>3.5.4</vertx.version>
     <junit.version>4.12</junit.version>
-    <folio-service-tools.version>0.0.1-SNAPSHOT</folio-service-tools.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>

@@ -23,11 +23,11 @@ import scala.collection.immutable.Map;
 import org.folio.common.pf.PartialFunction;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 
-public class ExceptionHandlersTest {
+public class RestExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForBadReqException() {
-    PartialFunction<Throwable, Response> handler = ExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
 
     Response response = handler.apply(new BadRequestException("BAD"));
 
@@ -36,7 +36,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForCQLQueryValidationException() {
-    PartialFunction<Throwable, Response> handler = ExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
 
     Exception cause = new Exception("INVALID");
     Response response = handler.apply(new CQLQueryValidationException(cause));
@@ -46,7 +46,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForCQL2PgJSONException() {
-    PartialFunction<Throwable, Response> handler = ExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
 
     Response response = handler.apply(new CQL2PgJSONException("EXC"));
 
@@ -55,7 +55,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForInvalidUUID() {
-    PartialFunction<Throwable, Response> handler = ExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
 
     Response response = handler.apply(new GenericDatabaseException(
       new ErrorMessage(new Map.Map1<>(InformationMessage.Message(), "invalid input syntax for type uuid"))));
@@ -68,7 +68,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void notFoundHandlerCreates404ResponseForNotFoundException() {
-    PartialFunction<Throwable, Response> handler = ExceptionHandlers.notFoundHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.notFoundHandler();
 
     Response response = handler.apply(new NotFoundException("NOTFOUND"));
 
@@ -77,7 +77,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void generalHandlerCreates500Response() {
-    PartialFunction<Throwable, Response> handler = ExceptionHandlers.generalHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.generalHandler();
 
     Response response = handler.apply(new Exception("GENERAL"));
 
@@ -88,7 +88,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void completionCauseUnwrapsCompletionException() {
-    Function<Throwable, Throwable> completionCause = ExceptionHandlers.completionCause();
+    Function<Throwable, Throwable> completionCause = RestExceptionHandlers.completionCause();
 
     Exception cause = new Exception();
     Throwable actual = completionCause.apply(new CompletionException(cause));
@@ -98,7 +98,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void completionCauseReturnsCompletionExceptionIfNoCause() {
-    Function<Throwable, Throwable> completionCause = ExceptionHandlers.completionCause();
+    Function<Throwable, Throwable> completionCause = RestExceptionHandlers.completionCause();
 
     CompletionException completionException = new CompletionException(null);
     Throwable actual = completionCause.apply(completionException);
@@ -108,7 +108,7 @@ public class ExceptionHandlersTest {
 
   @Test
   public void completionCauseReturnsExceptionIfNotCompletionException() {
-    Function<Throwable, Throwable> completionCause = ExceptionHandlers.completionCause();
+    Function<Throwable, Throwable> completionCause = RestExceptionHandlers.completionCause();
 
     Exception exception = new Exception(new Exception("cause"));
     Throwable actual = completionCause.apply(exception);
