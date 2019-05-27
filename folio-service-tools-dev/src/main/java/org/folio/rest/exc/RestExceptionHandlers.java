@@ -24,11 +24,11 @@ import org.folio.common.pf.PartialFunctions;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 import org.folio.rest.tools.utils.ValidationHelper;
 
-public class ExceptionHandlers {
+public class RestExceptionHandlers {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlers.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestExceptionHandlers.class);
 
-  private ExceptionHandlers() {
+  private RestExceptionHandlers() {
   }
 
   @SuppressWarnings("squid:CommentedOutCodeLine")
@@ -41,15 +41,15 @@ public class ExceptionHandlers {
                 .or(instanceOf(GenericDatabaseException.class).and(invalidUUID()))
                 .or(instanceOf(CQLQueryValidationException.class))
                 .or(instanceOf(CQL2PgJSONException.class)),
-              ExceptionHandlers::toBadRequest);
+              RestExceptionHandlers::toBadRequest);
   }
 
   public static PartialFunction<Throwable, Response> notFoundHandler() {
-    return pf(NotFoundException.class::isInstance, ExceptionHandlers::toNotFound);
+    return pf(NotFoundException.class::isInstance, RestExceptionHandlers::toNotFound);
   }
 
   public static PartialFunction<Throwable, Response> generalHandler() {
-    return pf(t -> true, ExceptionHandlers::toGeneral);
+    return pf(t -> true, RestExceptionHandlers::toGeneral);
   }
 
   public static PartialFunction<Throwable, Response> logged(PartialFunction<Throwable, Response> pf) {

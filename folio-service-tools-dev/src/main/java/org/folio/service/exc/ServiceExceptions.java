@@ -4,11 +4,11 @@ import static java.lang.String.format;
 
 import javax.ws.rs.NotFoundException;
 
-public class Exceptions {
+public class ServiceExceptions {
 
   private static final String NOT_FOUND_MSG = "%s not found by id: %s";
 
-  private Exceptions() {
+  private ServiceExceptions() {
   }
 
   public static NotFoundException notFound(String entity, String id) {

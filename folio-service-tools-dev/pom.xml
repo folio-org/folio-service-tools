@@ -13,7 +13,7 @@
   <name>folio-service-tools-dev</name>
 
   <properties>
-    <sonar.exclusions>src/main/java/**/PartialFunctions.*,src/main/java/**/Exceptions.*</sonar.exclusions>
+    <sonar.exclusions>src/main/java/**/PartialFunctions.*,src/main/java/**/ServiceExceptions.*</sonar.exclusions>
   </properties>
 
   <dependencies>
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.folio</groupId>
       <artifactId>folio-service-tools-test</artifactId>
-      <version>${folio-service-tools.version}</version>
+      <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
