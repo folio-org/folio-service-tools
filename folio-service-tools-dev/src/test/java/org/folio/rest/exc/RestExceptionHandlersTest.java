@@ -17,10 +17,10 @@ import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
 import com.github.mauricio.async.db.postgresql.messages.backend.InformationMessage;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
-import org.z3950.zing.cql.cql2pgjson.CQL2PgJSONException;
 import scala.collection.immutable.Map;
 
 import org.folio.common.pf.PartialFunction;
+import org.folio.cql2pgjson.exception.CQL2PgJSONException;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 
 public class RestExceptionHandlersTest {

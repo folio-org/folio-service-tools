@@ -17,10 +17,10 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.z3950.zing.cql.cql2pgjson.CQL2PgJSONException;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
+import org.folio.cql2pgjson.exception.CQL2PgJSONException;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 import org.folio.rest.tools.utils.ValidationHelper;
 
