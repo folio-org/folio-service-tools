@@ -13,7 +13,11 @@
   <name>folio-service-tools-dev</name>
 
   <properties>
-    <sonar.exclusions>src/main/java/**/PartialFunctions.*,src/main/java/**/ServiceExceptions.*</sonar.exclusions>
+    <sonar.exclusions>
+      src/main/java/**/PartialFunctions.*,
+      src/main/java/**/ServiceExceptions.*,
+      src/main/java/**CqlQuery.*
+    </sonar.exclusions>
   </properties>
 
   <dependencies>
