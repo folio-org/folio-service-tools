@@ -29,24 +29,23 @@ public class RestExceptionHandlers {
   }
 
   @SuppressWarnings("squid:CommentedOutCodeLine")
-  public static PartialFunction<Throwable, Response> badRequestHandler() {
+  public static PartialFunction<Throwable, Response> baseBadRequestHandler() {
     // predicate can be written also as:
     //    t -> t instanceof BadRequestException || t instanceof CQL2PgJSONException
     //
     // the below is to show how predicates that potentially have complex logic can be combined
-    return pf(instanceOf(BadRequestException.class)
+    return badRequestHandler(instanceOf(BadRequestException.class)
                 .or(instanceOf(GenericDatabaseException.class).and(invalidUUID()))
                 .or(instanceOf(CQLQueryValidationException.class))
-                .or(instanceOf(CQL2PgJSONException.class)),
-              RestExceptionResponses::toBadRequest);
+                .or(instanceOf(CQL2PgJSONException.class)));
   }
 
   public static PartialFunction<Throwable, Response> badRequestHandler(Predicate<Throwable> predicate) {
     return pf(predicate, RestExceptionResponses::toBadRequest);
   }
 
-  public static PartialFunction<Throwable, Response> notFoundHandler() {
-    return pf(NotFoundException.class::isInstance, RestExceptionResponses::toNotFound);
+  public static PartialFunction<Throwable, Response> baseNotFoundHandler() {
+    return notFoundHandler(NotFoundException.class::isInstance);
   }
 
   public static PartialFunction<Throwable, Response> notFoundHandler(Predicate<Throwable> predicate) {
