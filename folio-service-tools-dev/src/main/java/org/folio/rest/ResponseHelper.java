@@ -1,11 +1,18 @@
 package org.folio.rest;
 
+import java.util.function.Function;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
+
+import org.folio.common.pf.PartialFunction;
 
 public class ResponseHelper {
 
@@ -26,4 +33,11 @@ public class ResponseHelper {
       .build();
   }
 
+  public static <T> void respond(Future<T> result, Function<T, Response> mapper,
+                                 Handler<AsyncResult<Response>> asyncResultHandler,
+                                 PartialFunction<Throwable, Response> exceptionHandler) {
+    result.map(mapper)
+      .otherwise(exceptionHandler)
+      .setHandler(asyncResultHandler);
+  }
 }
