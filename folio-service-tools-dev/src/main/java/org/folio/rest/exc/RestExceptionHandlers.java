@@ -1,6 +1,8 @@
 package org.folio.rest.exc;
 
 import static org.folio.common.pf.PartialFunctions.pf;
+import static org.folio.rest.exc.ExceptionPredicates.instanceOf;
+import static org.folio.rest.exc.ExceptionPredicates.invalidUUID;
 
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
@@ -8,21 +10,16 @@ import java.util.function.Predicate;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import io.vertx.core.Future;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
 import org.folio.cql2pgjson.exception.CQL2PgJSONException;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
-import org.folio.rest.tools.utils.ValidationHelper;
 
 public class RestExceptionHandlers {
 
@@ -32,24 +29,31 @@ public class RestExceptionHandlers {
   }
 
   @SuppressWarnings("squid:CommentedOutCodeLine")
-  public static PartialFunction<Throwable, Response> badRequestHandler() {
+  public static PartialFunction<Throwable, Response> baseBadRequestHandler() {
     // predicate can be written also as:
     //    t -> t instanceof BadRequestException || t instanceof CQL2PgJSONException
     //
     // the below is to show how predicates that potentially have complex logic can be combined
-    return pf(instanceOf(BadRequestException.class)
+    return badRequestHandler(instanceOf(BadRequestException.class)
                 .or(instanceOf(GenericDatabaseException.class).and(invalidUUID()))
                 .or(instanceOf(CQLQueryValidationException.class))
-                .or(instanceOf(CQL2PgJSONException.class)),
-              RestExceptionHandlers::toBadRequest);
+                .or(instanceOf(CQL2PgJSONException.class)));
   }
 
-  public static PartialFunction<Throwable, Response> notFoundHandler() {
-    return pf(NotFoundException.class::isInstance, RestExceptionHandlers::toNotFound);
+  public static PartialFunction<Throwable, Response> badRequestHandler(Predicate<Throwable> predicate) {
+    return pf(predicate, RestExceptionResponses::toBadRequest);
+  }
+
+  public static PartialFunction<Throwable, Response> baseNotFoundHandler() {
+    return notFoundHandler(NotFoundException.class::isInstance);
+  }
+
+  public static PartialFunction<Throwable, Response> notFoundHandler(Predicate<Throwable> predicate) {
+    return pf(predicate, RestExceptionResponses::toNotFound);
   }
 
   public static PartialFunction<Throwable, Response> generalHandler() {
-    return pf(t -> true, RestExceptionHandlers::toGeneral);
+    return pf(t -> true, RestExceptionResponses::toGeneral);
   }
 
   public static PartialFunction<Throwable, Response> logged(PartialFunction<Throwable, Response> pf) {
@@ -71,54 +75,6 @@ public class RestExceptionHandlers {
     return t -> (t instanceof CompletionException) && t.getCause() != null
               ? t.getCause()
               : t;
-  }
-
-  private static Response status(int status, String msg) {
-    return Response.status(status)
-      .type(MediaType.TEXT_PLAIN)
-      .entity(StringUtils.defaultString(msg))
-      .build();
-  }
-
-  private static Response toBadRequest(Throwable t) {
-    return status(HttpStatus.SC_BAD_REQUEST, t.getMessage());
-  }
-
-  private static Response toNotFound(Throwable t) {
-    return status(HttpStatus.SC_NOT_FOUND, t.getMessage());
-  }
-
-  private static Response toGeneral(Throwable t) {
-    Future<Response> validationFuture = Future.future();
-    ValidationHelper.handleError(t, validationFuture);
-
-    if (validationFuture.succeeded()) {
-      return validationFuture.result();
-    } else {
-      return status(HttpStatus.SC_INTERNAL_SERVER_ERROR, Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
-    }
-  }
-
-  private static Predicate<Throwable> instanceOf(Class<? extends Throwable> cl) {
-    return new InstanceOfPredicate<>(cl);
-  }
-
-  private static Predicate<Throwable> invalidUUID() {
-    return t -> ValidationHelper.isInvalidUUID(t.getMessage());
-  }
-
-  private static class InstanceOfPredicate<T, E> implements Predicate<E> {
-
-    private Class<T> excClass;
-
-    InstanceOfPredicate(Class<T> excClass) {
-      this.excClass = excClass;
-    }
-
-    @Override
-    public boolean test(E e) {
-      return excClass.isInstance(e);
-    }
   }
 
 }

@@ -8,8 +8,8 @@ import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 
 class TestData {
 
-  static final Randomizer<Integer> negativeRandom = new IntegerRangeRandomizer(Integer.MIN_VALUE, -1);
-  static final Randomizer<Integer> positiveRandom = new IntegerRangeRandomizer(1, Integer.MAX_VALUE);
+  private static final Randomizer<Integer> negativeRandom = new IntegerRangeRandomizer(Integer.MIN_VALUE, -1);
+  private static final Randomizer<Integer> positiveRandom = new IntegerRangeRandomizer(1, Integer.MAX_VALUE);
 
   static final Predicate<Integer> positiveInt = positiveInt();
   static final Function<Integer, String> fPositiveIntMsg = fIntToString("Positive: %d");

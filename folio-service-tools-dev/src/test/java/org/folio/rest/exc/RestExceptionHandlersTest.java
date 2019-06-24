@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -27,7 +28,7 @@ public class RestExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForBadReqException() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new BadRequestException("BAD"));
 
@@ -36,7 +37,7 @@ public class RestExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForCQLQueryValidationException() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Exception cause = new Exception("INVALID");
     Response response = handler.apply(new CQLQueryValidationException(cause));
@@ -46,7 +47,7 @@ public class RestExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForCQL2PgJSONException() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new CQL2PgJSONException("EXC"));
 
@@ -55,7 +56,7 @@ public class RestExceptionHandlersTest {
 
   @Test
   public void badReqHandlerCreates400ResponseForInvalidUUID() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.badRequestHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new GenericDatabaseException(
       new ErrorMessage(new Map.Map1<>(InformationMessage.Message(), "invalid input syntax for type uuid"))));
@@ -68,7 +69,7 @@ public class RestExceptionHandlersTest {
 
   @Test
   public void notFoundHandlerCreates404ResponseForNotFoundException() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.notFoundHandler();
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseNotFoundHandler();
 
     Response response = handler.apply(new NotFoundException("NOTFOUND"));
 
