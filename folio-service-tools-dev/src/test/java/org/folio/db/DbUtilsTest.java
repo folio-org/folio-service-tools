@@ -28,4 +28,17 @@ public class DbUtilsTest {
     assertThat(jarray.getString(0), is("param1"));
     assertThat(jarray.getInteger(1), is(0));
   }
+
+  @Test
+  public void createParamsWorksWithNulls() {
+    List params = Arrays.asList("param1", null, 0, null);
+
+    JsonArray jarray = createParams(params);
+
+    assertThat(jarray.size(), is(params.size()));
+    assertThat(jarray.getString(0), is("param1"));
+    assertThat(jarray.hasNull(1), is(true));
+    assertThat(jarray.getInteger(2), is(0));
+    assertThat(jarray.hasNull(3), is(true));
+  }
 }

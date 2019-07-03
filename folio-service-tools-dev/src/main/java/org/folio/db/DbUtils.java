@@ -30,7 +30,13 @@ public final class DbUtils {
   public static JsonArray createParams(Iterable<?> queryParameters) {
     JsonArray parameters = new JsonArray();
 
-    queryParameters.forEach(parameters::add);
+    for (Object p : queryParameters) {
+      if (p != null) {
+        parameters.add(p);
+      } else {
+        parameters.addNull();
+      }
+    }
 
     return parameters;
   }
