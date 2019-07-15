@@ -30,7 +30,7 @@ public class Constraint {
     return new Constraint(Type.PRIMARY_KEY, name, table, columns);
   }
 
-  public static Constraint foreingKey(String name, String table, String... columns) {
+  public static Constraint foreignKey(String name, String table, String... columns) {
     return new Constraint(Type.FOREIGN_KEY, name, table, columns);
   }
 
@@ -52,6 +52,7 @@ public class Constraint {
 
   private Constraint(Type type, String name, String table, String... columns) {
     Validate.notNull(type, "Constraint type is null");
+    Validate.notBlank(table, "Constraint table is empty");
     //Validate.notBlank(name, "Constraint name is empty");
 
     String[] cols = ArrayUtils.nullToEmpty(columns);

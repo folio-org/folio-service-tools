@@ -63,7 +63,7 @@ class ConstrainViolationTranslation {
           constraint = Constraint.notNull(constName, table, column);
           break;
         case FOREIGN_KEY_VIOLATION:
-          constraint = Constraint.foreingKey(constName, table);
+          constraint = Constraint.foreignKey(constName, table);
           break;
         case UNIQUE_VIOLATION:
           // !!!!! Note:
