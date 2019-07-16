@@ -1,7 +1,20 @@
 package org.folio.db.exc.translation.postgresql;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
+import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
+import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
+import static org.folio.db.ErrorFactory.getDataTypeMismatchViolation;
+import static org.folio.db.ErrorFactory.getForeingKeyErrorMap;
+import static org.folio.db.ErrorFactory.getUUIDErrorMap;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import io.vertx.core.Future;
+import java.util.function.Function;
 import org.folio.db.exc.ConstraintViolationException;
 import org.folio.db.exc.DatabaseException;
 import org.folio.db.exc.InvalidUUIDException;
@@ -9,14 +22,11 @@ import org.folio.test.junit.TestStartLoggingRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
-import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
-import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
-import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
-import static org.folio.db.ErrorFactory.get;
-import static org.folio.db.ErrorFactory.getForeingKeyErrorMap;
-import static org.folio.db.ErrorFactory.getUUIDErrorMap;
-import static org.hamcrest.Matchers.equalTo;
+
+import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
 
 public class PostgreSQLExceptionTranslatorTest {
 
@@ -24,6 +34,9 @@ public class PostgreSQLExceptionTranslatorTest {
 
   @Rule
   public TestRule startLogger = TestStartLoggingRule.instance();
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void setup(){
@@ -36,19 +49,19 @@ public class PostgreSQLExceptionTranslatorTest {
       new com.github.mauricio.async.db.exceptions.DatabaseException("test error", new java.lang.RuntimeException());
 
     final boolean acceptable = translator.acceptable(exception);
-    org.junit.Assert.assertTrue(acceptable);
+    assertTrue(acceptable);
   }
 
   @Test
   public void shouldReturnFalseWhenExceptionIsNotAcceptable () {
     final boolean acceptable = translator.acceptable(new IllegalArgumentException());
-    org.junit.Assert.assertFalse(acceptable);
+    assertFalse(acceptable);
   }
 
   @Test
   public void shouldReturnFalseWhenExceptionIsNull() {
     final boolean acceptable = translator.acceptable(null);
-    org.junit.Assert.assertFalse(acceptable);
+    assertFalse(acceptable);
   }
 
   @Test
@@ -56,8 +69,8 @@ public class PostgreSQLExceptionTranslatorTest {
     GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getForeingKeyErrorMap()));
     final DatabaseException databaseException = translator.doTranslation(exception);
 
-    org.junit.Assert.assertThat(databaseException.getSqlState(), equalTo(FOREIGN_KEY_VIOLATION_ERROR_CODE));
-    org.junit.Assert.assertTrue(databaseException instanceof ConstraintViolationException);
+    assertThat(databaseException.getSqlState(), equalTo(FOREIGN_KEY_VIOLATION_ERROR_CODE));
+    assertTrue(databaseException instanceof ConstraintViolationException);
 
   }
 
@@ -66,18 +79,18 @@ public class PostgreSQLExceptionTranslatorTest {
     GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getUUIDErrorMap()));
     final DatabaseException databaseException = translator.doTranslation(exception);
 
-    org.junit.Assert.assertThat(databaseException.getSqlState(), equalTo(INVALID_TEXT_REPRESENTATION_ERROR_CODE));
-    org.junit.Assert.assertTrue(databaseException instanceof InvalidUUIDException);
+    assertThat(databaseException.getSqlState(), equalTo(INVALID_TEXT_REPRESENTATION_ERROR_CODE));
+    assertTrue(databaseException instanceof InvalidUUIDException);
 
   }
 
   @Test
   public void shouldReturnDatabaseExceptionWhenExceptionIsGenericDatabaseException() {
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(get()));
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getDataTypeMismatchViolation()));
     final DatabaseException databaseException = translator.doTranslation(exception);
 
-    org.junit.Assert.assertThat(databaseException.getSqlState(), equalTo(DATATYPE_MISMATCH_ERROR_CODE));
-    org.junit.Assert.assertTrue(databaseException instanceof DatabaseException);
+    assertThat(databaseException.getSqlState(), equalTo(DATATYPE_MISMATCH_ERROR_CODE));
+    assertTrue(databaseException instanceof DatabaseException);
 
   }
 
@@ -85,15 +98,15 @@ public class PostgreSQLExceptionTranslatorTest {
   public void shouldReturnDatabaseExceptionWhenExceptionIsIllegalArgumentException() {
     final DatabaseException databaseException = translator.doTranslation(new IllegalArgumentException());
 
-    org.junit.Assert.assertNull(databaseException.getSqlState());
-    org.junit.Assert.assertTrue(databaseException.getCause() instanceof IllegalArgumentException);
+    assertNull(databaseException.getSqlState());
+    assertTrue(databaseException.getCause() instanceof IllegalArgumentException);
 
   }
 
   @Test
   public void shouldReturnDatabaseExceptionWhenExceptionIsNull() {
     final DatabaseException databaseException = translator.doTranslation(null);
-    org.junit.Assert.assertNull(databaseException.getSqlState());
+    assertNull(databaseException.getSqlState());
   }
 
   @Test
@@ -103,20 +116,45 @@ public class PostgreSQLExceptionTranslatorTest {
       new com.github.mauricio.async.db.exceptions.DatabaseException("test error", new java.lang.RuntimeException());
 
     final DatabaseException databaseException = translator.translate(exception);
-    org.junit.Assert.assertNull(databaseException.getSqlState());
+    assertNull(databaseException.getSqlState());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldReturnDatabaseExceptionWhenThrowableIsNotAcceptable() {
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage(containsString("Exception is not acceptable and cannot be translated"));
 
     final DatabaseException databaseException = translator.translate(new IndexOutOfBoundsException());
-    org.junit.Assert.assertNull(databaseException.getSqlState());
+    assertNull(databaseException.getSqlState());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldReturnDatabaseExceptionWhenThrowableIsNull() {
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage(containsString("Exception is not acceptable and cannot be translated"));
 
     final DatabaseException databaseException = translator.translate(null);
-    org.junit.Assert.assertNull(databaseException.getSqlState());
+    assertNull(databaseException.getSqlState());
   }
+
+  @Test
+  public void shouldFailFutureWithIndexOutOfBoundsException() {
+
+    final Function<Throwable, Future<Object>> throwableFutureFunction = translator.translateOrPassBy();
+    final Future<Object> apply = throwableFutureFunction.apply(new IndexOutOfBoundsException());
+
+    assertTrue(apply.cause() instanceof IndexOutOfBoundsException);
+  }
+
+  @Test
+  public void shouldReturnDatabaseExceptionWhenThrowableIsNullo() {
+
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getUUIDErrorMap()));
+
+    final Function<Throwable, Future<Object>> throwableFutureFunction = translator.translateOrPassBy();
+    final Future<Object> apply = throwableFutureFunction.apply(exception);
+
+    assertTrue(apply.cause() instanceof InvalidUUIDException);
+  }
+
 }

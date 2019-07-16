@@ -100,7 +100,7 @@ public class ErrorFactory {
       .setSeverity("ERROR").build();
   }
 
-  public static Map<Object, String> get(){
+  public static Map<Object, String> getDataTypeMismatchViolation(){
     return new ErrorBuilder()
       .setMessage("column \"addresses\" is of type json but expression is of type character varying")
       .setSchema(SCHEMA_NAME)

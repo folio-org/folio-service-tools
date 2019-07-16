@@ -2,6 +2,8 @@ package org.folio.db.exc.translation.postgresql;
 
 import static org.folio.db.ErrorFactory.getErrorMapWithPsqlStateNull;
 import static org.folio.db.ErrorFactory.getPrimaryKeyErrorMap;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.folio.test.junit.TestStartLoggingRule;
 import org.junit.Rule;
@@ -18,37 +20,49 @@ public class TranslationUtilsTest {
 
   @Test
   public void shouldReturnTrueWhenPsqlStateBelongsToStateClass(){
-    TranslationUtils.exceptionWithSQLStateClass(new GenericDatabaseException(
+    final boolean isExceptionWithState = TranslationUtils.exceptionWithSQLStateClass(new GenericDatabaseException(
       new ErrorMessage(getPrimaryKeyErrorMap())), PSQLState.UNIQUE_VIOLATION);
+
+    assertTrue(isExceptionWithState);
   }
 
   @Test
   public void shouldReturnFalseWhenPsqlStateDoesNotBelongToStateClass(){
-    TranslationUtils.exceptionWithSQLStateClass(new GenericDatabaseException(
+    final boolean isExceptionWithState = TranslationUtils.exceptionWithSQLStateClass(new GenericDatabaseException(
       new ErrorMessage(getPrimaryKeyErrorMap())), PSQLState.DUPLICATE_COLUMN);
+
+    assertFalse(isExceptionWithState);
   }
 
   @Test
   public void shouldReturnFalseWhenPsqlStateClassIsNull(){
-    TranslationUtils.exceptionWithSQLStateClass(new GenericDatabaseException(
+    final boolean isExceptionWithState = TranslationUtils.exceptionWithSQLStateClass(new GenericDatabaseException(
       new ErrorMessage(getErrorMapWithPsqlStateNull())), PSQLState.INVALID_COLUMN_REFERENCE);
+
+    assertFalse(isExceptionWithState);
   }
 
   @Test
   public void shouldReturnTrueWhenPsqlStateEqualsToState(){
-    TranslationUtils.exceptionWithSQLState(new GenericDatabaseException(
+    final boolean isExceptionWithState = TranslationUtils.exceptionWithSQLState(new GenericDatabaseException(
       new ErrorMessage(getPrimaryKeyErrorMap())), PSQLState.UNIQUE_VIOLATION);
+
+    assertTrue(isExceptionWithState);
   }
 
   @Test
   public void shouldReturnFalseWhenPsqlStateDoesNotEqualToState(){
-    TranslationUtils.exceptionWithSQLState(new GenericDatabaseException(
+    final boolean isExceptionWithState = TranslationUtils.exceptionWithSQLState(new GenericDatabaseException(
       new ErrorMessage(getPrimaryKeyErrorMap())), PSQLState.DATABASE_DROPPED);
+
+    assertFalse(isExceptionWithState);
   }
 
   @Test
   public void shouldReturnFalseWhenPsqlStateIsNull(){
-    TranslationUtils.exceptionWithSQLState(new GenericDatabaseException(
+    final boolean isExceptionWithState = TranslationUtils.exceptionWithSQLState(new GenericDatabaseException(
       new ErrorMessage(getErrorMapWithPsqlStateNull())), PSQLState.DUPLICATE_FILE);
+
+    assertFalse(isExceptionWithState);
   }
 }
