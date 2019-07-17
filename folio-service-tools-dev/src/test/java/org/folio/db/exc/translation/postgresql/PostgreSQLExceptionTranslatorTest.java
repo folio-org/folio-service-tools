@@ -4,7 +4,7 @@ import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
 import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
 import static org.folio.db.ErrorFactory.getDataTypeMismatchViolation;
-import static org.folio.db.ErrorFactory.getForeingKeyErrorMap;
+import static org.folio.db.ErrorFactory.getForeignKeyErrorMap;
 import static org.folio.db.ErrorFactory.getUUIDErrorMap;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -66,7 +66,7 @@ public class PostgreSQLExceptionTranslatorTest {
 
   @Test
   public void shouldReturnDatabaseExceptionWhenExceptionIsConstraintViolationException() {
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getForeingKeyErrorMap()));
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getForeignKeyErrorMap()));
     final DatabaseException databaseException = translator.doTranslation(exception);
 
     assertThat(databaseException.getSqlState(), equalTo(FOREIGN_KEY_VIOLATION_ERROR_CODE));

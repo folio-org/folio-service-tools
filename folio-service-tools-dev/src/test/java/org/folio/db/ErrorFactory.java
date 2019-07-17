@@ -2,7 +2,10 @@ package org.folio.db;
 
 import static org.folio.db.ErrorConstants.CHECK_VIOLATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
+import static org.folio.db.ErrorConstants.DATA_LENGTH_MISMATCH_ERROR_CODE;
+import static org.folio.db.ErrorConstants.EXCLUSION_VIOLATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
+import static org.folio.db.ErrorConstants.INTEGRITY_VIOLATION__ERROR_CODE;
 import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.NOT_NULL_VIOLATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.SCHEMA_NAME;
@@ -14,7 +17,7 @@ public class ErrorFactory {
 
   private ErrorFactory() {}
 
- public  static Map<Object, String> getForeingKeyErrorMap(){
+ public  static Map<Object, String> getForeignKeyErrorMap(){
      return new ErrorBuilder()
        .setMessage("insert or update on table \"child\" violates foreign key constraint \"fk_parent\"")
        .setDetail("Key (parent_id1, parent_id2)=(22222, 813205855) is not a present in table \"parent\"")
@@ -100,6 +103,36 @@ public class ErrorFactory {
       .setSeverity("ERROR").build();
   }
 
+  public static Map<Object, String> getIntegrityViolationErrorMap(){
+    return new ErrorBuilder()
+      .setMessage("new ow for relation \"parent\" violates check constraint")
+      .setDetail("Failing row contains (1704747953, 1372598141, eOMtThyhVNLWUZNRcBaQKxl, -1.00)")
+      .setSchema(SCHEMA_NAME)
+      .setTable("parent")
+      .setLine("2055")
+      .setFile("execMain.c")
+      .setFieldName("positive_value")
+      .setSqlState(INTEGRITY_VIOLATION__ERROR_CODE)
+      .setRoutine("ExecConstraints")
+      .setErrorType("ERROR")
+      .setSeverity("ERROR").build();
+  }
+
+  public static Map<Object, String> getExclusionViolationErrorMap(){
+    return new ErrorBuilder()
+      .setMessage("conflicting key value violates exclusion constraint \"exclude_overlapping_bookings\"")
+      .setDetail("Key (daterange(from_date, to_date, '[]'::text))=([2017-04-20,2017-05-01)) conflicts with existing key (daterange(from_date, to_date, '[]'::text))=([2017-04-20,2017-04-22))")
+      .setSchema(SCHEMA_NAME)
+      .setTable("booking")
+      .setLine("839")
+      .setFile("execIndexing.c")
+      .setFieldName("exclude_overlapping_bookings")
+      .setSqlState(EXCLUSION_VIOLATION_ERROR_CODE)
+      .setRoutine("check_exclusion_or_unique_constraint")
+      .setErrorType("ERROR")
+      .setSeverity("ERROR").build();
+  }
+
   public static Map<Object, String> getDataTypeMismatchViolation(){
     return new ErrorBuilder()
       .setMessage("column \"addresses\" is of type json but expression is of type character varying")
@@ -109,6 +142,17 @@ public class ErrorFactory {
       .setFile("parse_target.c")
       .setSqlState(DATATYPE_MISMATCH_ERROR_CODE)
       .setRoutine("transformAssignedExpr")
+      .setErrorType("ERROR")
+      .setSeverity("ERROR").build();
+  }
+
+  public static Map<Object, String> getDataLengthMismatch(){
+    return new ErrorBuilder()
+      .setMessage("value too long for type character varying(10)")
+      .setLine("624")
+      .setFile("varchar.c")
+      .setSqlState(DATA_LENGTH_MISMATCH_ERROR_CODE)
+      .setRoutine("varchar")
       .setErrorType("ERROR")
       .setSeverity("ERROR").build();
   }
