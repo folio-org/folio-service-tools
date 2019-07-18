@@ -105,7 +105,7 @@ public class ErrorFactory {
 
   public static Map<Object, String> getIntegrityViolationErrorMap(){
     return new ErrorBuilder()
-      .setMessage("new ow for relation \"parent\" violates check constraint")
+      .setMessage("new row for relation \"parent\" violates check constraint")
       .setDetail("Failing row contains (1704747953, 1372598141, eOMtThyhVNLWUZNRcBaQKxl, -1.00)")
       .setSchema(SCHEMA_NAME)
       .setTable("parent")
