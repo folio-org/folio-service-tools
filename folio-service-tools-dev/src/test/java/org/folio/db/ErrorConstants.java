@@ -14,5 +14,8 @@ public class ErrorConstants {
 
   public static final String SCHEMA_NAME = "fs_mod_notes";
 
-  public static final String TABLE_NAME = "child";
+  public static final String CHILD_TABLE_NAME = "child";
+  public static final String PARENT_TABLE_NAME = "parent";
+
+  public static final String ERROR_TYPE = "ERROR";
 }

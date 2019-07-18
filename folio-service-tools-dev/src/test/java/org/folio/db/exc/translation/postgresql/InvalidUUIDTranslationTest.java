@@ -11,13 +11,19 @@ import static org.folio.db.ErrorFactory.getUUIDErrorMap;
 
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
 import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import org.folio.test.junit.TestStartLoggingRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.db.exc.DatabaseException;
 import org.folio.db.exc.InvalidUUIDException;
+import org.junit.rules.TestRule;
 
 public class InvalidUUIDTranslationTest {
+
+  @Rule
+  public TestRule startLogger = TestStartLoggingRule.instance();
 
   @Test
   public void shouldReturnDatabaseExceptionWithUUUIDViolationCode() {

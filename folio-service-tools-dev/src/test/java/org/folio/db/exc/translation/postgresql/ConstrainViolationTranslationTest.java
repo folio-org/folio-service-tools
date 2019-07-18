@@ -1,6 +1,8 @@
 package org.folio.db.exc.translation.postgresql;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -102,12 +104,16 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnForeignKeyConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException(){
+  public void shouldReturnForeignKeyConstraintViolationExceptionWithAllFieldsWhenExceptionIsDataException(){
     GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getForeignKeyErrorMap()));
     final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.FOREIGN_KEY_VIOLATION.getCode()));
-    assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.FOREIGN_KEY));
+    final Constraint constraint = resultException.getConstraint();
+    assertThat(constraint.getType(), equalTo(Constraint.Type.FOREIGN_KEY));
+    assertThat(constraint.getName(), equalTo("fk_parent"));
+    assertThat(constraint.getTable(), equalTo(CHILD_TABLE_NAME));
+    assertThat(resultException.getDetailedMessage(), containsString("is not a present in table"));
   }
 
   @Test

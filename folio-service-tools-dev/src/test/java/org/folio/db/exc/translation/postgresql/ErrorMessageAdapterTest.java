@@ -3,7 +3,7 @@ package org.folio.db.exc.translation.postgresql;
 import static junit.framework.TestCase.assertTrue;
 import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.SCHEMA_NAME;
-import static org.folio.db.ErrorConstants.TABLE_NAME;
+import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.folio.db.ErrorFactory.getErrorMapWithColumn;
 import static org.folio.db.ErrorFactory.getErrorMapWithColumnNull;
 import static org.folio.db.ErrorFactory.getErrorMapWithDetailNull;
@@ -123,9 +123,9 @@ public class ErrorMessageAdapterTest {
 
   @Test
   public void shouldReturnErrorWithTable() {
-    ErrorMessageAdapter adapter = new ErrorMessageAdapter(new ErrorMessage(getErrorMapWithTable(TABLE_NAME)));
+    ErrorMessageAdapter adapter = new ErrorMessageAdapter(new ErrorMessage(getErrorMapWithTable(CHILD_TABLE_NAME)));
     assertTrue(adapter.getTable().isPresent());
-    assertThat(adapter.getTable().get(), equalTo(TABLE_NAME));
+    assertThat(adapter.getTable().get(), equalTo(CHILD_TABLE_NAME));
   }
 
   @Test
