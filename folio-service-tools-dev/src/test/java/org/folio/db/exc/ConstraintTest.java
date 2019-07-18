@@ -1,6 +1,8 @@
 package org.folio.db.exc;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -119,4 +121,20 @@ public class ConstraintTest {
     result = cons.equals(Constraint.foreignKey(CONS_NAME, CONS_TABLE, CONS_COL_1, CONS_COL_2));
     assertThat(result, is(false));
   }
+
+  @Test
+  public void basicToString() {
+    Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, CONS_COL_1, CONS_COL_2);
+
+    String str = cons.toString();
+
+    assertThat(str, allOf(
+      containsString(Constraint.Type.PRIMARY_KEY.toString()),
+      containsString(CONS_NAME),
+      containsString(CONS_TABLE),
+      containsString(CONS_COL_1),
+      containsString(CONS_COL_2)
+    ));
+  }
+
 }
