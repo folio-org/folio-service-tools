@@ -14,6 +14,7 @@ public class PostgreSQLExceptionTranslator extends DBExceptionTranslator {
     fTranslation = InvalidUUIDTranslation.asPartial()
                     .orElse(DataExceptionTranslation.asPartial())
                     .orElse(ConstrainViolationTranslation.asPartial())
+                    .orElse(AuthorizationExceptionTranslation.asPartial())
                     .orElse(GenericDBExceptionTranslation.asPartial());
   }
 

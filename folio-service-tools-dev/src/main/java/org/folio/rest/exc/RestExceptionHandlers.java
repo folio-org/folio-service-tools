@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
@@ -19,6 +20,10 @@ import io.vertx.core.logging.LoggerFactory;
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
 import org.folio.cql2pgjson.exception.CQL2PgJSONException;
+import org.folio.db.exc.AuthorizationException;
+import org.folio.db.exc.ConstraintViolationException;
+import org.folio.db.exc.DataException;
+import org.folio.db.exc.InvalidUUIDException;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 
 public class RestExceptionHandlers {
@@ -35,7 +40,8 @@ public class RestExceptionHandlers {
     //
     // the below is to show how predicates that potentially have complex logic can be combined
     return badRequestHandler(instanceOf(BadRequestException.class)
-                .or(instanceOf(GenericDatabaseException.class).and(invalidUUID()))
+                .or(instanceOf(InvalidUUIDException.class)) // if DB exception translation applied OR ...
+                .or(instanceOf(GenericDatabaseException.class).and(invalidUUID())) // ... if not applied
                 .or(instanceOf(CQLQueryValidationException.class))
                 .or(instanceOf(CQL2PgJSONException.class)));
   }
@@ -50,6 +56,24 @@ public class RestExceptionHandlers {
 
   public static PartialFunction<Throwable, Response> notFoundHandler(Predicate<Throwable> predicate) {
     return pf(predicate, RestExceptionResponses::toNotFound);
+  }
+
+  public static PartialFunction<Throwable, Response> baseUnauthorizedHandler() {
+    return unauthorizedHandler(instanceOf(NotAuthorizedException.class)
+                .or(instanceOf(AuthorizationException.class)));
+  }
+
+  public static PartialFunction<Throwable, Response> unauthorizedHandler(Predicate<Throwable> predicate) {
+    return pf(predicate, RestExceptionResponses::toUnauthorized);
+  }
+
+  public static PartialFunction<Throwable, Response> baseUnprocessableHandler() {
+    return unprocessableHandler(instanceOf(ConstraintViolationException.class)
+                .or(instanceOf(DataException.class)));
+  }
+
+  public static PartialFunction<Throwable, Response> unprocessableHandler(Predicate<Throwable> predicate) {
+    return pf(predicate, RestExceptionResponses::toUnprocessable);
   }
 
   public static PartialFunction<Throwable, Response> generalHandler() {

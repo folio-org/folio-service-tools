@@ -10,6 +10,7 @@ public class ErrorConstants {
   public static final String INVALID_TEXT_REPRESENTATION_ERROR_CODE = "22P02";
   public static final String DATATYPE_MISMATCH_ERROR_CODE = "42804";
   public static final String DATA_LENGTH_MISMATCH_ERROR_CODE = "22001";
+  public static final String INVALID_PASSWORD_ERROR_CODE = "28P01";
 
 
   public static final String SCHEMA_NAME = "fs_mod_notes";
@@ -18,4 +19,5 @@ public class ErrorConstants {
   public static final String PARENT_TABLE_NAME = "parent";
 
   public static final String ERROR_TYPE = "ERROR";
+  public static final String FATAL_TYPE = "FATAL";
 }
