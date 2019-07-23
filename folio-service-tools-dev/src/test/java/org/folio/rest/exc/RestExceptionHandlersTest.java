@@ -10,6 +10,7 @@ import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
@@ -22,6 +23,10 @@ import scala.collection.immutable.Map;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.cql2pgjson.exception.CQL2PgJSONException;
+import org.folio.db.exc.Constraint;
+import org.folio.db.exc.ConstraintViolationException;
+import org.folio.db.exc.DataException;
+import org.folio.db.exc.InvalidUUIDException;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 
 public class RestExceptionHandlersTest {
@@ -68,12 +73,58 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
+  public void badReqHandlerCreates400ResponseForInvalidUUIDExc() {
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
+
+    Response response = handler.apply(new InvalidUUIDException("UUID", "22P02", "11111111"));
+
+    verifyResponse(response, HttpStatus.SC_BAD_REQUEST, "UUID");
+  }
+
+  @Test
   public void notFoundHandlerCreates404ResponseForNotFoundException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseNotFoundHandler();
 
     Response response = handler.apply(new NotFoundException("NOTFOUND"));
 
     verifyResponse(response, HttpStatus.SC_NOT_FOUND, "NOTFOUND");
+  }
+
+  @Test
+  public void unauthorizedHandlerCreates401ResponseForNotAuthorizedException() {
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnauthorizedHandler();
+
+    Response response = handler.apply(new NotAuthorizedException("NOTAUTH"));
+
+    verifyResponse(response, HttpStatus.SC_UNAUTHORIZED, "Unauthorized"); // message from the exception is ignored
+  }
+
+  @Test
+  public void unauthorizedHandlerCreates401ResponseForAuthorizationException() {
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnauthorizedHandler();
+
+    Response response = handler.apply(new NotAuthorizedException("NOTAUTH"));
+
+    verifyResponse(response, HttpStatus.SC_UNAUTHORIZED, "Unauthorized"); // message from the exception is ignored
+  }
+
+  @Test
+  public void unprocessableHandlerCreates422ResponseForConstraintViolationException() {
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnprocessableHandler();
+
+    Response response = handler.apply(new ConstraintViolationException("PK", "23505",
+      Constraint.primaryKey("pk_foo", "foo_table")));
+
+    verifyResponse(response, HttpStatus.SC_UNPROCESSABLE_ENTITY, "PK");
+  }
+
+  @Test
+  public void unprocessableHandlerCreates422ResponseForDataException() {
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnprocessableHandler();
+
+    Response response = handler.apply(new DataException("DATA"));
+
+    verifyResponse(response, HttpStatus.SC_UNPROCESSABLE_ENTITY, "DATA");
   }
 
   @Test

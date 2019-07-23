@@ -1,17 +1,19 @@
 package org.folio.db;
 
 import static org.folio.db.ErrorConstants.CHECK_VIOLATION_ERROR_CODE;
+import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
 import static org.folio.db.ErrorConstants.DATA_LENGTH_MISMATCH_ERROR_CODE;
 import static org.folio.db.ErrorConstants.ERROR_TYPE;
 import static org.folio.db.ErrorConstants.EXCLUSION_VIOLATION_ERROR_CODE;
+import static org.folio.db.ErrorConstants.FATAL_TYPE;
 import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.INTEGRITY_VIOLATION__ERROR_CODE;
+import static org.folio.db.ErrorConstants.INVALID_PASSWORD_ERROR_CODE;
 import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.NOT_NULL_VIOLATION_ERROR_CODE;
 import static org.folio.db.ErrorConstants.PARENT_TABLE_NAME;
 import static org.folio.db.ErrorConstants.SCHEMA_NAME;
-import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.folio.db.ErrorConstants.UNIQUE_VIOLATION_ERROR_CODE;
 
 import scala.collection.immutable.Map;
@@ -158,6 +160,17 @@ public class ErrorFactory {
       .setRoutine("varchar")
       .setErrorType(ERROR_TYPE)
       .setSeverity(ERROR_TYPE).build();
+  }
+
+  public static Map<Object, String> getInvalidPasswordErrorMap(){
+    return new ErrorBuilder()
+      .setMessage("password authentication failed for user \"wrong_mod_notes\"")
+      .setLine("328")
+      .setFile("auth.c")
+      .setSqlState(INVALID_PASSWORD_ERROR_CODE)
+      .setRoutine("auth_failed")
+      .setErrorType(FATAL_TYPE)
+      .setSeverity(FATAL_TYPE).build();
   }
 
   public static Map<Object, String> getErrorMapWithFieldNameOnly(String name){

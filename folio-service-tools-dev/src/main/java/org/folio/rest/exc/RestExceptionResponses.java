@@ -22,6 +22,15 @@ public class RestExceptionResponses {
     return statusWithText(HttpStatus.SC_NOT_FOUND, t.getMessage());
   }
 
+  @SuppressWarnings("squid:S1172")
+  public static Response toUnauthorized(Throwable t) {
+    return statusWithText(HttpStatus.SC_UNAUTHORIZED, "Unauthorized");
+  }
+
+  public static Response toUnprocessable(Throwable t) {
+    return statusWithText(HttpStatus.SC_UNPROCESSABLE_ENTITY, t.getMessage());
+  }
+
   public static Response toGeneral(Throwable t) {
     Future<Response> validationFuture = Future.future();
     ValidationHelper.handleError(t, validationFuture);

@@ -1,11 +1,5 @@
 package org.folio.db.exc.translation.postgresql;
 
-import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
-import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
-import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
-import static org.folio.db.ErrorFactory.getDataTypeMismatchViolation;
-import static org.folio.db.ErrorFactory.getForeignKeyErrorMap;
-import static org.folio.db.ErrorFactory.getUUIDErrorMap;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -13,20 +7,31 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import io.vertx.core.Future;
+import static org.folio.db.ErrorConstants.DATATYPE_MISMATCH_ERROR_CODE;
+import static org.folio.db.ErrorConstants.FOREIGN_KEY_VIOLATION_ERROR_CODE;
+import static org.folio.db.ErrorConstants.INVALID_PASSWORD_ERROR_CODE;
+import static org.folio.db.ErrorConstants.INVALID_TEXT_REPRESENTATION_ERROR_CODE;
+import static org.folio.db.ErrorFactory.getDataTypeMismatchViolation;
+import static org.folio.db.ErrorFactory.getForeignKeyErrorMap;
+import static org.folio.db.ErrorFactory.getInvalidPasswordErrorMap;
+import static org.folio.db.ErrorFactory.getUUIDErrorMap;
+
 import java.util.function.Function;
-import org.folio.db.exc.ConstraintViolationException;
-import org.folio.db.exc.DatabaseException;
-import org.folio.db.exc.InvalidUUIDException;
-import org.folio.test.junit.TestStartLoggingRule;
+
+import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import io.vertx.core.Future;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import org.folio.db.exc.AuthorizationException;
+import org.folio.db.exc.ConstraintViolationException;
+import org.folio.db.exc.DatabaseException;
+import org.folio.db.exc.InvalidUUIDException;
+import org.folio.test.junit.TestStartLoggingRule;
 
 public class PostgreSQLExceptionTranslatorTest {
 
@@ -92,6 +97,15 @@ public class PostgreSQLExceptionTranslatorTest {
     assertThat(databaseException.getSqlState(), equalTo(DATATYPE_MISMATCH_ERROR_CODE));
     assertTrue(databaseException instanceof DatabaseException);
 
+  }
+
+  @Test
+  public void shouldReturnDatabaseExceptionWhenExceptionIsAuthorizationException() {
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getInvalidPasswordErrorMap()));
+    final DatabaseException databaseException = translator.doTranslation(exception);
+
+    assertThat(databaseException.getSqlState(), equalTo(INVALID_PASSWORD_ERROR_CODE));
+    assertTrue(databaseException instanceof AuthorizationException);
   }
 
   @Test
