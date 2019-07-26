@@ -1,12 +1,15 @@
 package org.folio.db.exc.translation.postgresql;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
+import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.folio.db.ErrorFactory.getCheckViolationErrorMap;
 import static org.folio.db.ErrorFactory.getDataLengthMismatch;
 import static org.folio.db.ErrorFactory.getDataTypeMismatchViolation;
@@ -129,5 +132,17 @@ public class ConstrainViolationTranslationTest {
   public void shouldThrowExceptionWhenReceivesNotIntegrityConstraintViolation(){
     GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getDataTypeMismatchViolation()));
     new ConstrainViolationTranslation.TFunction().apply(exception);
+  }
+
+  @Test
+  public void shouldReturnConstraintViolationExceptionWithInvalidFieldsPopulated(){
+    // detail: "Key (id1, id2)=(22222, 813205855) already exists"
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getPrimaryKeyErrorMap()));
+    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+
+    assertThat(resultException.getInvalidValues(), notNullValue());
+    assertThat(resultException.getInvalidValues().size(), is(2));
+    assertThat(resultException.getInvalidValues(), hasEntry("id1", "22222"));
+    assertThat(resultException.getInvalidValues(), hasEntry("id2", "813205855"));
   }
 }
