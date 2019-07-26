@@ -53,7 +53,13 @@ class ConstrainViolationTranslation {
 
       Constraint constraint = createConstraint(sqlState, constName, table, column);
 
-      return new ConstraintViolationException(msg, exc, sqlState.getCode(), details, constraint);
+      ConstraintViolationException cve = new ConstraintViolationException(msg, exc, sqlState.getCode(),
+          details, constraint);
+
+      InvalidValueParser p = new InvalidValueParser(em);
+      p.parse().entrySet().forEach(entry -> cve.addInvalidValue(entry.getKey(), entry.getValue()));
+
+      return cve;
     }
 
     private Constraint createConstraint(PSQLState sqlState, String constName, String table, String column) {

@@ -1,9 +1,15 @@
 package org.folio.db.exc;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.Validate;
+
 public class ConstraintViolationException extends DatabaseException {
 
   private String detailedMessage;
   private Constraint constraint;
+  private Map<String, String> invalidValues;
 
 
   public ConstraintViolationException(String message, String sqlState, Constraint constraint) {
@@ -23,6 +29,7 @@ public class ConstraintViolationException extends DatabaseException {
     super(message, cause, sqlState);
     this.detailedMessage = detailedMessage;
     this.constraint = constraint;
+    this.invalidValues = new HashMap<>();
   }
 
   public String getDetailedMessage() {
@@ -36,4 +43,14 @@ public class ConstraintViolationException extends DatabaseException {
   public Constraint.Type getConstraintType() {
     return constraint.getType();
   }
+
+  public void addInvalidValue(String fieldName, String value) {
+    Validate.notBlank(fieldName);
+    invalidValues.put(fieldName, value);
+  }
+
+  public Map<String, String> getInvalidValues() {
+    return new HashMap<>(invalidValues);
+  }
+
 }

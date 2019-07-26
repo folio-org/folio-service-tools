@@ -126,7 +126,8 @@ public class ErrorFactory {
   public static Map<Object, String> getExclusionViolationErrorMap(){
     return new ErrorBuilder()
       .setMessage("conflicting key value violates exclusion constraint \"exclude_overlapping_bookings\"")
-      .setDetail("Key (daterange(from_date, to_date, '[]'::text))=([2017-04-20,2017-05-01)) conflicts with existing key (daterange(from_date, to_date, '[]'::text))=([2017-04-20,2017-04-22))")
+      .setDetail("Key (daterange(from_date, to_date, '[]'::text))=([2017-04-20,2017-05-01)) " +
+        "conflicts with existing key (daterange(from_date, to_date, '[]'::text))=([2017-04-20,2017-04-22))")
       .setSchema(SCHEMA_NAME)
       .setTable("booking")
       .setLine("839")
