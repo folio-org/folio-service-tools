@@ -8,6 +8,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import org.apache.commons.collections4.IterableGet;
+import org.apache.commons.lang3.ArrayUtils;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
@@ -47,29 +49,33 @@ class ConstrainViolationTranslation {
 
       String table = em.getTable().orElse(null);
       String constName = em.getName().orElse(null);
-      // for some types of exception (FK, PK, UNIQUE violations) the columns can be extracted from Detail msg
-      // but for now only take it from the column field
-      String column = em.getColumn().orElse(null);
 
-      Constraint constraint = createConstraint(sqlState, constName, table, column);
+      IterableGet<String, String> invalidValues = new InvalidValueParser(em).parse();
+      // for some types of exception (FK, PK, UNIQUE violations) the columns can be extracted from Detail msg
+      String[] columns = em.getColumn()
+        .map(ArrayUtils::toArray)
+        .orElse(invalidValues.keySet().toArray(new String[0]));
+
+      Constraint constraint = createConstraint(sqlState, constName, table, columns);
 
       ConstraintViolationException cve = new ConstraintViolationException(msg, exc, sqlState.getCode(),
           details, constraint);
 
-      InvalidValueParser p = new InvalidValueParser(em);
-      p.parse().entrySet().forEach(entry -> cve.addInvalidValue(entry.getKey(), entry.getValue()));
+      invalidValues.entrySet().forEach(entry -> cve.addInvalidValue(entry.getKey(), entry.getValue()));
 
       return cve;
     }
 
-    private Constraint createConstraint(PSQLState sqlState, String constName, String table, String column) {
+    private Constraint createConstraint(PSQLState sqlState, String constName, String table, String[] columns) {
       Constraint constraint;
       switch (sqlState) {
         case NOT_NULL_VIOLATION:
+          // for this type of constraint single column is expected
+          String column = columns.length == 1 ? columns [0] : null;
           constraint = Constraint.notNull(constName, table, column);
           break;
         case FOREIGN_KEY_VIOLATION:
-          constraint = Constraint.foreignKey(constName, table);
+          constraint = Constraint.foreignKey(constName, table, columns);
           break;
         case UNIQUE_VIOLATION:
           // !!!!! Note:
@@ -77,10 +83,10 @@ class ConstrainViolationTranslation {
           // although in PostgreSQL they are defined with different keywords:
           //    - PRIMARY KEY
           //    - UNIQUE.
-          // So to differentiate them somehow the name of PK constraint should start from "pk_"
+          // So to differentiate them somehow the name of PK constraint should start with "pk_"
           constraint = defaultString(constName).toLowerCase().startsWith(PK_PREFIX)
-                          ? Constraint.primaryKey(constName, table)
-                          : Constraint.unique(constName, table);
+                          ? Constraint.primaryKey(constName, table, columns)
+                          : Constraint.unique(constName, table, columns);
           break;
         case CHECK_VIOLATION:
           constraint = Constraint.check(constName, table);

@@ -24,7 +24,7 @@ public class Constraint {
   private String name;
   private String table;
   private List<String> columns;
-  
+
 
   public static Constraint primaryKey(String name, String table, String... columns) {
     return new Constraint(Type.PRIMARY_KEY, name, table, columns);
@@ -55,8 +55,11 @@ public class Constraint {
     Validate.notBlank(table, "Constraint table is empty");
     //Validate.notBlank(name, "Constraint name is empty");
 
+    // normalize columns:
+    // - replace null with empty array
+    // - remove all nulls from the array
     String[] cols = ArrayUtils.nullToEmpty(columns);
-    Validate.noNullElements(cols);
+    cols = ArrayUtils.removeAllOccurences(cols, null);
 
     this.type = type;
     this.name = name;

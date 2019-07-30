@@ -1,6 +1,7 @@
 package org.folio.db.exc.translation.postgresql;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -144,5 +145,24 @@ public class ConstrainViolationTranslationTest {
     assertThat(resultException.getInvalidValues().size(), is(2));
     assertThat(resultException.getInvalidValues(), hasEntry("id1", "22222"));
     assertThat(resultException.getInvalidValues(), hasEntry("id2", "813205855"));
+  }
+
+  @Test
+  public void shouldReturnConstraintViolationExceptionWithColumnNamesPopulatedFromDetail(){
+    // detail: "Key (id1, id2)=(22222, 813205855) already exists"
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getPrimaryKeyErrorMap()));
+    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+
+    Constraint cons = resultException.getConstraint();
+    assertThat(cons.getColumns(), containsInAnyOrder("id1", "id2"));
+  }
+
+  @Test
+  public void shouldReturnConstraintViolationExceptionWithSingleColumnPopulatedFromColumnField(){
+    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getNotNullViolationErrorMap()));
+    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+
+    Constraint cons = resultException.getConstraint();
+    assertThat(cons.getColumns(), containsInAnyOrder("name"));
   }
 }

@@ -88,6 +88,13 @@ public class ConstraintTest {
   }
 
   @Test
+  public void filtersOutNullColumns() {
+    Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, null, CONS_COL_2, null);
+
+    assertThat(cons.getColumns(), containsInAnyOrder(CONS_COL_2));
+  }
+
+  @Test
   public void failedIfTableNameIsNull() {
     thrown.expect(NullPointerException.class);
 
@@ -99,13 +106,6 @@ public class ConstraintTest {
     thrown.expect(IllegalArgumentException.class);
 
     Constraint.other(CONS_NAME, "  \t");
-  }
-
-  @Test
-  public void failedIfOneOfColumnsIsNull() {
-    thrown.expect(IllegalArgumentException.class);
-
-    Constraint.primaryKey(CONS_NAME, CONS_TABLE, null, CONS_COL_2);
   }
 
   @Test
