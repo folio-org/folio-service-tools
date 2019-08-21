@@ -38,6 +38,11 @@
         <version>25.0.1</version>
       </dependency>
       <dependency>
+        <groupId>org.folio.okapi</groupId>
+        <artifactId>okapi-common</artifactId>
+        <version>2.26.0</version>
+      </dependency>
+      <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-stack-depchain</artifactId>
         <version>${vertx.version}</version>
