@@ -1,3 +1,6 @@
+## v1.2.0 2019-08-21
+* MODCFIELDS-9 - Add base class for tests that use combination of Vert.x, Wiremock and Postgres servers
+
 ## v1.1.0 2019-07-23
 * MODNOTES-100 - Fix error message when we try to delete a note type
 * MODNOTES-106 - Provide a way to convert generic database exceptions into more specific ones
