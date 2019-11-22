@@ -9,8 +9,8 @@ import static org.folio.db.ErrorFactory.getErrorMapWithSqlStateNull;
 import static org.folio.db.ErrorFactory.getIntegrityViolationErrorMap;
 import static org.folio.db.ErrorFactory.getUUIDErrorMap;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.folio.test.junit.TestStartLoggingRule;
 import org.junit.Rule;
 import org.junit.Test;

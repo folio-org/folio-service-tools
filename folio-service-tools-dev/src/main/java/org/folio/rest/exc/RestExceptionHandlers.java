@@ -13,7 +13,7 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 

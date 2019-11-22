@@ -3,7 +3,7 @@ package org.folio.db.exc.translation.postgresql;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.apache.commons.collections4.IterableGet;
 import org.junit.Rule;
 import org.junit.Test;

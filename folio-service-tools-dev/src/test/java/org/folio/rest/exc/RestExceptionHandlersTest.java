@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
@@ -14,12 +15,11 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
-import com.github.mauricio.async.db.postgresql.messages.backend.InformationMessage;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.apache.http.HttpStatus;
+import org.folio.db.exc.translation.postgresql.InformationMessageConstants;
 import org.junit.Test;
-import scala.collection.immutable.Map;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.cql2pgjson.exception.CQL2PgJSONException;
@@ -64,7 +64,7 @@ public class RestExceptionHandlersTest {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new GenericDatabaseException(
-      new ErrorMessage(new Map.Map1<>(InformationMessage.Message(), "invalid input syntax for type uuid"))));
+      new ErrorMessage(Collections.singletonMap(InformationMessageConstants.MESSAGE, "invalid input syntax for type uuid"))));
 
     assertThat(response, notNullValue());
     assertThat(response.getStatus(), is(HttpStatus.SC_BAD_REQUEST));

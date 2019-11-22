@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 import org.apache.commons.lang3.StringUtils;
 
 import org.folio.common.pf.PartialFunction;
@@ -64,7 +64,7 @@ class InvalidUUIDTranslation {
                 ? matcher.group(1)
                 : StringUtils.EMPTY; // do not throw any exception for now
     }
-    
+
   }
-  
+
 }

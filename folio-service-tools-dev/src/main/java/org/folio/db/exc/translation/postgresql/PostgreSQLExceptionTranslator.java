@@ -1,6 +1,6 @@
 package org.folio.db.exc.translation.postgresql;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.db.exc.DatabaseException;
@@ -20,7 +20,7 @@ public class PostgreSQLExceptionTranslator extends DBExceptionTranslator {
 
   @Override
   public boolean acceptable(Throwable exc) {
-    return (exc instanceof com.github.mauricio.async.db.exceptions.DatabaseException);
+    return (exc instanceof com.github.jasync.sql.db.exceptions.DatabaseException);
   }
 
   @Override

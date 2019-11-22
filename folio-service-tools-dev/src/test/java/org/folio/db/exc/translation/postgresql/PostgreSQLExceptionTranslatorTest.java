@@ -18,8 +18,8 @@ import static org.folio.db.ErrorFactory.getUUIDErrorMap;
 
 import java.util.function.Function;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import io.vertx.core.Future;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,8 +50,8 @@ public class PostgreSQLExceptionTranslatorTest {
 
   @Test
   public void shouldReturnTrueWhenExceptionIsAcceptable () {
-    com.github.mauricio.async.db.exceptions.DatabaseException exception =
-      new com.github.mauricio.async.db.exceptions.DatabaseException("test error", new java.lang.RuntimeException());
+    com.github.jasync.sql.db.exceptions.DatabaseException exception =
+      new com.github.jasync.sql.db.exceptions.DatabaseException("test error", new java.lang.RuntimeException());
 
     final boolean acceptable = translator.acceptable(exception);
     assertTrue(acceptable);
@@ -126,8 +126,8 @@ public class PostgreSQLExceptionTranslatorTest {
   @Test
   public void shouldReturnDatabaseExceptionWhenThrowableIsDatabaseException() {
 
-    com.github.mauricio.async.db.exceptions.DatabaseException exception =
-      new com.github.mauricio.async.db.exceptions.DatabaseException("test error", new java.lang.RuntimeException());
+    com.github.jasync.sql.db.exceptions.DatabaseException exception =
+      new com.github.jasync.sql.db.exceptions.DatabaseException("test error", new java.lang.RuntimeException());
 
     final DatabaseException databaseException = translator.translate(exception);
     assertNull(databaseException.getSqlState());

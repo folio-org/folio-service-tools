@@ -29,7 +29,7 @@ import org.folio.test.junit.TestStartLoggingRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.junit.rules.TestRule;
 
 public class ErrorMessageAdapterTest {
