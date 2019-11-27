@@ -4,10 +4,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Optional;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
-import com.github.mauricio.async.db.postgresql.messages.backend.InformationMessage;
-import scala.collection.immutable.Map;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 
 class ErrorMessageAdapter {
 
@@ -24,25 +22,25 @@ class ErrorMessageAdapter {
   }
 
   ErrorMessageAdapter(GenericDatabaseException dbe) {
-    this(dbe.errorMessage());
+    this(dbe.getErrorMessage());
   }
 
   Optional<String> getSQLState() {
-    return getField(InformationMessage.SQLState());
+    return getField(InformationMessageConstants.SQL_STATE);
   }
 
   Optional<PSQLState> getPSQLState() {
-    String sqlState = getField(InformationMessage.SQLState()).orElse(EMPTY);
+    String sqlState = getField(InformationMessageConstants.SQL_STATE).orElse(EMPTY);
 
     return PSQLState.contains(sqlState) ? Optional.of(PSQLState.enumOf(sqlState)) : Optional.empty();
   }
 
   Optional<String> getMessage() {
-    return getField(InformationMessage.Message());
+    return getField(InformationMessageConstants.MESSAGE);
   }
 
   Optional<String> getDetailedMessage() {
-    return getField(InformationMessage.Detail());
+    return getField(InformationMessageConstants.DETAIL);
   }
 
   Optional<String> getSchema() {
@@ -62,8 +60,6 @@ class ErrorMessageAdapter {
   }
 
   private Optional<String> getField(char name) {
-    Map<Object, String> errFields = errorMessage.fields();
-
-    return errFields.get(name).fold(Optional::empty, Optional::of);
+    return Optional.ofNullable(errorMessage.getFields().get(name));
   }
 }

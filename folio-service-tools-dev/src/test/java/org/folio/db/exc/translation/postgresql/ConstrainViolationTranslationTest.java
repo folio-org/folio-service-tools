@@ -21,8 +21,8 @@ import static org.folio.db.ErrorFactory.getNotNullViolationErrorMap;
 import static org.folio.db.ErrorFactory.getPrimaryKeyErrorMap;
 import static org.folio.db.ErrorFactory.getUniqueViolationErrorMap;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;

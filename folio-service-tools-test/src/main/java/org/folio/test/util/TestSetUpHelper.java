@@ -5,12 +5,13 @@ import static org.folio.test.util.TestUtil.STUB_TOKEN;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 import org.folio.rest.RestVerticle;
 import org.folio.rest.client.TenantClient;
+import org.folio.rest.jaxrs.model.TenantAttributes;
 import org.folio.rest.persist.PostgresClient;
+import org.folio.rest.tools.PomReader;
 import org.folio.rest.tools.utils.NetworkUtils;
 
 import io.vertx.core.DeploymentOptions;
@@ -47,7 +48,7 @@ public class TestSetUpHelper {
     vertx.deployVerticle(RestVerticle.class.getName(), getDeploymentOptions(configProperties), event -> {
       TenantClient tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN);
       try {
-        tenantClient.postTenant(null, res2 -> future.complete(null));
+        tenantClient.postTenant(new TenantAttributes().withModuleTo(PomReader.INSTANCE.getVersion()), res2 -> future.complete(null));
       } catch (Exception e) {
         e.printStackTrace();
       }

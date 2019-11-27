@@ -1,6 +1,6 @@
 package org.folio.db.exc.translation.postgresql;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 
 class TranslationUtils {
 

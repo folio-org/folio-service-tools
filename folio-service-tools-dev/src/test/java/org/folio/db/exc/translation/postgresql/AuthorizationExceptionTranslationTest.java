@@ -10,9 +10,8 @@ import static org.folio.db.ErrorFactory.getDataLengthMismatch;
 import static org.folio.db.ErrorFactory.getErrorMapWithSqlStateNull;
 import static org.folio.db.ErrorFactory.getInvalidPasswordErrorMap;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.mauricio.async.db.postgresql.messages.backend.ErrorMessage;
-import com.github.mauricio.async.db.postgresql.messages.backend.InformationMessage;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -72,6 +71,6 @@ public class AuthorizationExceptionTranslationTest {
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.INVALID_PASSWORD.getCode()));
     assertThat(resultException.getCause(), is(exception));
-    assertThat(resultException.getMessage(), equalTo(errorMessage.fields().get(InformationMessage.Message()).get()));
+    assertThat(resultException.getMessage(), equalTo(errorMessage.getFields().get(InformationMessageConstants.MESSAGE)));
   }
 }

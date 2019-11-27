@@ -5,7 +5,7 @@ import static org.folio.db.exc.translation.postgresql.TranslationUtils.exception
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;

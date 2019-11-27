@@ -7,7 +7,7 @@ import static org.folio.db.exc.translation.postgresql.TranslationUtils.exception
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException;
+import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 import org.apache.commons.collections4.IterableGet;
 import org.apache.commons.lang3.ArrayUtils;
 
