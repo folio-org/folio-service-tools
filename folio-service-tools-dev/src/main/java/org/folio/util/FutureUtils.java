@@ -1,6 +1,7 @@
 package org.folio.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.CompletableFuture;
 
 import io.vertx.core.Future;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -38,4 +39,26 @@ public final class FutureUtils {
     return result;
   }
 
+  public static <T> CompletableFuture<T> mapVertxFuture(Future<T> future) {
+    CompletableFuture<T> completableFuture = new CompletableFuture<>();
+
+    future
+      .map(completableFuture::complete)
+      .otherwise(completableFuture::completeExceptionally);
+
+    return completableFuture;
+  }
+
+  public static <T> Future<T> mapCompletableFuture(CompletableFuture<T> completableFuture) {
+    Future<T> future = Future.future();
+
+    completableFuture
+      .thenAccept(future::complete)
+      .exceptionally(cause -> {
+        future.fail(cause);
+        return null;
+      });
+
+    return future;
+  }
 }
