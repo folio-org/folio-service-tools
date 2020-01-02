@@ -26,10 +26,6 @@
       <artifactId>domain-models-runtime</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.folio.okapi</groupId>
-      <artifactId>okapi-common</artifactId>
-    </dependency>
-    <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
     </dependency>

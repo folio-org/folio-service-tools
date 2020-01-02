@@ -35,12 +35,7 @@
       <dependency>
         <groupId>org.folio</groupId>
         <artifactId>domain-models-runtime</artifactId>
-        <version>29.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.folio.okapi</groupId>
-        <artifactId>okapi-common</artifactId>
-        <version>2.26.0</version>
+        <version>29.1.1</version>
       </dependency>
       <dependency>
         <groupId>io.vertx</groupId>
