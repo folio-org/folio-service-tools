@@ -1,3 +1,7 @@
+## v1.3.1 2020-01-02    
+* remove explicit dependency to okapi-common 
+* update RMB to 29.1.1
+
 ## v1.3.0 2019-11-27    
 * MODKBEKBJ-339 - Update RMB to 29.0.1
 
