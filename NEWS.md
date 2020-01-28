@@ -1,3 +1,7 @@
+## v1.4.0 2020-01-28    
+* Add code owners 
+* MODCFIELDS-27 - Move utility methods from mod-kb-ebsco-java
+
 ## v1.3.1 2020-01-02    
 * remove explicit dependency to okapi-common 
 * update RMB to 29.1.1
