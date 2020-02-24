@@ -15,6 +15,7 @@
   <properties>
     <sonar.exclusions>
       src/main/java/**/PartialFunctions.*,
+      src/main/java/**/service/exc/*,
       src/main/java/**/ServiceExceptions.*,
       src/main/java/**CqlQuery.*
     </sonar.exclusions>

@@ -1,3 +1,6 @@
+## v1.4.1 2020-02-24
+* introduce invalid data exceptions
+
 ## v1.4.0 2020-01-28    
 * Add code owners 
 * MODCFIELDS-27 - Move utility methods from mod-kb-ebsco-java
