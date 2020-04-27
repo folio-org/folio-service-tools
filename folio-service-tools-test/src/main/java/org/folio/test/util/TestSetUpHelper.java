@@ -36,14 +36,6 @@ public class TestSetUpHelper {
     port = NetworkUtils.nextFreePort();
     host = "http://127.0.0.1";
 
-
-    try {
-      PostgresClient.getInstance(vertx)
-        .startEmbeddedPostgres();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to start embedded postgres" , e);
-    }
-
     CompletableFuture<Void> future = new CompletableFuture<>();
     vertx.deployVerticle(RestVerticle.class.getName(), getDeploymentOptions(configProperties), event -> {
       TenantClient tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN);
