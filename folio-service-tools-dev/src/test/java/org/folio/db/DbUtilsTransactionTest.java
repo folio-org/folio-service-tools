@@ -1,23 +1,25 @@
 package org.folio.db;
 
-import org.folio.rest.persist.PostgresClient;
+import static org.folio.test.util.TestUtil.STUB_TENANT;
+
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
+import io.vertx.ext.sql.ResultSet;
+import io.vertx.ext.sql.SQLConnection;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.ext.sql.ResultSet;
-import io.vertx.ext.sql.SQLConnection;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
-
-import static org.folio.test.util.TestUtil.STUB_TENANT;
+import org.folio.rest.persist.PostgresClient;
 
 
 @RunWith(VertxUnitRunner.class)
@@ -69,9 +71,9 @@ public class DbUtilsTransactionTest {
   }
 
   private Future<Void> assertCount(int expectedCount, TestContext context) {
-      Future<ResultSet> future = Future.future();
-      PostgresClient.getInstance(vertx).select("SELECT COUNT(*) as count FROM " + TEST_TABLE, future);
-      return future.map(resultSet -> {
+      Promise<ResultSet> promise = Promise.promise();
+      PostgresClient.getInstance(vertx).select("SELECT COUNT(*) as count FROM " + TEST_TABLE, promise);
+      return promise.future().map(resultSet -> {
         String count = resultSet.getRows().get(0).getString("count");
         context.assertEquals(expectedCount, count);
         return null;
@@ -80,11 +82,11 @@ public class DbUtilsTransactionTest {
 
   @NotNull
   private Future<Void> executeWithConnection(AsyncResult<SQLConnection> connection, String sql) {
-    Future<Void> future = Future.future();
+    Promise<Void> promise = Promise.promise();
     PostgresClient.getInstance(vertx).execute(
       connection, sql,
-      event -> future.complete(null));
-    return future;
+      event -> promise.complete(null));
+    return promise.future();
   }
 
 }

@@ -1,27 +1,28 @@
 package org.folio.db;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.sql.SQLConnection;
-
-import org.apache.commons.lang3.mutable.MutableObject;
-import org.folio.cql2pgjson.CQL2PgJSON;
-import org.folio.cql2pgjson.exception.FieldException;
-import org.folio.rest.persist.Criteria.Limit;
-import org.folio.rest.persist.Criteria.Offset;
-import org.folio.rest.persist.PostgresClient;
-import org.folio.rest.persist.cql.CQLWrapper;
-import org.folio.util.FutureUtils;
+import static org.folio.util.FutureUtils.mapCompletableFuture;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
 
-import static org.folio.util.FutureUtils.mapCompletableFuture;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.sql.SQLConnection;
+import org.apache.commons.lang3.mutable.MutableObject;
+
+import org.folio.cql2pgjson.CQL2PgJSON;
+import org.folio.cql2pgjson.exception.FieldException;
+import org.folio.rest.persist.PostgresClient;
+import org.folio.rest.persist.Criteria.Limit;
+import org.folio.rest.persist.Criteria.Offset;
+import org.folio.rest.persist.cql.CQLWrapper;
+import org.folio.util.FutureUtils;
 
 public final class DbUtils {
 
@@ -97,9 +98,9 @@ public final class DbUtils {
   }
 
   private static CompletionStage<Void> endTransaction(PostgresClient postgresClient, MutableObject<AsyncResult<SQLConnection>> mutableConnection) {
-    Future<Void> future = Future.future();
-    postgresClient.endTx(mutableConnection.getValue(), future);
-    return FutureUtils.mapVertxFuture(future);
+    Promise<Void> promise = Promise.promise();
+    postgresClient.endTx(mutableConnection.getValue(), promise);
+    return FutureUtils.mapVertxFuture(promise.future());
   }
 
 }

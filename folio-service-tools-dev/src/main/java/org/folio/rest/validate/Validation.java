@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class Validation {
@@ -24,13 +25,13 @@ public class Validation {
     Objects.requireNonNull(testMethod);
 
     tests.add(Pair.of(testValue, testMethod));
-    
+
     return this;
   }
 
   @SuppressWarnings("unchecked")
   public Future<Void> validate() {
-    Future<Void> result = Future.future();
+    Promise<Void> result = Promise.promise();
 
     try {
       for (Pair<Object, Consumer> test : tests) {
@@ -45,7 +46,7 @@ public class Validation {
       result.fail(e);
     }
 
-    return result;
+    return result.future();
   }
 
 }
