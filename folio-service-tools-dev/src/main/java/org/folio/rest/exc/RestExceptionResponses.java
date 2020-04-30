@@ -5,6 +5,7 @@ import static org.folio.rest.ResponseHelper.statusWithText;
 import javax.ws.rs.core.Response;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import org.apache.http.HttpStatus;
 
 import org.folio.rest.tools.utils.ValidationHelper;
@@ -32,11 +33,13 @@ public class RestExceptionResponses {
   }
 
   public static Response toGeneral(Throwable t) {
-    Future<Response> validationFuture = Future.future();
-    ValidationHelper.handleError(t, validationFuture);
+    Promise<Response> promise = Promise.promise();
 
-    if (validationFuture.succeeded()) {
-      return validationFuture.result();
+    ValidationHelper.handleError(t, promise);
+
+    Future<Response> future = promise.future();
+    if (future.succeeded()) {
+      return future.result();
     } else {
       return statusWithText(HttpStatus.SC_INTERNAL_SERVER_ERROR, Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }

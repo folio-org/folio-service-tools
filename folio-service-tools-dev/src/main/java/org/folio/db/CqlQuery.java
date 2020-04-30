@@ -4,6 +4,7 @@ import static org.folio.db.DbUtils.ALL_FIELDS;
 import static org.folio.db.DbUtils.getCQLWrapper;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 
 import org.folio.cql2pgjson.exception.FieldException;
 import org.folio.rest.persist.PostgresClient;
@@ -30,9 +31,9 @@ public class CqlQuery<T> {
         return Future.failedFuture(e);
       }
 
-      Future<Results<T>> future = Future.future();
-      pg.get(table, clazz, ALL_FIELDS, cql, true, false, future);
+      Promise<Results<T>> promise = Promise.promise();
+      pg.get(table, clazz, ALL_FIELDS, cql, true, false, promise);
 
-      return future;
+      return promise.future();
     }
   }

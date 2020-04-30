@@ -1,9 +1,15 @@
 package org.folio.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 
 public final class FutureUtils {
@@ -12,7 +18,7 @@ public final class FutureUtils {
   }
 
   public static  <T> Future<T> wrapExceptions(Future<T> future, Class<? extends Throwable> wrapperExcClass) {
-    Future<T> result = Future.future();
+    Promise<T> result = Promise.promise();
 
     future.setHandler(ar -> {
       if (ar.succeeded()) {
@@ -36,7 +42,7 @@ public final class FutureUtils {
       }
     });
 
-    return result;
+    return result.future();
   }
 
   public static <T> CompletableFuture<T> mapVertxFuture(Future<T> future) {
@@ -50,15 +56,53 @@ public final class FutureUtils {
   }
 
   public static <T> Future<T> mapCompletableFuture(CompletableFuture<T> completableFuture) {
-    Future<T> future = Future.future();
+    Promise<T> promise = Promise.promise();
 
     completableFuture
-      .thenAccept(future::complete)
+      .thenAccept(promise::complete)
       .exceptionally(cause -> {
-        future.fail(cause);
+        promise.fail(cause);
         return null;
       });
 
-    return future;
+    return promise.future();
+  }
+
+  public static <T> CompletableFuture<T> failedFuture(Throwable ex) {
+    CompletableFuture<T> f = new CompletableFuture<>();
+
+    f.completeExceptionally(ex);
+
+    return f;
+  }
+
+  public static <T,U> CompletableFuture<T> mapResult(Future<U> future, Function<U, T> mapper) {
+    CompletableFuture<T> result = new CompletableFuture<>();
+
+    future.map(mapper)
+      .map(result::complete)
+      .otherwise(result::completeExceptionally);
+
+    return result;
+  }
+
+  /**
+   * Returns a new CompletableFuture that is completed when all of the given futures complete,
+   * returned CompletableFuture contains list of values from futures that have succeeded,
+   * If future completes exceptionally then the exception is passed to provided exceptionHandler
+   */
+  public static <T> CompletableFuture<List<T>> allOfSucceeded(Collection<CompletableFuture<T>> futures, Consumer<Throwable> exceptionHandler) {
+    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+      .handle((o, e) ->
+        futures.stream()
+          .map(future -> future.whenComplete((result, throwable) -> {
+            if(throwable != null) {
+              exceptionHandler.accept(throwable);
+            }
+          }))
+          .filter(future -> !future.isCompletedExceptionally())
+          .map(CompletableFuture::join)
+          .collect(Collectors.toList())
+      );
   }
 }
