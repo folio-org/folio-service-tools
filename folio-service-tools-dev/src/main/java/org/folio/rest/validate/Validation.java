@@ -9,6 +9,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import org.apache.commons.lang3.tuple.Pair;
 
+@SuppressWarnings("java:S3740")
 public class Validation {
 
   private List<Pair<Object, Consumer>> tests = new ArrayList<>();
