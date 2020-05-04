@@ -19,11 +19,17 @@ import java.util.concurrent.ExecutionException;
 import javax.ws.rs.NotAuthorizedException;
 
 import io.vertx.core.Future;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.test.junit.TestStartLoggingRule;
 
 public class TokenUtilsTest {
+
+  @Rule
+  public TestRule startLogger = TestStartLoggingRule.instance();
 
   private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9."
     + "eyJzdWIiOiJURVNUX1VTRVJfTkFNRSIsInVzZXJfaWQiOiJURVNUX1VTRVJfSUQiLCJpYXQiOjE1ODU4OTUxNDQsInRlbmFudCI6ImRpa3UifQ."
