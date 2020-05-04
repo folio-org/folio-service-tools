@@ -1,7 +1,10 @@
 package org.folio.util;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import static org.folio.util.FutureUtils.failedFuture;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -9,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.ws.rs.NotAuthorizedException;
 
 import io.vertx.core.json.JsonObject;
+import org.apache.commons.lang.StringUtils;
 
 import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.rest.tools.utils.JwtUtils;
@@ -39,9 +43,15 @@ public final class TokenUtils {
     }
   }
 
-  public static CompletableFuture<UserInfo> fetchUserInfo(Map<String, String> okapiHeaders) {
-    return userInfoFromToken(okapiHeaders.get(XOkapiHeaders.TOKEN))
+  public static CompletableFuture<UserInfo> fetchUserInfo(String token) {
+    return userInfoFromToken(token)
       .map(CompletableFuture::completedFuture)
-      .orElse(failedFuture(new NotAuthorizedException(INVALID_TOKEN_MESSAGE)));
+      .orElse(failedFuture(new NotAuthorizedException(INVALID_TOKEN_MESSAGE, StringUtils.defaultString(token))));
+  }
+
+  public static CompletableFuture<UserInfo> fetchUserInfo(Map<String, String> okapiHeaders) {
+    Map<String, String> h = defaultIfNull(okapiHeaders, Collections.emptyMap());
+
+    return fetchUserInfo(h.get(XOkapiHeaders.TOKEN));
   }
 }
