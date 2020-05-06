@@ -1,3 +1,7 @@
+## v1.4.2 2020-05-06
+* MODKBEKBJ-432 Add fetchUserInfo(token) method
+* MODKBEKBJ-432 Move TokenUtils/FutureUtils from mod-kb-ebsco-java
+
 ## v1.4.1 2020-02-24
 * introduce invalid data exceptions
 
