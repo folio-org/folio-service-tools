@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.ws.rs.NotAuthorizedException;
 
 import io.vertx.core.json.JsonObject;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.StringUtils;
 
 import org.folio.okapi.common.XOkapiHeaders;
@@ -50,7 +51,7 @@ public final class TokenUtils {
   }
 
   public static CompletableFuture<UserInfo> fetchUserInfo(Map<String, String> okapiHeaders) {
-    Map<String, String> h = defaultIfNull(okapiHeaders, Collections.emptyMap());
+    Map<String, String> h = new CaseInsensitiveMap<>(defaultIfNull(okapiHeaders, Collections.emptyMap()));
 
     return fetchUserInfo(h.get(XOkapiHeaders.TOKEN));
   }

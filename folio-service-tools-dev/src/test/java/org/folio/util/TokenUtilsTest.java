@@ -71,6 +71,19 @@ public class TokenUtilsTest {
   }
 
   @Test
+  public void testFetchIsCaseInsensitiveToHeaderNames() throws ExecutionException, InterruptedException {
+    Map<String, String> headers = new HashMap<>();
+    headers.put(XOkapiHeaders.TOKEN.toUpperCase(), VALID_TOKEN);
+
+    CompletableFuture<UserInfo> future = TokenUtils.fetchUserInfo(headers);
+
+    UserInfo result = future.get();
+
+    assertEquals(USER_ID, result.getUserId());
+    assertEquals(USER_NAME, result.getUserName());
+  }
+
+  @Test
   public void testFetchFailedWithNotAuthorizedWhenEmptyToken() {
     Future<UserInfo> result = mapCompletableFuture(TokenUtils.fetchUserInfo(Collections.emptyMap()));
 
