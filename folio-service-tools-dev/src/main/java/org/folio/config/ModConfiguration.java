@@ -11,14 +11,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 
-import org.folio.rest.client.ConfigurationsClient;
 import org.folio.common.OkapiParams;
+import org.folio.rest.client.ConfigurationsClient;
 
 public class ModConfiguration implements Configuration {
 
@@ -99,7 +100,7 @@ public class ModConfiguration implements Configuration {
   }
 
   private Future<JsonObject> getConfigObject(String code, OkapiParams params) {
-    Future<JsonObject> result = Future.future();
+    Promise<JsonObject> result = Promise.promise();
 
     try {
       ConfigurationsClient configurationsClient = new ConfigurationsClient(params.getHost(), params.getPort(),
@@ -114,18 +115,18 @@ public class ModConfiguration implements Configuration {
       result.fail(e);
     }
 
-    return result;
+    return result.future();
   }
 
-  private void handleResponseBody(HttpClientResponse response, Buffer body, String code, Future<JsonObject> future) {
+  private void handleResponseBody(HttpClientResponse response, Buffer body, String code, Promise<JsonObject> promise) {
     if (response.statusCode() == 200) {
       try {
-        future.complete(retrievePropObject(code, body));
+        promise.complete(retrievePropObject(code, body));
       } catch (Exception e) {
-        future.fail(e);
+        promise.fail(e);
       }
     } else {
-      future.fail(new ConfigurationException(
+      promise.fail(new ConfigurationException(
         format("Configuration property cannot be retrieved: code = %s. " +
           "Response details: status = %d, body = '%s'", code, response.statusCode(), body.toString())));
     }
