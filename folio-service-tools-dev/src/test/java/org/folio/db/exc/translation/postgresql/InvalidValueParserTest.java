@@ -3,7 +3,9 @@ package org.folio.db.exc.translation.postgresql;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
+import static org.folio.db.ErrorFactory.getErrorMapWithDetailOnly;
+import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;
+
 import org.apache.commons.collections4.IterableGet;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,8 +22,8 @@ public class InvalidValueParserTest {
 
   @Test
   public void parsesToSingleValue() {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(new ErrorMessage(
-      ErrorFactory.getErrorMapWithDetailOnly("Key (name)=(John) already exists")));
+    PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(
+      getErrorMapWithDetailOnly("Key (name)=(John) already exists")));
 
     IterableGet<String, String> values = new InvalidValueParser(em).parse();
 
@@ -32,8 +34,8 @@ public class InvalidValueParserTest {
 
   @Test
   public void parsesToSeveralValues() {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(new ErrorMessage(ErrorFactory.getErrorMapWithDetailOnly(
-        "Key (parent_id1, parent_id2)=(22222, 813205855) is not present in table \"parent\".")));
+    PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(getErrorMapWithDetailOnly(
+      "Key (parent_id1, parent_id2)=(22222, 813205855) is not present in table \"parent\".")));
 
     IterableGet<String, String> values = new InvalidValueParser(em).parse();
 
@@ -48,7 +50,7 @@ public class InvalidValueParserTest {
 
   @Test
   public void trimExcessiveSpacesFromKeysValues() {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(new ErrorMessage(ErrorFactory.getErrorMapWithDetailOnly(
+    PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(getErrorMapWithDetailOnly(
       "Key ( parent_id1  , parent_id2  ) = (  22222  , 813205855  ) is not present in table \"parent\".")));
 
     IterableGet<String, String> values = new InvalidValueParser(em).parse();
@@ -64,7 +66,7 @@ public class InvalidValueParserTest {
 
   @Test
   public void parsesToNoValuesIfDetailIsEmpty() {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(new ErrorMessage(ErrorFactory.getErrorMapWithDetailNull()));
+    PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(ErrorFactory.getErrorMapWithDetailNull()));
 
     IterableGet<String, String> values = new InvalidValueParser(em).parse();
 
@@ -73,7 +75,7 @@ public class InvalidValueParserTest {
 
   @Test
   public void parsesToNoValuesIfPatternDoesntMatch() {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(new ErrorMessage(ErrorFactory.getErrorMapWithDetailOnly(
+    PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(getErrorMapWithDetailOnly(
       "Failing row contains (1697635108, 858317485, null, 4670207833.23).")));
 
     IterableGet<String, String> values = new InvalidValueParser(em).parse();

@@ -20,7 +20,7 @@ public class DbUtilsTest {
 
   @Test
   public void createParamsPopulateJsonArray() {
-    List params = Arrays.asList("param1", 0);
+    List<?> params = Arrays.asList("param1", 0);
 
     JsonArray jarray = createParams(params);
 
@@ -31,7 +31,7 @@ public class DbUtilsTest {
 
   @Test
   public void createParamsWorksWithNulls() {
-    List params = Arrays.asList("param1", null, 0, null);
+    List<?> params = Arrays.asList("param1", null, 0, null);
 
     JsonArray jarray = createParams(params);
 
