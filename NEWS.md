@@ -1,3 +1,6 @@
+## v1.4.3 2020-05-18
+* MODKBEKBJ-432 Сonvert headers to case insensitive in TokenUtils.fetchUserInfo()
+
 ## v1.4.2 2020-05-06
 * MODKBEKBJ-432 Add fetchUserInfo(token) method
 * MODKBEKBJ-432 Move TokenUtils/FutureUtils from mod-kb-ebsco-java

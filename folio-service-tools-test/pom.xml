@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.folio</groupId>
     <artifactId>folio-service-tools</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
+    <version>1.4.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>folio-service-tools-test</artifactId>
@@ -13,6 +13,7 @@
   <name>folio-service-tools-test</name>
 
   <properties>
+    <commons-io.version>2.6</commons-io.version>
     <sonar.exclusions>src/main/**/*</sonar.exclusions>
   </properties>
 
@@ -40,7 +41,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.6</version>
+      <version>${commons-io.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
