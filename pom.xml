@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.folio</groupId>
   <artifactId>folio-service-tools</artifactId>
-  <version>1.4.3-SNAPSHOT</version>
+  <version>1.4.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -25,7 +25,13 @@
 
   <properties>
     <vertx.version>3.8.4</vertx.version>
+    <raml-module-builder.version>29.1.1</raml-module-builder.version>
+    <log4j-slf4j-impl.version>2.9.1</log4j-slf4j-impl.version>
     <junit.version>4.12</junit.version>
+    <mockito.version>2.24.5</mockito.version>
+    <wiremock.version>2.19.0</wiremock.version>
+    <rest-assured.version>3.3.0</rest-assured.version>
+    <easy-random.version>4.0.0.RC1</easy-random.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -35,7 +41,7 @@
       <dependency>
         <groupId>org.folio</groupId>
         <artifactId>domain-models-runtime</artifactId>
-        <version>29.1.1</version>
+        <version>${raml-module-builder.version}</version>
       </dependency>
       <dependency>
         <groupId>io.vertx</groupId>
@@ -47,7 +53,7 @@
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-slf4j-impl</artifactId>
-        <version>2.9.1</version>
+        <version>${log4j-slf4j-impl.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -58,13 +64,13 @@
       <dependency>
         <groupId>io.rest-assured</groupId>
         <artifactId>rest-assured</artifactId>
-        <version>3.3.0</version>
+        <version>${rest-assured.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>com.github.tomakehurst</groupId>
         <artifactId>wiremock</artifactId>
-        <version>2.19.0</version>
+        <version>${wiremock.version}</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>
@@ -76,13 +82,13 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>2.24.5</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.jeasy</groupId>
         <artifactId>easy-random</artifactId>
-        <version>4.0.0.RC1</version>
+        <version>${easy-random.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
