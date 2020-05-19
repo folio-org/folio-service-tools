@@ -8,7 +8,7 @@ import org.folio.db.exc.translation.DBExceptionTranslator;
 
 public class PostgreSQLExceptionTranslator extends DBExceptionTranslator {
 
-  private PartialFunction<PgException, DatabaseException> fTranslation;
+  private final PartialFunction<PgException, DatabaseException> fTranslation;
 
   public PostgreSQLExceptionTranslator() {
     fTranslation = InvalidUUIDTranslation.asPartial()
@@ -26,7 +26,7 @@ public class PostgreSQLExceptionTranslator extends DBExceptionTranslator {
   @Override
   protected DatabaseException doTranslation(Throwable exc) {
     return (exc instanceof PgException)
-      ? fTranslation.apply((PgException) exc) // operate with GenericDatabaseException at the moment
+      ? fTranslation.apply((PgException) exc) // operates with PgException at the moment
       : new DatabaseException(exc); // the rest is just wrapped into DatabaseException
   }
 

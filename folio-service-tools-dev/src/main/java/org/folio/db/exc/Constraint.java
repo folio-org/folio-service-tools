@@ -11,6 +11,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Constraint {
 
+  public enum Type {
+    PRIMARY_KEY,
+    FOREIGN_KEY,
+    UNIQUE,
+    CHECK,
+    NOT_NULL,
+    OTHER // for not need / not processed types at the moment
+  }
+
   private final Type type;
   private final String name;
   private final String table;
@@ -100,14 +109,5 @@ public class Constraint {
       .append("table", table)
       .append("columns", columns)
       .toString();
-  }
-
-  public enum Type {
-    PRIMARY_KEY,
-    FOREIGN_KEY,
-    UNIQUE,
-    CHECK,
-    NOT_NULL,
-    OTHER // for not need / not processed types at the moment
   }
 }
