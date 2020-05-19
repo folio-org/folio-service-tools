@@ -38,6 +38,6 @@ public class ResponseHelper {
                                  PartialFunction<Throwable, Response> exceptionHandler) {
     result.map(mapper)
       .otherwise(exceptionHandler)
-      .setHandler(asyncResultHandler);
+      .onComplete(asyncResultHandler);
   }
 }

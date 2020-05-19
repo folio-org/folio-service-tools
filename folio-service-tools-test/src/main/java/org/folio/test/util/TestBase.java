@@ -1,25 +1,14 @@
 package org.folio.test.util;
 
 import static io.restassured.RestAssured.given;
+
 import static org.folio.test.util.TestUtil.STUB_TENANT;
 
-import java.io.IOException;
 import java.util.HashMap;
-
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
-import org.folio.okapi.common.XOkapiHeaders;
-import org.folio.test.junit.TestStartLoggingRule;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
 
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
@@ -30,16 +19,27 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.TestContext;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
+import org.apache.http.entity.ContentType;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+
+import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.test.junit.TestStartLoggingRule;
 
 /**
  * Base test class for tests that use wiremock and vertx http servers,
  * test that inherits this class must use VertxUnitRunner as test runner
  * <p>
- *
+ * <p>
  * BeforeClass and AfterClass methods have to run in order for this class to work correctly,
  * if superclass declares its own @BeforeClass or @AfterClass methods, then they shouldn't hide existing
  * methods (i.e. they should have different names).
  * Alternatively superclass can hide existing methods and call TestBase#setUpClass/TestBase#tearDownClass methods directly.
+ *
  * @see BeforeClass
  * @see AfterClass
  */

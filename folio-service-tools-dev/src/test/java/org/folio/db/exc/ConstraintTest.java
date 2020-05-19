@@ -9,7 +9,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
 
 import org.folio.test.junit.TestStartLoggingRule;
@@ -23,9 +22,6 @@ public class ConstraintTest {
 
   @Rule
   public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
 
   @Test
   public void constructsPrimaryKeyConstraint() {
@@ -92,20 +88,6 @@ public class ConstraintTest {
     Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, null, CONS_COL_2, null);
 
     assertThat(cons.getColumns(), containsInAnyOrder(CONS_COL_2));
-  }
-
-  @Test
-  public void failedIfTableNameIsNull() {
-    thrown.expect(NullPointerException.class);
-
-    Constraint.other(CONS_NAME, null);
-  }
-
-  @Test
-  public void failedIfTableNameIsBlank() {
-    thrown.expect(IllegalArgumentException.class);
-
-    Constraint.other(CONS_NAME, "  \t");
   }
 
   @Test

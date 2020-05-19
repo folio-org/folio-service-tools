@@ -22,7 +22,7 @@ public class FutureUtilsTest {
     Future<Object> vertxFuture = FutureUtils.mapCompletableFuture(completableFuture);
     completableFuture.complete(RESULT_VALUE);
     assertTrue(vertxFuture.succeeded());
-    vertxFuture.setHandler(result ->
+    vertxFuture.onComplete(result ->
       assertEquals(RESULT_VALUE, result.result()));
   }
 
@@ -32,7 +32,7 @@ public class FutureUtilsTest {
     Future<Object> vertxFuture = FutureUtils.mapCompletableFuture(completableFuture);
     completableFuture.completeExceptionally(EXCEPTION_VALUE);
     assertTrue(vertxFuture.failed());
-    vertxFuture.setHandler(result -> {
+    vertxFuture.onComplete(result -> {
       assertTrue(result.cause() instanceof CompletionException);
       assertEquals(EXCEPTION_VALUE, result.cause().getCause());
     });

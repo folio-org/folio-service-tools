@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.vertx.core.http.CaseInsensitiveHeaders;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,10 +20,10 @@ import org.folio.test.junit.TestStartLoggingRule;
 public class OkapiParamsTest {
 
   private static final String TENANT = "TEST";
-  private static final String TOKEN = "qRjjl7T3PfnP8wUPhHcVKrnbYZq0rETLg7EcMW7ciF17rE2YD5He0Dj3LfuTRSwX"+
-    "LKvcp2eibvNYGqGPewoJhQw3hXAP3i1jjcRhcygQwi3bq1OeaWAhIYrKIVkJ7Wjp"+
+  private static final String TOKEN = "qRjjl7T3PfnP8wUPhHcVKrnbYZq0rETLg7EcMW7ciF17rE2YD5He0Dj3LfuTRSwX" +
+    "LKvcp2eibvNYGqGPewoJhQw3hXAP3i1jjcRhcygQwi3bq1OeaWAhIYrKIVkJ7Wjp" +
     "x9TiWBgus2avFf3V0fvaszfj2UNi4eJYmlkaxptYLODAO4JTfRF4A5jYTmfAd8Jb" +
-    "FOVVoTUw7ggl7DY0IzP48hb9SgCtbVcAQysr5HyuZZijIAOGz3UwIQMcxxdHItJo"+
+    "FOVVoTUw7ggl7DY0IzP48hb9SgCtbVcAQysr5HyuZZijIAOGz3UwIQMcxxdHItJo" +
     "N6q1I51fnrNo8v0ZoGLt9nH0QvdZO1BgdvPyUxShvlMbOtYFU5fc6hIFZyZGdLnt";
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
@@ -31,12 +31,11 @@ public class OkapiParamsTest {
   private static final String SOME_HEADER = "SomeHeader";
   private static final String SOME_VALUE = "SomeValue";
 
-  private Map<String, String> headers;
-  private CaseInsensitiveHeaders caseInsensitiveHeaders;
-
   @Rule
   public TestRule startLogger = TestStartLoggingRule.instance();
 
+  private Map<String, String> headers;
+  private CaseInsensitiveMap<String, String> caseInsensitiveHeaders;
 
   @Before
   public void setUp() {
@@ -46,8 +45,7 @@ public class OkapiParamsTest {
     headers.put(XOkapiHeaders.TENANT, TENANT);
     headers.put(SOME_HEADER, SOME_VALUE);
 
-    caseInsensitiveHeaders = new CaseInsensitiveHeaders();
-    caseInsensitiveHeaders.addAll(headers);
+    caseInsensitiveHeaders = new CaseInsensitiveMap<>(headers);
   }
 
   @Test(expected = NullPointerException.class)
@@ -96,40 +94,20 @@ public class OkapiParamsTest {
   public void returnsCaseInsensitiveHeaders() {
     OkapiParams params = new OkapiParams(headers);
 
-    CaseInsensitiveHeaders actual = params.getHeaders();
+    Map<String, String> actual = params.getHeaders();
 
     assertThat(actual.size(), is(caseInsensitiveHeaders.size()));
-    caseInsensitiveHeaders.forEach(entry -> assertThat(actual.get(entry.getKey()), is(entry.getValue())));
+    caseInsensitiveHeaders.forEach((key, value) -> assertThat(actual.get(key), is(value)));
   }
 
   @Test
   public void returnsACopyOfCaseInsensitiveHeaders() {
     OkapiParams params = new OkapiParams(headers);
 
-    CaseInsensitiveHeaders headers = params.getHeaders();
+    Map<String, String> headers = params.getHeaders();
     headers.remove(SOME_HEADER);
 
     headers = params.getHeaders();
     assertThat(headers.get(SOME_HEADER), is(SOME_VALUE));
-  }
-
-  @Test
-  public void returnsHeadersAsMap() {
-    OkapiParams params = new OkapiParams(headers);
-
-    Map<String, String> hmap = params.getHeadersAsMap();
-
-    assertThat(hmap, is(headers));
-  }
-
-  @Test
-  public void returnsACopyOfHeadersAsMap() {
-    OkapiParams params = new OkapiParams(headers);
-
-    Map<String, String> hmap = params.getHeadersAsMap();
-    hmap.remove(SOME_HEADER);
-
-    hmap = params.getHeadersAsMap();
-    assertThat(hmap.get(SOME_HEADER), is(SOME_VALUE));
   }
 }

@@ -1,6 +1,5 @@
 package org.folio.db.exc.translation.postgresql;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -9,6 +8,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.folio.db.ErrorFactory.getCheckViolationErrorMap;
@@ -20,14 +20,13 @@ import static org.folio.db.ErrorFactory.getForeignKeyErrorMap;
 import static org.folio.db.ErrorFactory.getNotNullViolationErrorMap;
 import static org.folio.db.ErrorFactory.getPrimaryKeyErrorMap;
 import static org.folio.db.ErrorFactory.getUniqueViolationErrorMap;
+import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
+import io.vertx.pgclient.PgException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import org.folio.common.pf.PartialFunction;
 import org.folio.db.exc.Constraint;
 import org.folio.db.exc.ConstraintViolationException;
 import org.folio.db.exc.DatabaseException;
@@ -39,81 +38,80 @@ public class ConstrainViolationTranslationTest {
   public TestRule startLogger = TestStartLoggingRule.instance();
 
   @Test
-  public void shouldReturnDatabaseExceptionWithIntegrityConstraintViolationCode(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getUniqueViolationErrorMap()));
-    final PartialFunction<GenericDatabaseException, DatabaseException> asPartial = ConstrainViolationTranslation.asPartial();
-    final DatabaseException apply = asPartial.apply(exception);
+  public void shouldReturnDatabaseExceptionWithIntegrityConstraintViolationCode() {
+    PgException exception = createPgExceptionFromMap((getUniqueViolationErrorMap()));
+    DatabaseException apply = ConstrainViolationTranslation.asPartial().apply(exception);
 
     assertThat(apply.getSqlState(), equalTo(PSQLState.UNIQUE_VIOLATION.getCode()));
   }
 
   @Test
-  public void shouldReturnTrueWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getUniqueViolationErrorMap()));
-    final boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
+  public void shouldReturnTrueWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getUniqueViolationErrorMap()));
+    boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
 
     assertTrue(isDataException);
   }
 
   @Test
-  public void shouldReturnFalseWhenExceptionIsNotDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getDataLengthMismatch()));
-    final boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
+  public void shouldReturnFalseWhenExceptionIsNotDataException() {
+    PgException exception = createPgExceptionFromMap((getDataLengthMismatch()));
+    boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
 
     assertFalse(isDataException);
   }
 
   @Test
-  public void shouldReturnFalseWhenExceptionIsNull(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getErrorMapWithSqlStateNull()));
-    final boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
+  public void shouldReturnFalseWhenExceptionIsNull() {
+    PgException exception = createPgExceptionFromMap((getErrorMapWithSqlStateNull()));
+    boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
 
     assertFalse(isDataException);
   }
 
   @Test
-  public void shouldReturnUniqueConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getUniqueViolationErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnUniqueConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getUniqueViolationErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.UNIQUE_VIOLATION.getCode()));
     assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.UNIQUE));
   }
 
   @Test
-  public void shouldReturnNotNullConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getNotNullViolationErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnNotNullConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getNotNullViolationErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.NOT_NULL_VIOLATION.getCode()));
     assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.NOT_NULL));
   }
 
   @Test
-  public void shouldReturnCheckConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getCheckViolationErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnCheckConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getCheckViolationErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.CHECK_VIOLATION.getCode()));
     assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.CHECK));
   }
 
   @Test
-  public void shouldReturnPrimaryKeyConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getPrimaryKeyErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnPrimaryKeyConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getPrimaryKeyErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.UNIQUE_VIOLATION.getCode()));
     assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.PRIMARY_KEY));
   }
 
   @Test
-  public void shouldReturnForeignKeyConstraintViolationExceptionWithAllFieldsWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getForeignKeyErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnForeignKeyConstraintViolationExceptionWithAllFieldsWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getForeignKeyErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.FOREIGN_KEY_VIOLATION.getCode()));
-    final Constraint constraint = resultException.getConstraint();
+    Constraint constraint = resultException.getConstraint();
     assertThat(constraint.getType(), equalTo(Constraint.Type.FOREIGN_KEY));
     assertThat(constraint.getName(), equalTo("fk_parent"));
     assertThat(constraint.getTable(), equalTo(CHILD_TABLE_NAME));
@@ -121,25 +119,25 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnOtherConstraintViolationWithSqlStateWhenExceptionIsDataException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getExclusionViolationErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnOtherConstraintViolationWithSqlStateWhenExceptionIsDataException() {
+    PgException exception = createPgExceptionFromMap((getExclusionViolationErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.EXCLUSION_VIOLATION.getCode()));
     assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.OTHER));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void shouldThrowExceptionWhenReceivesNotIntegrityConstraintViolation(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getDataTypeMismatchViolation()));
+  public void shouldThrowExceptionWhenReceivesNotIntegrityConstraintViolation() {
+    PgException exception = createPgExceptionFromMap((getDataTypeMismatchViolation()));
     new ConstrainViolationTranslation.TFunction().apply(exception);
   }
 
   @Test
-  public void shouldReturnConstraintViolationExceptionWithInvalidFieldsPopulated(){
+  public void shouldReturnConstraintViolationExceptionWithInvalidFieldsPopulated() {
     // detail: "Key (id1, id2)=(22222, 813205855) already exists"
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getPrimaryKeyErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+    PgException exception = createPgExceptionFromMap((getPrimaryKeyErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getInvalidValues(), notNullValue());
     assertThat(resultException.getInvalidValues().size(), is(2));
@@ -148,19 +146,19 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnConstraintViolationExceptionWithColumnNamesPopulatedFromDetail(){
+  public void shouldReturnConstraintViolationExceptionWithColumnNamesPopulatedFromDetail() {
     // detail: "Key (id1, id2)=(22222, 813205855) already exists"
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getPrimaryKeyErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+    PgException exception = createPgExceptionFromMap((getPrimaryKeyErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     Constraint cons = resultException.getConstraint();
     assertThat(cons.getColumns(), containsInAnyOrder("id1", "id2"));
   }
 
   @Test
-  public void shouldReturnConstraintViolationExceptionWithSingleColumnPopulatedFromColumnField(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getNotNullViolationErrorMap()));
-    final ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
+  public void shouldReturnConstraintViolationExceptionWithSingleColumnPopulatedFromColumnField() {
+    PgException exception = createPgExceptionFromMap((getNotNullViolationErrorMap()));
+    ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
     Constraint cons = resultException.getConstraint();
     assertThat(cons.getColumns(), containsInAnyOrder("name"));

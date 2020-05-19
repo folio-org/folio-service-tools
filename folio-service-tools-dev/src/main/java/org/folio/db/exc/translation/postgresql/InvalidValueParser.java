@@ -22,8 +22,7 @@ class InvalidValueParser {
 
   private String details;
 
-
-  InvalidValueParser(ErrorMessageAdapter messageAdapter) {
+  InvalidValueParser(PgExceptionAdapter messageAdapter) {
     this.details = messageAdapter.getDetailedMessage().orElse(null);
   }
 

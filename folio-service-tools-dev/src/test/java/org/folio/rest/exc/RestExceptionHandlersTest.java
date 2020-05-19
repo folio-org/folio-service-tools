@@ -15,10 +15,7 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
 import org.apache.http.HttpStatus;
-import org.folio.db.exc.translation.postgresql.InformationMessageConstants;
 import org.junit.Test;
 
 import org.folio.common.pf.PartialFunction;
@@ -27,9 +24,18 @@ import org.folio.db.exc.Constraint;
 import org.folio.db.exc.ConstraintViolationException;
 import org.folio.db.exc.DataException;
 import org.folio.db.exc.InvalidUUIDException;
+import org.folio.db.exc.translation.postgresql.InformationMessageConstants;
+import org.folio.rest.persist.PgExceptionUtil;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
 
 public class RestExceptionHandlersTest {
+
+  private static void verifyResponse(Response response, int expectedStatus, String expectedMsg) {
+    assertThat(response, notNullValue());
+    assertThat(response.getStatus(), is(expectedStatus));
+    assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
+    assertThat(response.getEntity(), is(expectedMsg));
+  }
 
   @Test
   public void badReqHandlerCreates400ResponseForBadReqException() {
@@ -51,25 +57,25 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
+  public void badReqHandlerCreates400ResponseForInvalidUUID() {
+    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
+
+    Response response = handler.apply(PgExceptionUtil.createPgExceptionFromMap(
+      Collections.singletonMap(InformationMessageConstants.MESSAGE, "invalid input syntax for type uuid")));
+
+    assertThat(response, notNullValue());
+    assertThat(response.getStatus(), is(HttpStatus.SC_BAD_REQUEST));
+    assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
+    assertThat(response.getEntity().toString(), containsString("invalid input syntax for type uuid"));
+  }
+
+  @Test
   public void badReqHandlerCreates400ResponseForCQL2PgJSONException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new CQL2PgJSONException("EXC"));
 
     verifyResponse(response, HttpStatus.SC_BAD_REQUEST, "EXC");
-  }
-
-  @Test
-  public void badReqHandlerCreates400ResponseForInvalidUUID() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
-
-    Response response = handler.apply(new GenericDatabaseException(
-      new ErrorMessage(Collections.singletonMap(InformationMessageConstants.MESSAGE, "invalid input syntax for type uuid"))));
-
-    assertThat(response, notNullValue());
-    assertThat(response.getStatus(), is(HttpStatus.SC_BAD_REQUEST));
-    assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
-    assertThat(response.getEntity().toString(), containsString("invalid input syntax for type uuid"));
   }
 
   @Test
@@ -166,12 +172,5 @@ public class RestExceptionHandlersTest {
     Throwable actual = completionCause.apply(exception);
 
     assertThat(actual, is(exception));
-  }
-
-  private static void verifyResponse(Response response, int expectedStatus, String expectedMsg) {
-    assertThat(response, notNullValue());
-    assertThat(response.getStatus(), is(expectedStatus));
-    assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
-    assertThat(response.getEntity(), is(expectedMsg));
   }
 }

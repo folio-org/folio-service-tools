@@ -9,14 +9,13 @@ import static org.junit.Assert.assertTrue;
 import static org.folio.db.ErrorFactory.getDataLengthMismatch;
 import static org.folio.db.ErrorFactory.getErrorMapWithSqlStateNull;
 import static org.folio.db.ErrorFactory.getInvalidPasswordErrorMap;
+import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
-import com.github.jasync.sql.db.postgresql.messages.backend.ErrorMessage;
+import io.vertx.pgclient.PgException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import org.folio.common.pf.PartialFunction;
 import org.folio.db.exc.AuthorizationException;
 import org.folio.db.exc.DatabaseException;
 import org.folio.test.junit.TestStartLoggingRule;
@@ -28,49 +27,45 @@ public class AuthorizationExceptionTranslationTest {
   public TestRule startLogger = TestStartLoggingRule.instance();
 
   @Test
-  public void shouldReturnDatabaseExceptionWithInvalidAuthorizationCode(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getInvalidPasswordErrorMap()));
-    final PartialFunction<GenericDatabaseException, DatabaseException> asPartial =
-      AuthorizationExceptionTranslation.asPartial();
+  public void shouldReturnDatabaseExceptionWithInvalidAuthorizationCode() {
+    PgException exception = createPgExceptionFromMap((getInvalidPasswordErrorMap()));
+    DatabaseException resultException = AuthorizationExceptionTranslation.asPartial().apply(exception);
 
-    final DatabaseException apply = asPartial.apply(exception);
-
-    assertThat(apply.getSqlState(), equalTo(PSQLState.INVALID_PASSWORD.getCode()));
+    assertThat(resultException.getSqlState(), equalTo(PSQLState.INVALID_PASSWORD.getCode()));
   }
 
   @Test
-  public void shouldReturnTrueWhenExceptionIsAuthorizationException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getInvalidPasswordErrorMap()));
-    final boolean isAuthException = new AuthorizationExceptionTranslation.TPredicate().test(exception);
+  public void shouldReturnTrueWhenExceptionIsAuthorizationException() {
+    PgException exception = createPgExceptionFromMap((getInvalidPasswordErrorMap()));
+    boolean isAuthException = new AuthorizationExceptionTranslation.TPredicate().test(exception);
 
     assertTrue(isAuthException);
   }
 
   @Test
-  public void shouldReturnFalseWhenExceptionIsNotAuthorizationException(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getDataLengthMismatch()));
-    final boolean isAuthException = new AuthorizationExceptionTranslation.TPredicate().test(exception);
+  public void shouldReturnFalseWhenExceptionIsNotAuthorizationException() {
+    PgException exception = createPgExceptionFromMap((getDataLengthMismatch()));
+    boolean isAuthException = new AuthorizationExceptionTranslation.TPredicate().test(exception);
 
     assertFalse(isAuthException);
   }
 
   @Test
-  public void shouldReturnFalseWhenExceptionIsNull(){
-    GenericDatabaseException exception = new GenericDatabaseException(new ErrorMessage(getErrorMapWithSqlStateNull()));
-    final boolean isAuthException = new AuthorizationExceptionTranslation.TPredicate().test(exception);
+  public void shouldReturnFalseWhenExceptionIsNull() {
+    PgException exception = createPgExceptionFromMap((getErrorMapWithSqlStateNull()));
+    boolean isAuthException = new AuthorizationExceptionTranslation.TPredicate().test(exception);
 
     assertFalse(isAuthException);
   }
 
   @Test
-  public void shouldReturnAuthorizationExceptionWithSqlStateWhenExceptionIsInvalidAuthorization(){
-    ErrorMessage errorMessage = new ErrorMessage(getInvalidPasswordErrorMap());
-    GenericDatabaseException exception = new GenericDatabaseException(errorMessage);
+  public void shouldReturnAuthorizationExceptionWithSqlStateWhenExceptionIsInvalidAuthorization() {
+    PgException exception = createPgExceptionFromMap(getInvalidPasswordErrorMap());
 
-    final AuthorizationException resultException = new AuthorizationExceptionTranslation.TFunction().apply(exception);
+    AuthorizationException resultException = new AuthorizationExceptionTranslation.TFunction().apply(exception);
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.INVALID_PASSWORD.getCode()));
     assertThat(resultException.getCause(), is(exception));
-    assertThat(resultException.getMessage(), equalTo(errorMessage.getFields().get(InformationMessageConstants.MESSAGE)));
+    assertThat(resultException.getMessage(), equalTo(exception.getMessage()));
   }
 }
