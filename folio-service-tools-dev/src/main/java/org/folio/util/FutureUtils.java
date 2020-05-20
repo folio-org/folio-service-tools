@@ -17,10 +17,10 @@ public final class FutureUtils {
   private FutureUtils() {
   }
 
-  public static  <T> Future<T> wrapExceptions(Future<T> future, Class<? extends Throwable> wrapperExcClass) {
+  public static <T> Future<T> wrapExceptions(Future<T> future, Class<? extends Throwable> wrapperExcClass) {
     Promise<T> result = Promise.promise();
 
-    future.setHandler(ar -> {
+    future.onComplete(ar -> {
       if (ar.succeeded()) {
         result.complete(ar.result());
       } else {
@@ -76,7 +76,7 @@ public final class FutureUtils {
     return f;
   }
 
-  public static <T,U> CompletableFuture<T> mapResult(Future<U> future, Function<U, T> mapper) {
+  public static <T, U> CompletableFuture<T> mapResult(Future<U> future, Function<U, T> mapper) {
     CompletableFuture<T> result = new CompletableFuture<>();
 
     future.map(mapper)
@@ -91,12 +91,13 @@ public final class FutureUtils {
    * returned CompletableFuture contains list of values from futures that have succeeded,
    * If future completes exceptionally then the exception is passed to provided exceptionHandler
    */
-  public static <T> CompletableFuture<List<T>> allOfSucceeded(Collection<CompletableFuture<T>> futures, Consumer<Throwable> exceptionHandler) {
+  public static <T> CompletableFuture<List<T>> allOfSucceeded(Collection<CompletableFuture<T>> futures,
+                                                              Consumer<Throwable> exceptionHandler) {
     return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
       .handle((o, e) ->
         futures.stream()
           .map(future -> future.whenComplete((result, throwable) -> {
-            if(throwable != null) {
+            if (throwable != null) {
               exceptionHandler.accept(throwable);
             }
           }))

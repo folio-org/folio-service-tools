@@ -82,7 +82,7 @@ public class ModConfigurationTest {
       assertEquals("5", result);
     });
 
-    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -94,7 +94,7 @@ public class ModConfigurationTest {
       assertEquals(5, result.intValue());
     });
 
-    configuration.getInt(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getInt(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class ModConfigurationTest {
       assertEquals(5L, result.longValue());
     });
 
-    configuration.getLong(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getLong(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -118,7 +118,7 @@ public class ModConfigurationTest {
       assertEquals(5d, result, 0);
     });
 
-    configuration.getDouble(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getDouble(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -130,7 +130,7 @@ public class ModConfigurationTest {
       assertEquals("10", result);
     });
 
-    configuration.getString(CONFIG_PROP_CODE, "10", okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, "10", okapiParams).onComplete(verify);
   }
 
   @Test
@@ -142,7 +142,7 @@ public class ModConfigurationTest {
       assertEquals(Integer.MAX_VALUE, result.intValue());
     });
 
-    configuration.getInt(CONFIG_PROP_CODE, Integer.MAX_VALUE, okapiParams).setHandler(verify);
+    configuration.getInt(CONFIG_PROP_CODE, Integer.MAX_VALUE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -154,7 +154,7 @@ public class ModConfigurationTest {
       assertEquals(Long.MAX_VALUE, result.longValue());
     });
 
-    configuration.getLong(CONFIG_PROP_CODE, Long.MAX_VALUE, okapiParams).setHandler(verify);
+    configuration.getLong(CONFIG_PROP_CODE, Long.MAX_VALUE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -166,7 +166,7 @@ public class ModConfigurationTest {
       assertEquals(Double.MAX_VALUE, result, 0);
     });
 
-    configuration.getDouble(CONFIG_PROP_CODE, Double.MAX_VALUE, okapiParams).setHandler(verify);
+    configuration.getDouble(CONFIG_PROP_CODE, Double.MAX_VALUE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -178,7 +178,7 @@ public class ModConfigurationTest {
       assertTrue(result);
     });
 
-    configuration.getBoolean(CONFIG_PROP_CODE, true, okapiParams).setHandler(verify);
+    configuration.getBoolean(CONFIG_PROP_CODE, true, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -190,7 +190,7 @@ public class ModConfigurationTest {
       assertEquals(CONFIG_PROP_CODE, ((PropertyNotFoundException) t).getPropertyCode());
     });
 
-    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -202,7 +202,7 @@ public class ModConfigurationTest {
       assertEquals(CONFIG_PROP_CODE, ((PropertyNotFoundException) t).getPropertyCode());
     });
 
-    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -214,7 +214,7 @@ public class ModConfigurationTest {
       assertThat(t.getMessage(), containsString(String.valueOf(HttpStatus.SC_BAD_REQUEST)));
     });
 
-    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -226,7 +226,7 @@ public class ModConfigurationTest {
       assertEquals(CONFIG_PROP_CODE, ((ValueNotDefinedException) t).getPropertyCode());
     });
 
-    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 
   @Test
@@ -239,6 +239,6 @@ public class ModConfigurationTest {
       assertThat(t.getMessage(), containsString("more than one configuration properties found"));
     });
 
-    configuration.getString(CONFIG_PROP_CODE, okapiParams).setHandler(verify);
+    configuration.getString(CONFIG_PROP_CODE, okapiParams).onComplete(verify);
   }
 }

@@ -5,7 +5,7 @@ import static org.folio.db.exc.translation.postgresql.TranslationUtils.exception
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import io.vertx.pgclient.PgException;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
@@ -17,23 +17,23 @@ class DataExceptionTranslation {
   private DataExceptionTranslation() {
   }
 
-  static PartialFunction<GenericDatabaseException, DatabaseException> asPartial() {
+  static PartialFunction<PgException, DatabaseException> asPartial() {
     return PartialFunctions.pf(new TPredicate(), new TFunction());
   }
 
-  static class TPredicate implements Predicate<GenericDatabaseException> {
+  static class TPredicate implements Predicate<PgException> {
 
     @Override
-    public boolean test(GenericDatabaseException exc) {
+    public boolean test(PgException exc) {
       return exceptionWithSQLStateClass(exc, PSQLState.DATA_EXCEPTION);
     }
   }
 
-  static class TFunction implements Function<GenericDatabaseException, DataException> {
+  static class TFunction implements Function<PgException, DataException> {
 
     @Override
-    public DataException apply(GenericDatabaseException exc) {
-      ErrorMessageAdapter em = new ErrorMessageAdapter(exc);
+    public DataException apply(PgException exc) {
+      PgExceptionAdapter em = new PgExceptionAdapter(exc);
 
       String sqlState = em.getSQLState().orElse(null);
       String msg = em.getMessage().orElse(null);

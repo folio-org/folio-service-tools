@@ -13,14 +13,14 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.sql.SQLConnection;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import org.folio.cql2pgjson.CQL2PgJSON;
 import org.folio.cql2pgjson.exception.FieldException;
-import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.persist.Criteria.Limit;
 import org.folio.rest.persist.Criteria.Offset;
+import org.folio.rest.persist.PostgresClient;
+import org.folio.rest.persist.SQLConnection;
 import org.folio.rest.persist.cql.CQLWrapper;
 import org.folio.util.FutureUtils;
 
@@ -31,7 +31,8 @@ public final class DbUtils {
 
   private static final Logger LOG = LoggerFactory.getLogger(DbUtils.class);
 
-  private DbUtils() {}
+  private DbUtils() {
+  }
 
   public static <T> CompletableFuture<T> executeInTransaction(String tenantId, Vertx vertx,
                                                               BiFunction<PostgresClient, AsyncResult<SQLConnection>, CompletableFuture<T>> action) {
@@ -66,16 +67,17 @@ public final class DbUtils {
   }
 
   public static <T> Future<T> executeInTransactionWithVertxFuture(String tenantId, Vertx vertx,
-                                                              BiFunction<PostgresClient,
-                                                                AsyncResult<SQLConnection>, Future<T>> action) {
-    BiFunction<PostgresClient, AsyncResult<SQLConnection>, CompletableFuture<T>> newAction = action.andThen(FutureUtils::mapVertxFuture);
+                                                                  BiFunction<PostgresClient,
+                                                                    AsyncResult<SQLConnection>, Future<T>> action) {
+    BiFunction<PostgresClient, AsyncResult<SQLConnection>, CompletableFuture<T>> newAction =
+      action.andThen(FutureUtils::mapVertxFuture);
     return mapCompletableFuture(executeInTransaction(tenantId, vertx, newAction));
   }
 
   public static CQLWrapper getCQLWrapper(String tableName, String query, int limit, int offset) throws FieldException {
     return getCQLWrapper(tableName, query)
-            .setLimit(new Limit(limit))
-            .setOffset(new Offset(offset));
+      .setLimit(new Limit(limit))
+      .setOffset(new Offset(offset));
   }
 
   public static CQLWrapper getCQLWrapper(String tableName, String query) throws FieldException {
@@ -97,7 +99,8 @@ public final class DbUtils {
     return parameters;
   }
 
-  private static CompletionStage<Void> endTransaction(PostgresClient postgresClient, MutableObject<AsyncResult<SQLConnection>> mutableConnection) {
+  private static CompletionStage<Void> endTransaction(PostgresClient postgresClient,
+                                                      MutableObject<AsyncResult<SQLConnection>> mutableConnection) {
     Promise<Void> promise = Promise.promise();
     postgresClient.endTx(mutableConnection.getValue(), promise);
     return FutureUtils.mapVertxFuture(promise.future());

@@ -1,22 +1,22 @@
 package org.folio.db.exc.translation.postgresql;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import io.vertx.pgclient.PgException;
 
 class TranslationUtils {
 
   private TranslationUtils() {
   }
 
-  static boolean exceptionWithSQLStateClass(GenericDatabaseException exc, PSQLState expectedClass) {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(exc);
+  static boolean exceptionWithSQLStateClass(PgException exc, PSQLState expectedClass) {
+    PgExceptionAdapter em = new PgExceptionAdapter(exc);
 
     return em.getPSQLState()
       .map(state -> state.belongToClassOf(expectedClass))
       .orElse(false);
   }
 
-  static boolean exceptionWithSQLState(GenericDatabaseException exc, PSQLState expectedState) {
-    ErrorMessageAdapter em = new ErrorMessageAdapter(exc);
+  static boolean exceptionWithSQLState(PgException exc, PSQLState expectedState) {
+    PgExceptionAdapter em = new PgExceptionAdapter(exc);
 
     return em.getPSQLState()
       .map(state -> state == expectedState)

@@ -20,11 +20,25 @@ public class Constraint {
     OTHER // for not need / not processed types at the moment
   }
 
-  private Type type;
-  private String name;
-  private String table;
-  private List<String> columns;
+  private final Type type;
+  private final String name;
+  private final String table;
+  private final List<String> columns;
 
+  private Constraint(Type type, String name, String table, String... columns) {
+    Validate.notNull(type, "Constraint type is null");
+
+    // normalize columns:
+    // - replace null with empty array
+    // - remove all nulls from the array
+    String[] cols = ArrayUtils.nullToEmpty(columns);
+    cols = ArrayUtils.removeAllOccurences(cols, null);
+
+    this.type = type;
+    this.name = name;
+    this.table = table;
+    this.columns = Arrays.asList(cols);
+  }
 
   public static Constraint primaryKey(String name, String table, String... columns) {
     return new Constraint(Type.PRIMARY_KEY, name, table, columns);
@@ -50,23 +64,6 @@ public class Constraint {
     return new Constraint(Type.OTHER, name, table);
   }
 
-  private Constraint(Type type, String name, String table, String... columns) {
-    Validate.notNull(type, "Constraint type is null");
-    Validate.notBlank(table, "Constraint table is empty");
-    //Validate.notBlank(name, "Constraint name is empty");
-
-    // normalize columns:
-    // - replace null with empty array
-    // - remove all nulls from the array
-    String[] cols = ArrayUtils.nullToEmpty(columns);
-    cols = ArrayUtils.removeAllOccurences(cols, null);
-
-    this.type = type;
-    this.name = name;
-    this.table = table;
-    this.columns = Arrays.asList(cols);
-  }
-
   public Type getType() {
     return type;
   }
@@ -85,9 +82,11 @@ public class Constraint {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
+    if (this == o)
+      return true;
 
-    if (o == null || getClass() != o.getClass()) return false;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
     Constraint that = (Constraint) o;
 

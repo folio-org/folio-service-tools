@@ -2,23 +2,22 @@ package org.folio.common;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
-
-import io.vertx.core.http.CaseInsensitiveHeaders;
 import java.util.Objects;
+
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import org.folio.okapi.common.XOkapiHeaders;
 
 public class OkapiParams {
 
-  private CaseInsensitiveHeaders headers;
+  private final Map<String, String> headers;
 
-  private String host;
-  private int port;
-  private String token;
-  private String tenant;
+  private final String host;
+  private final int port;
+  private final String token;
+  private final String tenant;
 
 
   public OkapiParams(Map<String, String> headers) {
@@ -35,8 +34,7 @@ public class OkapiParams {
       throw new IllegalArgumentException("Okapi url header contains invalid value: " + headers.get(XOkapiHeaders.URL));
     }
 
-    this.headers = new CaseInsensitiveHeaders();
-    this.headers.addAll(headers);
+    this.headers = new CaseInsensitiveMap<>(headers);
 
     this.token = headers.get(XOkapiHeaders.TOKEN);
     this.tenant = headers.get(XOkapiHeaders.TENANT);
@@ -45,21 +43,9 @@ public class OkapiParams {
     this.port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
   }
 
-  public CaseInsensitiveHeaders getHeaders() {
+  public Map<String, String> getHeaders() {
     // make a copy to avoid any modifications to contained headers
-    CaseInsensitiveHeaders result = new CaseInsensitiveHeaders();
-    result.addAll(headers);
-    return result;
-  }
-
-  public Map<String, String> getHeadersAsMap() {
-    Map<String, String> result = new HashMap<>(headers.size());
-
-    for (Map.Entry<String, String> header : headers) {
-      result.put(header.getKey(), header.getValue());
-    }
-
-    return result;
+    return new CaseInsensitiveMap<>(headers);
   }
 
   public String getToken() {

@@ -7,7 +7,7 @@ import static org.folio.db.exc.translation.postgresql.TranslationUtils.exception
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
+import io.vertx.pgclient.PgException;
 import org.apache.commons.collections4.IterableGet;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -22,26 +22,26 @@ class ConstrainViolationTranslation {
   private ConstrainViolationTranslation() {
   }
 
-  static PartialFunction<GenericDatabaseException, DatabaseException> asPartial() {
+  static PartialFunction<PgException, DatabaseException> asPartial() {
     return PartialFunctions.pf(new TPredicate(), new TFunction());
   }
 
-  static class TPredicate implements Predicate<GenericDatabaseException> {
+  static class TPredicate implements Predicate<PgException> {
 
     @Override
-    public boolean test(GenericDatabaseException exc) {
+    public boolean test(PgException exc) {
       return exceptionWithSQLStateClass(exc, PSQLState.INTEGRITY_CONSTRAINT_VIOLATION);
     }
   }
 
-  static class TFunction implements Function<GenericDatabaseException, ConstraintViolationException> {
+  static class TFunction implements Function<PgException, ConstraintViolationException> {
 
     private static final String PK_PREFIX = "pk_";
 
     @Override
     @SuppressWarnings("squid:S3655")
-    public ConstraintViolationException apply(GenericDatabaseException exc) {
-      ErrorMessageAdapter em = new ErrorMessageAdapter(exc);
+    public ConstraintViolationException apply(PgException exc) {
+      PgExceptionAdapter em = new PgExceptionAdapter(exc);
 
       PSQLState sqlState = em.getPSQLState().get(); // predicate should test the message already, it's save to call get()
       String msg = em.getMessage().orElse(null);
@@ -59,7 +59,7 @@ class ConstrainViolationTranslation {
       Constraint constraint = createConstraint(sqlState, constName, table, columns);
 
       ConstraintViolationException cve = new ConstraintViolationException(msg, exc, sqlState.getCode(),
-          details, constraint);
+        details, constraint);
 
       invalidValues.entrySet().forEach(entry -> cve.addInvalidValue(entry.getKey(), entry.getValue()));
 
@@ -71,7 +71,7 @@ class ConstrainViolationTranslation {
       switch (sqlState) {
         case NOT_NULL_VIOLATION:
           // for this type of constraint single column is expected
-          String column = columns.length == 1 ? columns [0] : null;
+          String column = columns.length == 1 ? columns[0] : null;
           constraint = Constraint.notNull(constName, table, column);
           break;
         case FOREIGN_KEY_VIOLATION:
@@ -85,8 +85,8 @@ class ConstrainViolationTranslation {
           //    - UNIQUE.
           // So to differentiate them somehow the name of PK constraint should start with "pk_"
           constraint = defaultString(constName).toLowerCase().startsWith(PK_PREFIX)
-                          ? Constraint.primaryKey(constName, table, columns)
-                          : Constraint.unique(constName, table, columns);
+            ? Constraint.primaryKey(constName, table, columns)
+            : Constraint.unique(constName, table, columns);
           break;
         case CHECK_VIOLATION:
           constraint = Constraint.check(constName, table);

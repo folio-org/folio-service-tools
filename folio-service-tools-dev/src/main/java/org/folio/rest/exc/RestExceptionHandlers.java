@@ -13,9 +13,9 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import com.github.jasync.sql.db.postgresql.exceptions.GenericDatabaseException;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.pgclient.PgException;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
@@ -40,10 +40,10 @@ public class RestExceptionHandlers {
     //
     // the below is to show how predicates that potentially have complex logic can be combined
     return badRequestHandler(instanceOf(BadRequestException.class)
-                .or(instanceOf(InvalidUUIDException.class)) // if DB exception translation applied OR ...
-                .or(instanceOf(GenericDatabaseException.class).and(invalidUUID())) // ... if not applied
-                .or(instanceOf(CQLQueryValidationException.class))
-                .or(instanceOf(CQL2PgJSONException.class)));
+      .or(instanceOf(InvalidUUIDException.class)) // if DB exception translation applied OR ...
+      .or(instanceOf(PgException.class).and(invalidUUID())) // ... if not applied
+      .or(instanceOf(CQLQueryValidationException.class))
+      .or(instanceOf(CQL2PgJSONException.class)));
   }
 
   public static PartialFunction<Throwable, Response> badRequestHandler(Predicate<Throwable> predicate) {
@@ -60,7 +60,7 @@ public class RestExceptionHandlers {
 
   public static PartialFunction<Throwable, Response> baseUnauthorizedHandler() {
     return unauthorizedHandler(instanceOf(NotAuthorizedException.class)
-                .or(instanceOf(AuthorizationException.class)));
+      .or(instanceOf(AuthorizationException.class)));
   }
 
   public static PartialFunction<Throwable, Response> unauthorizedHandler(Predicate<Throwable> predicate) {
@@ -69,7 +69,7 @@ public class RestExceptionHandlers {
 
   public static PartialFunction<Throwable, Response> baseUnprocessableHandler() {
     return unprocessableHandler(instanceOf(ConstraintViolationException.class)
-                .or(instanceOf(DataException.class)));
+      .or(instanceOf(DataException.class)));
   }
 
   public static PartialFunction<Throwable, Response> unprocessableHandler(Predicate<Throwable> predicate) {
@@ -87,18 +87,18 @@ public class RestExceptionHandlers {
   /**
    * In case of Completable Futures the errors are usually wrapped inside of CompletionException,
    * opposite to Vert.x Futures where the original exceptions simply stored inside the Future as is.
-   *
+   * <p>
    * So to get to the cause this function examines the type of exception and extract the cause from CompletionException
    * if it's not null. Otherwise the given exception returned as cause.
-   *
+   * <p>
    * This function is supposed to be used before any handlers (via compose) to normalize the exception.
    *
    * @return the cause of CompletionException
    */
   public static Function<Throwable, Throwable> completionCause() {
     return t -> (t instanceof CompletionException) && t.getCause() != null
-              ? t.getCause()
-              : t;
+      ? t.getCause()
+      : t;
   }
 
 }

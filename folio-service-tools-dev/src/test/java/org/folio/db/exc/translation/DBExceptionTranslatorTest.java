@@ -16,18 +16,19 @@ import org.folio.test.junit.TestStartLoggingRule;
 
 public class DBExceptionTranslatorTest {
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
   private static final Throwable INCOMING_EXC = new Exception("Incoming");
   private static final DatabaseException TRANSLATED_EXC = new DatabaseException("Translated");
+
+  @Rule
+  public TestRule startLogger = TestStartLoggingRule.instance();
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   private TestTranslator translator;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     translator = new TestTranslator(true, TRANSLATED_EXC);
   }
 
