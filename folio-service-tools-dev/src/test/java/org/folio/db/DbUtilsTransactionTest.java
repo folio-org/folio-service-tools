@@ -12,7 +12,6 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,10 +72,10 @@ public class DbUtilsTransactionTest {
   }
 
   private Future<Void> assertCount(int expectedCount, TestContext context) {
-    Promise<RowSet<Row>> promise = Promise.promise();
-    PostgresClient.getInstance(VERTX).select("SELECT COUNT(*) as count FROM " + TEST_TABLE, promise);
-    return promise.future().map(rowSet -> {
-      String count = rowSet.iterator().next().getString("count");
+    Promise<Row> promise = Promise.promise();
+    PostgresClient.getInstance(VERTX).selectSingle("SELECT COUNT(*) as count FROM " + TEST_TABLE, promise);
+    return promise.future().map(row -> {
+      String count = row.getString("count");
       context.assertEquals(expectedCount, count);
       return null;
     });
