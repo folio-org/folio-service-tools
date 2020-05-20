@@ -21,7 +21,7 @@ public final class RowSetUtils {
     return StreamSupport.stream(spliterator, false);
   }
 
-  public static <T> List<T> mapRowSet(RowSet<Row> rowSet, Function<Row, T> mapper) {
+  public static <T> List<T> map(RowSet<Row> rowSet, Function<Row, T> mapper) {
     return streamOf(rowSet)
       .map(mapper)
       .collect(Collectors.toList());
