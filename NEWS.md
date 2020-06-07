@@ -1,3 +1,6 @@
+## v1.5.0 2020-06-07
+* Bump up minor version
+
 ## v1.4.4 2020-06-07
 * FST-1 Update to RMB v30.0.0 and Vert.X 3.9.0
 * MODCFIELDS-49 Add util classes
