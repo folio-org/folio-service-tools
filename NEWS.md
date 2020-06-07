@@ -1,5 +1,9 @@
+## v1.4.4 2020-06-07
+* FST-1 Update to RMB v30.0.0 and Vert.X 3.9.0
+* MODCFIELDS-49 Add util classes
+
 ## v1.4.3 2020-05-18
-* MODKBEKBJ-432 Сonvert headers to case insensitive in TokenUtils.fetchUserInfo()
+* MODKBEKBJ-432 Convert headers to case insensitive in TokenUtils.fetchUserInfo()
 
 ## v1.4.2 2020-05-06
 * MODKBEKBJ-432 Add fetchUserInfo(token) method
