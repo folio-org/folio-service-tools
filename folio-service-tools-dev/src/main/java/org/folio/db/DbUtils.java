@@ -10,9 +10,9 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.sqlclient.Tuple;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import org.folio.cql2pgjson.CQL2PgJSON;
@@ -85,17 +85,9 @@ public final class DbUtils {
     return new CQLWrapper(cql2pgJson, query);
   }
 
-  public static JsonArray createParams(Iterable<?> queryParameters) {
-    JsonArray parameters = new JsonArray();
-
-    for (Object p : queryParameters) {
-      if (p != null) {
-        parameters.add(p);
-      } else {
-        parameters.addNull();
-      }
-    }
-
+  public static Tuple createParams(Iterable<?> queryParameters) {
+    Tuple parameters = Tuple.tuple();
+    queryParameters.forEach(parameters::addValue);
     return parameters;
   }
 
