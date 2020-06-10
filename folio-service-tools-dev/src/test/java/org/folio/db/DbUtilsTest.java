@@ -16,7 +16,7 @@ public class DbUtilsTest {
 
   @Test(expected = NullPointerException.class)
   public void createParamsFailedWithNPEIfParamsNull() {
-    createParams(null);
+    createParams((Iterable<?>) null);
   }
 
   @Test
@@ -41,5 +41,14 @@ public class DbUtilsTest {
     assertThat(tuple.getString(2), is(nullValue()));
     assertThat(tuple.getInteger(2), is(0));
     assertThat(tuple.getString(3), is(nullValue()));
+  }
+
+  @Test
+  public void createParamsVarArgsPopulateJsonArray() {
+    Tuple tuple = createParams("param1", 0);
+
+    assertThat(tuple.size(), is(2));
+    assertThat(tuple.getString(0), is("param1"));
+    assertThat(tuple.getInteger(1), is(0));
   }
 }
