@@ -2,6 +2,7 @@ package org.folio.db;
 
 import static org.folio.util.FutureUtils.mapCompletableFuture;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
@@ -17,10 +18,10 @@ import org.apache.commons.lang3.mutable.MutableObject;
 
 import org.folio.cql2pgjson.CQL2PgJSON;
 import org.folio.cql2pgjson.exception.FieldException;
-import org.folio.rest.persist.Criteria.Limit;
-import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.persist.SQLConnection;
+import org.folio.rest.persist.Criteria.Limit;
+import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.cql.CQLWrapper;
 import org.folio.util.FutureUtils;
 
@@ -89,6 +90,10 @@ public final class DbUtils {
     Tuple parameters = Tuple.tuple();
     queryParameters.forEach(parameters::addValue);
     return parameters;
+  }
+
+  public static Tuple createParams(Object... queryParameters) {
+    return createParams(Arrays.asList(queryParameters));
   }
 
   private static CompletionStage<Void> endTransaction(PostgresClient postgresClient,
