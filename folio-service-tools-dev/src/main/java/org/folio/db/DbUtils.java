@@ -2,6 +2,7 @@ package org.folio.db;
 
 import static org.folio.util.FutureUtils.mapCompletableFuture;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
@@ -10,17 +11,17 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.sqlclient.Tuple;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import org.folio.cql2pgjson.CQL2PgJSON;
 import org.folio.cql2pgjson.exception.FieldException;
-import org.folio.rest.persist.Criteria.Limit;
-import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.persist.SQLConnection;
+import org.folio.rest.persist.Criteria.Limit;
+import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.cql.CQLWrapper;
 import org.folio.util.FutureUtils;
 
@@ -85,18 +86,14 @@ public final class DbUtils {
     return new CQLWrapper(cql2pgJson, query);
   }
 
-  public static JsonArray createParams(Iterable<?> queryParameters) {
-    JsonArray parameters = new JsonArray();
-
-    for (Object p : queryParameters) {
-      if (p != null) {
-        parameters.add(p);
-      } else {
-        parameters.addNull();
-      }
-    }
-
+  public static Tuple createParams(Iterable<?> queryParameters) {
+    Tuple parameters = Tuple.tuple();
+    queryParameters.forEach(parameters::addValue);
     return parameters;
+  }
+
+  public static Tuple createParams(Object... queryParameters) {
+    return createParams(Arrays.asList(queryParameters));
   }
 
   private static CompletionStage<Void> endTransaction(PostgresClient postgresClient,
