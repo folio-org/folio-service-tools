@@ -1,3 +1,7 @@
+## v1.5.1 2020-06-12
+* Add util methods to RowSetUtils
+* Update to RMB v30.0.2 and Vert.X 3.9.1
+
 ## v1.5.0 2020-06-07
 * Bump up minor version
 
