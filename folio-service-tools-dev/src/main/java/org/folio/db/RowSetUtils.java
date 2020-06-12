@@ -56,21 +56,6 @@ public final class RowSetUtils {
     return firstItem == NullRow.INSTANCE ? null : mapper.apply(firstItem);
   }
 
-  public static JsonObject toJsonObject(Row row) {
-    Objects.requireNonNull(row);
-
-    JsonObject jsonObject = new JsonObject();
-    for (int i = 0; i < row.size(); i++) {
-      String columnName = row.getColumnName(i);
-      jsonObject.put(columnName, row.getValue(columnName));
-    }
-    return jsonObject;
-  }
-
-  public static String toJson(Row row) {
-    return toJsonObject(row).toString();
-  }
-
   public static boolean isEmpty(RowSet<Row> rowSet) {
     return rowSet.rowCount() == 0;
   }
