@@ -1,6 +1,5 @@
 package org.folio.db;
 
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.impl.RowImpl;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.impl.RowDesc;
@@ -80,24 +78,6 @@ public class RowSetUtilsTest {
 
     Integer id = RowSetUtils.mapFirstItem(emptyRowSet, row -> row.getInteger("id"));
     assertThat(id, nullValue());
-  }
-
-  @Test
-  public void testMapRowToJsonObject() {
-    LocalRowSet rowSet = getTestRowSet();
-
-    Row item = RowSetUtils.firstItem(rowSet);
-    JsonObject jsonObject = RowSetUtils.toJsonObject(item);
-    assertThat(jsonObject.encode(), equalTo("{\"id\":1,\"name\":\"test name1\"}"));
-  }
-
-  @Test
-  public void testMapItemToJson() {
-    LocalRowSet rowSet = getTestRowSet();
-
-    Row item = RowSetUtils.firstItem(rowSet);
-    String json = RowSetUtils.toJson(item);
-    assertThat(json, equalTo("{\"id\":1,\"name\":\"test name1\"}"));
   }
 
   @Test
