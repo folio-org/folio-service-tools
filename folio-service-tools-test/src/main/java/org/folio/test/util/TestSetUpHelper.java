@@ -3,9 +3,13 @@ package org.folio.test.util;
 import static org.folio.test.util.TestUtil.STUB_TENANT;
 import static org.folio.test.util.TestUtil.STUB_TOKEN;
 
-import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 
 import org.folio.rest.RestVerticle;
 import org.folio.rest.client.TenantClient;
@@ -14,11 +18,6 @@ import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.tools.PomReader;
 import org.folio.rest.tools.utils.NetworkUtils;
 
-import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
-import java.util.Map;
-
 public class TestSetUpHelper {
   private static final String HTTP_PORT = "http.port";
 
@@ -26,6 +25,7 @@ public class TestSetUpHelper {
   private static String host;
   private static boolean started;
   private static Vertx vertx;
+  private static PostgresClient pgClient;
 
   public static void startVertxAndPostgres() {
     startVertxAndPostgres(Collections.emptyMap());
@@ -36,12 +36,12 @@ public class TestSetUpHelper {
     port = NetworkUtils.nextFreePort();
     host = "http://127.0.0.1";
 
-
     try {
-      PostgresClient.getInstance(vertx)
-        .startEmbeddedPostgres();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to start embedded postgres" , e);
+      // this's going to start embedded Postgres (see PostgresClient constructor)
+      // or use the one from env properties
+      pgClient = PostgresClient.getInstance(vertx);
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to initialize postgres client" , e);
     }
 
     CompletableFuture<Void> future = new CompletableFuture<>();
@@ -62,6 +62,8 @@ public class TestSetUpHelper {
     CompletableFuture<Void> future = new CompletableFuture<>();
     vertx.close(res -> {
       PostgresClient.stopEmbeddedPostgres();
+      pgClient = null;
+
       future.complete(null);
     });
     future.join();
@@ -84,6 +86,9 @@ public class TestSetUpHelper {
     return vertx;
   }
 
+  public static PostgresClient getPgClient() {
+    return pgClient;
+  }
 
   private static DeploymentOptions getDeploymentOptions(Map<String, String> configProperties) {
     JsonObject config = new JsonObject()
