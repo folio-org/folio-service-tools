@@ -14,6 +14,7 @@ public class OkapiParams {
 
   private final Map<String, String> headers;
 
+  private final String url;
   private final String host;
   private final int port;
   private final String token;
@@ -34,6 +35,7 @@ public class OkapiParams {
       throw new IllegalArgumentException("Okapi url header contains invalid value: " + headers.get(XOkapiHeaders.URL));
     }
 
+    this.url = url.toString();
     this.headers = new CaseInsensitiveMap<>(headers);
 
     this.token = headers.get(XOkapiHeaders.TOKEN);
@@ -62,6 +64,10 @@ public class OkapiParams {
 
   public int getPort() {
     return port;
+  }
+
+  public String getUrl() {
+    return url;
   }
 
   @Override

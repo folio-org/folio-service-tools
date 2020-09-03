@@ -3,4 +3,5 @@ buildMvn {
   publishAPI = false
   mvnDeploy = true
   runLintRamlCop = false
+  buildNode = 'jenkins-agent-java11'
 }

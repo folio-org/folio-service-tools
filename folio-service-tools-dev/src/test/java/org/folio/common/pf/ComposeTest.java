@@ -1,15 +1,17 @@
 package org.folio.common.pf;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assume.assumeThat;
+
 import static org.folio.common.pf.TestData.fNegate;
 import static org.folio.common.pf.TestData.fPositiveIntMsg;
 import static org.folio.common.pf.TestData.intsOfEveryKind;
 import static org.folio.common.pf.TestData.positiveInt;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
+
 import java.util.function.Function;
-import org.folio.test.junit.TestStartLoggingRule;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -18,6 +20,8 @@ import org.junit.experimental.theories.Theory;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+
+import org.folio.test.junit.TestStartLoggingRule;
 
 @RunWith(Theories.class)
 public class ComposeTest {

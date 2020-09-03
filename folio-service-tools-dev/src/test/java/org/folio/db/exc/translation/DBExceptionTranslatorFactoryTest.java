@@ -1,6 +1,6 @@
 package org.folio.db.exc.translation;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.Matchers;
 import org.junit.Rule;

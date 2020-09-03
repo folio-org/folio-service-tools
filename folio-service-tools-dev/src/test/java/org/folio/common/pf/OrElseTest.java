@@ -1,8 +1,8 @@
 package org.folio.common.pf;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 import static org.folio.common.pf.TestData.fNegativeIntMsg;
@@ -63,7 +63,7 @@ public class OrElseTest {
   @Theory
   public void applyResultEqualToF1IfF1Defined(Integer i) {
     assumeThat(f1.isDefinedAt(i), is(true));
-    
+
     assertThat(orElse.apply(i), is(f1.apply(i)));
   }
 
