@@ -4,6 +4,8 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import static org.folio.util.FutureUtils.failedFuture;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -16,7 +18,6 @@ import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.StringUtils;
 
 import org.folio.okapi.common.XOkapiHeaders;
-import org.folio.rest.tools.utils.JwtUtils;
 
 public final class TokenUtils {
 
@@ -37,7 +38,7 @@ public final class TokenUtils {
   public static Optional<UserInfo> userInfoFromToken(String token) {
     try {
       String[] split = token.split("\\.");
-      JsonObject j = new JsonObject(JwtUtils.getJson(split[1]));
+      JsonObject j = new JsonObject(getJson(split[1]));
       return Optional.of(new UserInfo(j.getString(USER_ID_KEY), j.getString(USERNAME_KEY)));
     } catch (Exception e) {
       return Optional.empty();
@@ -54,5 +55,10 @@ public final class TokenUtils {
     Map<String, String> h = new CaseInsensitiveMap<>(defaultIfNull(okapiHeaders, Collections.emptyMap()));
 
     return fetchUserInfo(h.get(XOkapiHeaders.TOKEN));
+  }
+
+  private static String getJson(String strEncoded) {
+    byte[] decodedBytes = Base64.getDecoder().decode(strEncoded);
+    return new String(decodedBytes, StandardCharsets.UTF_8);
   }
 }
