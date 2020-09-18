@@ -11,6 +11,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.sqlclient.Tuple;
@@ -94,6 +95,24 @@ public final class DbUtils {
 
   public static Tuple createParams(Object... queryParameters) {
     return createParams(Arrays.asList(queryParameters));
+  }
+
+  public static JsonArray createParamsAsJsonArray(Iterable<?> queryParameters) {
+    JsonArray parameters = new JsonArray();
+
+    for (Object p : queryParameters) {
+      if (p != null) {
+        parameters.add(p);
+      } else {
+        parameters.addNull();
+      }
+    }
+
+    return parameters;
+  }
+
+  public static JsonArray createParamsAsJsonArray(Object... queryParameters) {
+    return createParamsAsJsonArray(Arrays.asList(queryParameters));
   }
 
   private static CompletionStage<Void> endTransaction(PostgresClient postgresClient,
