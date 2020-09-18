@@ -1,11 +1,11 @@
 package org.folio.db.exc.translation.postgresql;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
@@ -57,7 +57,7 @@ public class PSQLStateTest {
   public void getCodeClassReturnsFirst2CharsOfCode() {
     for (PSQLState state : PSQLState.values()) {
       assertThat(state.getCodeClass(), allOf(
-        not(isEmptyOrNullString()), 
+        not(isEmptyOrNullString()),
         is(state.getCodeClass().substring(0, 2))
       ));
     }
@@ -188,7 +188,7 @@ public class PSQLStateTest {
     StringBuilder result = new StringBuilder();
 
     char[] chars = code.toCharArray();
-    
+
     for (char c : chars) {
       char updated = RandomUtils.nextBoolean() ? Character.toUpperCase(c) : Character.toLowerCase(c);
       result.append(updated);

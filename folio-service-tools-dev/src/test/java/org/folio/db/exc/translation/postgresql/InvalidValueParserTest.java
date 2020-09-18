@@ -1,7 +1,7 @@
 package org.folio.db.exc.translation.postgresql;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import static org.folio.db.ErrorFactory.getErrorMapWithDetailOnly;
 import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;

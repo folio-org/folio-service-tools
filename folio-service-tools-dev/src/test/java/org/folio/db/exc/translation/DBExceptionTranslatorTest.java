@@ -1,8 +1,8 @@
 package org.folio.db.exc.translation;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 
 import io.vertx.core.Future;
 import org.junit.Before;
