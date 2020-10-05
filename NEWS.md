@@ -1,3 +1,8 @@
+## v1.6.0 2020-10-05
+* FST-3 Migrate to JDK 11 and RMB 31.x
+* Restore method to create db params as json array
+* Honor existing postgres in favor of embedded one
+
 ## v1.5.1 2020-06-12
 * Add util methods to RowSetUtils
 * Update to RMB v30.0.2 and Vert.X 3.9.1
