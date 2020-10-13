@@ -27,7 +27,7 @@
     <vertx.version>3.9.2</vertx.version>
     <raml-module-builder.version>31.1.0</raml-module-builder.version>
     <log4j-slf4j-impl.version>2.13.3</log4j-slf4j-impl.version>
-    <junit.version>4.13</junit.version>
+    <junit.version>4.13.1</junit.version>
     <mockito.version>3.5.9</mockito.version>
     <wiremock.version>2.27.1</wiremock.version>
     <rest-assured.version>4.3.1</rest-assured.version>
