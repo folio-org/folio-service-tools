@@ -66,6 +66,6 @@ public class AuthorizationExceptionTranslationTest {
 
     assertThat(resultException.getSqlState(), equalTo(PSQLState.INVALID_PASSWORD.getCode()));
     assertThat(resultException.getCause(), is(exception));
-    assertThat(resultException.getMessage(), equalTo(exception.getMessage()));
+    assertThat(resultException.getMessage(), equalTo(exception.getErrorMessage()));
   }
 }

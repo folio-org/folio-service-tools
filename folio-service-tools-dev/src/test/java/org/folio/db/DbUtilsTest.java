@@ -40,7 +40,7 @@ public class DbUtilsTest {
 
     assertThat(tuple.size(), is(params.size()));
     assertThat(tuple.getString(0), is("param1"));
-    assertThat(tuple.getString(2), is(nullValue()));
+    assertThat(tuple.getString(1), is(nullValue()));
     assertThat(tuple.getInteger(2), is(0));
     assertThat(tuple.getString(3), is(nullValue()));
   }

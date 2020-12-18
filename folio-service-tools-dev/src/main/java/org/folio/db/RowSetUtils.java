@@ -97,8 +97,8 @@ public final class RowSetUtils {
     }
 
     @Override
-    public <T> T[] getValues(Class<T> type, int idx) {
-      return (T[]) new Object[0];
+    public Object getValue(String column) {
+      return null;
     }
 
     @Override

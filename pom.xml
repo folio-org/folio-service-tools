@@ -24,14 +24,14 @@
   </licenses>
 
   <properties>
-    <vertx.version>3.9.2</vertx.version>
-    <raml-module-builder.version>31.1.0</raml-module-builder.version>
-    <log4j-slf4j-impl.version>2.13.3</log4j-slf4j-impl.version>
+    <vertx.version>4.0.0</vertx.version>
+    <raml-module-builder.version>32.0.0-SNAPSHOT</raml-module-builder.version>
+    <log4j-slf4j-impl.version>2.14.0</log4j-slf4j-impl.version>
     <junit.version>4.13.1</junit.version>
-    <mockito.version>3.5.9</mockito.version>
-    <wiremock.version>2.27.1</wiremock.version>
-    <rest-assured.version>4.3.1</rest-assured.version>
-    <easy-random.version>4.2.0</easy-random.version>
+    <mockito.version>3.6.28</mockito.version>
+    <wiremock.version>2.27.2</wiremock.version>
+    <rest-assured.version>4.3.3</rest-assured.version>
+    <easy-random.version>5.0.0</easy-random.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
