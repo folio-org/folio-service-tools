@@ -52,7 +52,7 @@ public class DbUtilsTransactionTest {
       executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(5)")
         .compose(
           o -> executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(" + INVALID_VALUE + ")")))
-      .onComplete(assertCount(0, context));
+      .onComplete(v -> assertCount(0, context));
   }
 
   @Test

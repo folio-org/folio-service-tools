@@ -13,8 +13,8 @@
   <name>folio-service-tools-dev</name>
 
   <properties>
-    <httpcore.version>4.4.13</httpcore.version>
-    <mod-configuration-client.version>4.0.3</mod-configuration-client.version>
+    <httpcore.version>4.4.14</httpcore.version>
+    <mod-configuration-client.version>5.6.0-SNAPSHOT</mod-configuration-client.version>
     <sonar.exclusions>
       src/main/java/**/PartialFunctions.*,
       src/main/java/**/service/exc/*,

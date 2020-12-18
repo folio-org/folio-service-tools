@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.HttpResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import org.folio.common.OkapiParams;
@@ -34,6 +34,17 @@ public class ModConfiguration implements Configuration {
       throw new IllegalArgumentException("Module name cannot be empty");
     }
     this.module = module;
+  }
+
+  private static Function<JsonObject, Optional<String>> value() {
+    return json -> {
+      String value = json.getString(PROP_VALUE);
+      return StringUtils.isNotBlank(value) ? Optional.of(value) : Optional.empty();
+    };
+  }
+
+  private static <T> Function<Optional<String>, Optional<T>> convert(Function<String, T> conversion) {
+    return s -> s.map(conversion);
   }
 
   @Override
@@ -89,10 +100,10 @@ public class ModConfiguration implements Configuration {
   private <T> Future<T> getValue(String code, Function<JsonObject, Optional<T>> valueExtractor, OkapiParams params) {
     // make sure non config exception is wrapped into ConfigurationException
     return wrapExceptions(
-              getConfigObject(code, params)
-                .map(valueExtractor)
-                .map(value -> failIfEmpty(code, value)),
-              ConfigurationException.class);
+      getConfigObject(code, params)
+        .map(valueExtractor)
+        .map(value -> failIfEmpty(code, value)),
+      ConfigurationException.class);
   }
 
   private <T> T failIfEmpty(String propertyCode, Optional<T> value) {
@@ -103,14 +114,24 @@ public class ModConfiguration implements Configuration {
     Promise<JsonObject> result = Promise.promise();
 
     try {
-      ConfigurationsClient configurationsClient = new ConfigurationsClient(params.getHost(), params.getPort(),
-        params.getTenant(), params.getToken());
+      ConfigurationsClient configurationsClient = new ConfigurationsClient(
+        params.getUrl(),
+        params.getTenant(),
+        params.getToken()
+      );
 
       String query = format(PROP_BY_CODE_QUERY, module, code);
 
-      configurationsClient.getEntries(query, 0, 10, null, null, response ->
-        response.bodyHandler(body -> handleResponseBody(response, body, code, result))
-      );
+      Promise<HttpResponse<Buffer>> promise = Promise.promise();
+      configurationsClient.getConfigurationsEntries(query, 0, 10, null, null, promise);
+      promise.future().onComplete(ar -> {
+        if (ar.succeeded()) {
+          HttpResponse<Buffer> response = ar.result();
+          handleResponseBody(response.statusCode(), response.body(), code, result);
+        } else {
+          result.fail(ar.cause());
+        }
+      });
     } catch (Exception e) {
       result.fail(e);
     }
@@ -118,8 +139,8 @@ public class ModConfiguration implements Configuration {
     return result.future();
   }
 
-  private void handleResponseBody(HttpClientResponse response, Buffer body, String code, Promise<JsonObject> promise) {
-    if (response.statusCode() == 200) {
+  private void handleResponseBody(int statusCode, Buffer body, String code, Promise<JsonObject> promise) {
+    if (statusCode == 200) {
       try {
         promise.complete(retrievePropObject(code, body));
       } catch (Exception e) {
@@ -128,7 +149,7 @@ public class ModConfiguration implements Configuration {
     } else {
       promise.fail(new ConfigurationException(
         format("Configuration property cannot be retrieved: code = %s. " +
-          "Response details: status = %d, body = '%s'", code, response.statusCode(), body.toString())));
+          "Response details: status = %d, body = '%s'", code, statusCode, body)));
     }
   }
 
@@ -143,21 +164,13 @@ public class ModConfiguration implements Configuration {
       .collect(Collectors.toList());
 
     switch (enabled.size()) {
-      case 0: throw new PropertyNotFoundException(code);
-      case 1: return enabled.get(0);
-      default: throw new PropertyException(code, "more than one configuration properties found");
+      case 0:
+        throw new PropertyNotFoundException(code);
+      case 1:
+        return enabled.get(0);
+      default:
+        throw new PropertyException(code, "more than one configuration properties found");
     }
-  }
-
-  private static Function<JsonObject, Optional<String>> value() {
-    return json -> {
-      String value = json.getString(PROP_VALUE);
-      return StringUtils.isNotBlank(value) ? Optional.of(value) : Optional.empty();
-    };
-  }
-
-  private static <T> Function<Optional<String>, Optional<T>> convert(Function<String, T> conversion) {
-    return s -> s.map(conversion);
   }
 
 }

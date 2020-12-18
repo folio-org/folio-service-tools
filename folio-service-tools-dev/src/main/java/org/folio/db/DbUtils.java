@@ -12,17 +12,17 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.sqlclient.Tuple;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.folio.cql2pgjson.CQL2PgJSON;
 import org.folio.cql2pgjson.exception.FieldException;
-import org.folio.rest.persist.PostgresClient;
-import org.folio.rest.persist.SQLConnection;
 import org.folio.rest.persist.Criteria.Limit;
 import org.folio.rest.persist.Criteria.Offset;
+import org.folio.rest.persist.PostgresClient;
+import org.folio.rest.persist.SQLConnection;
 import org.folio.rest.persist.cql.CQLWrapper;
 import org.folio.util.FutureUtils;
 
@@ -31,7 +31,7 @@ public final class DbUtils {
   @SuppressWarnings("squid:S2386")
   public static final String[] ALL_FIELDS = {"*"};
 
-  private static final Logger LOG = LoggerFactory.getLogger(DbUtils.class);
+  private static final Logger LOG = LogManager.getLogger(DbUtils.class);
 
   private DbUtils() {
   }

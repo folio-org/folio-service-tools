@@ -13,9 +13,9 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.pgclient.PgException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.common.pf.PartialFunctions;
@@ -28,7 +28,7 @@ import org.folio.rest.persist.cql.CQLQueryValidationException;
 
 public class RestExceptionHandlers {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RestExceptionHandlers.class);
+  private static final Logger LOGGER = LogManager.getLogger(RestExceptionHandlers.class);
 
   private RestExceptionHandlers() {
   }
