@@ -53,8 +53,18 @@ public class TestSetUpHelper {
       try {
         TenantAttributes tenantAttributes = new TenantAttributes().withModuleTo(PomReader.INSTANCE.getVersion());
         tenantClient.postTenant(tenantAttributes, res1 -> {
-          String jobId = res1.result().bodyAsJson(TenantJob.class).getId();
-          tenantClient.getTenantByOperationId(jobId, TENANT_OP_WAITINGTIME, res2 -> future.complete(null));
+          if (res1.succeeded()) {
+            String jobId = res1.result().bodyAsJson(TenantJob.class).getId();
+            tenantClient.getTenantByOperationId(jobId, TENANT_OP_WAITINGTIME, res2 -> {
+              if (res2.succeeded()) {
+                future.complete(null);
+              } else {
+                future.completeExceptionally(new IllegalStateException("Failed to get tenant"));
+              }
+            });
+          } else {
+            future.completeExceptionally(new IllegalStateException("Failed to create tenant job"));
+          }
         });
       } catch (Exception e) {
         future.completeExceptionally(e);
