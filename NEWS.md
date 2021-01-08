@@ -1,3 +1,7 @@
+## v1.6.1 2021-01-08
+* FST-6 Upgrade to RMB 32.x and Vert.x 4.0
+* Update TestSetUpHelper to wait until tenant deployed
+
 ## v1.6.0 2020-10-05
 * FST-3 Migrate to JDK 11 and RMB 31.x
 * Restore method to create db params as json array
