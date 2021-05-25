@@ -21,6 +21,7 @@ import org.folio.rest.tools.utils.NetworkUtils;
 public class TestSetUpHelper {
 
   private static final String HTTP_PORT = "http.port";
+  private static final String MODULE_TO_VERSION = "mod-1.0.0";
   private static final int TENANT_OP_WAITINGTIME = 60000;
 
   private static int port;
@@ -47,7 +48,7 @@ public class TestSetUpHelper {
     vertx.deployVerticle(RestVerticle.class.getName(), getDeploymentOptions(configProperties), event -> {
       TenantClient tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN, vertx.createHttpClient());
       try {
-        TenantAttributes tenantAttributes = new TenantAttributes().withModuleTo("mod-1.0.0");
+        TenantAttributes tenantAttributes = new TenantAttributes().withModuleTo(MODULE_TO_VERSION);
         tenantClient.postTenant(tenantAttributes, res1 -> {
           if (res1.succeeded()) {
             String jobId = res1.result().bodyAsJson(TenantJob.class).getId();
