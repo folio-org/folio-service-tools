@@ -2,7 +2,6 @@ package org.folio.db;
 
 import static org.folio.test.util.TestUtil.STUB_TENANT;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import io.vertx.core.AsyncResult;
@@ -17,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.folio.postgres.testing.PostgresTesterContainer;
 import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.persist.SQLConnection;
 
@@ -30,9 +30,9 @@ public class DbUtilsTransactionTest {
   private static final Vertx VERTX = Vertx.vertx();
 
   @BeforeClass
-  public static void setUpBeforeClass() throws IOException {
-    PostgresClient.getInstance(VERTX)
-      .startEmbeddedPostgres();
+  public static void setUpBeforeClass() {
+    PostgresClient.setPostgresTester(new PostgresTesterContainer());
+    PostgresClient.getInstance(VERTX).startPostgresTester();
     CompletableFuture<Void> future = new CompletableFuture<>();
     PostgresClient.getInstance(VERTX).execute(
       "CREATE TABLE " + TEST_TABLE + "(value INTEGER)",
@@ -42,8 +42,7 @@ public class DbUtilsTransactionTest {
 
   @AfterClass
   public static void tearDownAfterClass() {
-    PostgresClient
-      .stopEmbeddedPostgres();
+    PostgresClient.stopPostgresTester();
   }
 
   @Test

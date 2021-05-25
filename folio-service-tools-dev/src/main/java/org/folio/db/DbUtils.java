@@ -36,13 +36,13 @@ public final class DbUtils {
   private DbUtils() {
   }
 
+  @Deprecated
   public static <T> CompletableFuture<T> executeInTransaction(String tenantId, Vertx vertx,
                                                               BiFunction<PostgresClient, AsyncResult<SQLConnection>, CompletableFuture<T>> action) {
     PostgresClient postgresClient = PostgresClient.getInstance(vertx, tenantId);
     MutableObject<AsyncResult<SQLConnection>> mutableConnection = new MutableObject<>();
     MutableObject<T> mutableResult = new MutableObject<>();
     CompletableFuture<Boolean> rollbackFuture = new CompletableFuture<>();
-
     return CompletableFuture.completedFuture(null)
       .thenCompose(o -> {
         CompletableFuture<Void> startTxFuture = new CompletableFuture<>();
