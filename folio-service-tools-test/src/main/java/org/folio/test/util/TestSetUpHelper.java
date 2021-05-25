@@ -3,7 +3,6 @@ package org.folio.test.util;
 import static org.folio.test.util.TestUtil.STUB_TENANT;
 import static org.folio.test.util.TestUtil.STUB_TOKEN;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -11,12 +10,12 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
+import org.folio.postgres.testing.PostgresTesterContainer;
 import org.folio.rest.RestVerticle;
 import org.folio.rest.client.TenantClient;
 import org.folio.rest.jaxrs.model.TenantAttributes;
 import org.folio.rest.jaxrs.model.TenantJob;
 import org.folio.rest.persist.PostgresClient;
-import org.folio.rest.tools.PomReader;
 import org.folio.rest.tools.utils.NetworkUtils;
 
 public class TestSetUpHelper {
@@ -30,10 +29,6 @@ public class TestSetUpHelper {
   private static Vertx vertx;
   private static PostgresClient pgClient;
 
-  public static void startVertxAndPostgres() {
-    startVertxAndPostgres(Collections.emptyMap());
-  }
-
   public static void startVertxAndPostgres(Map<String, String> configProperties) {
     vertx = Vertx.vertx();
     port = NetworkUtils.nextFreePort();
@@ -42,16 +37,17 @@ public class TestSetUpHelper {
     try {
       // this's going to start embedded Postgres (see PostgresClient constructor)
       // or use the one from env properties
-      pgClient = PostgresClient.getInstance(vertx);
+      PostgresClient.setPostgresTester(new PostgresTesterContainer());
+      PostgresClient.getInstance(vertx).startPostgresTester();
     } catch (Exception e) {
       throw new IllegalStateException("Failed to initialize postgres client", e);
     }
 
     CompletableFuture<Void> future = new CompletableFuture<>();
     vertx.deployVerticle(RestVerticle.class.getName(), getDeploymentOptions(configProperties), event -> {
-      TenantClient tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN);
+      TenantClient tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN, vertx.createHttpClient());
       try {
-        TenantAttributes tenantAttributes = new TenantAttributes().withModuleTo(PomReader.INSTANCE.getVersion());
+        TenantAttributes tenantAttributes = new TenantAttributes().withModuleTo("mod-1.0.0");
         tenantClient.postTenant(tenantAttributes, res1 -> {
           if (res1.succeeded()) {
             String jobId = res1.result().bodyAsJson(TenantJob.class).getId();
@@ -78,7 +74,6 @@ public class TestSetUpHelper {
   public static void stopVertxAndPostgres() {
     CompletableFuture<Void> future = new CompletableFuture<>();
     vertx.close(res -> {
-      PostgresClient.stopEmbeddedPostgres();
       pgClient = null;
 
       future.complete(null);
