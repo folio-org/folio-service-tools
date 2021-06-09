@@ -1,3 +1,6 @@
+## v1.7.0 2021-06-09
+* FST-6 Upgrade to RMB 33 and Vert.x 4.1.0.CR1
+
 ## v1.6.1 2021-01-08
 * FST-6 Upgrade to RMB 32.x and Vert.x 4.0
 * Update TestSetUpHelper to wait until tenant deployed
