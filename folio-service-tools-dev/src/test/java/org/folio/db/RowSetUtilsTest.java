@@ -2,6 +2,7 @@ package org.folio.db;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.impl.RowImpl;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.impl.RowDesc;
@@ -69,6 +70,11 @@ public class RowSetUtilsTest {
     assertThat(item.getValue(0), nullValue());
     assertThat(item.getValue("id"), nullValue());
     assertThat(item.addValue(1), nullValue());
+    assertThat(item.size(), equalTo(0));
+    assertThat(item.types(), empty());
+
+    item.clear();
+
     assertThat(item.size(), equalTo(0));
   }
 
@@ -124,6 +130,21 @@ public class RowSetUtilsTest {
 
     Date date = RowSetUtils.toDate(offsetDateTime);
     assertThat(date, notNullValue());
+  }
+
+  class Holder {
+    public String a;
+    public String b;
+  }
+
+  @Test
+  public void testToJsonObject() {
+    assertThat(RowSetUtils.toJsonObject(null), nullValue());
+
+    Holder holder = new Holder();
+    holder.a = "foo";
+    holder.b = "bar";
+    assertThat(RowSetUtils.toJsonObject(holder), equalTo(new JsonObject().put("a", "foo").put("b", "bar")));
   }
 
   @Test
