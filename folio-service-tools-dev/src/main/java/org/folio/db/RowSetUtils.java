@@ -78,7 +78,7 @@ public final class RowSetUtils {
   }
 
   public static <T> JsonObject toJsonObject(T object) {
-    return object == null ? null : JsonObject.mapFrom(object);
+    return JsonObject.mapFrom(object);
   }
 
   private static class NullRow implements Row {
