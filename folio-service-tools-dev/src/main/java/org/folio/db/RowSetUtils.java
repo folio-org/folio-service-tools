@@ -2,6 +2,7 @@ package org.folio.db;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -118,7 +119,12 @@ public final class RowSetUtils {
 
     @Override
     public void clear() {
+      // nothing to do
+    }
 
+    @Override
+    public List<Class<?>> types() {
+      return Collections.emptyList();
     }
   }
 }

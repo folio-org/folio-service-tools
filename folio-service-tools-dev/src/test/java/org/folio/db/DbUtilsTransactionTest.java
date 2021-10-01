@@ -2,8 +2,6 @@ package org.folio.db;
 
 import static org.folio.test.util.TestUtil.STUB_TENANT;
 
-import java.util.concurrent.CompletableFuture;
-
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -30,14 +28,12 @@ public class DbUtilsTransactionTest {
   private static final Vertx VERTX = Vertx.vertx();
 
   @BeforeClass
-  public static void setUpBeforeClass() {
+  public static void setUpBeforeClass(TestContext context) {
     PostgresClient.setPostgresTester(new PostgresTesterContainer());
     PostgresClient.getInstance(VERTX).startPostgresTester();
-    CompletableFuture<Void> future = new CompletableFuture<>();
     PostgresClient.getInstance(VERTX).execute(
       "CREATE TABLE " + TEST_TABLE + "(value INTEGER)",
-      event -> future.complete(null));
-    future.join();
+      context.asyncAssertSuccess());
   }
 
   @AfterClass
