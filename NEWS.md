@@ -1,3 +1,7 @@
+## v1.7.1 2021-10-04
+* FST-15: Upgrade folio-service-tools to RMB 33.1.1 and Vert.x 4.1.4
+* FST-16: Upgrade folio-service-tools to mod-configuration-client 5.7.1
+
 ## v1.7.0 2021-06-09
 * FST-6 Upgrade to RMB 33 and Vert.x 4.1.0.CR1
 
