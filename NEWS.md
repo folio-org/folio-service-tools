@@ -1,3 +1,6 @@
+## v1.8.0-SNAPSHOT 2021-xx-xx
+* FST-17: Kiwi R3 2021 - Log4j vulnerability verification and correction
+
 ## v1.7.1 2021-10-04
 * FST-15: Upgrade folio-service-tools to RMB 33.1.1 and Vert.x 4.1.4
 * FST-16: Upgrade folio-service-tools to mod-configuration-client 5.7.1
