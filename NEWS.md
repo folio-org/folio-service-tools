@@ -1,4 +1,4 @@
-## v1.8.0-SNAPSHOT 2021-xx-xx
+## v1.7.2 2021-12-16
 * FST-17: Kiwi R3 2021 - Log4j vulnerability verification and correction
 
 ## v1.7.1 2021-10-04
