@@ -26,7 +26,6 @@
   <properties>
     <vertx.version>4.2.4</vertx.version>
     <raml-module-builder.version>33.2.4</raml-module-builder.version>
-    <log4j-slf4j-impl.version>2.16.0</log4j-slf4j-impl.version>
     <junit.version>4.13.2</junit.version>
     <mockito.version>4.2.0</mockito.version>
     <wiremock.version>2.32.0</wiremock.version>
@@ -55,11 +54,6 @@
         <version>${vertx.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j-impl</artifactId>
-        <version>${log4j-slf4j-impl.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
