@@ -28,7 +28,7 @@
     <raml-module-builder.version>33.2.4</raml-module-builder.version>
     <junit.version>4.13.2</junit.version>
     <mockito.version>4.2.0</mockito.version>
-    <wiremock.version>2.27.2</wiremock.version>
+    <wiremock.version>2.32.0</wiremock.version>
     <rest-assured.version>4.4.0</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,7 +76,7 @@
       </dependency>
       <dependency>
         <groupId>com.github.tomakehurst</groupId>
-        <artifactId>wiremock</artifactId>
+        <artifactId>wiremock-jre8</artifactId>
         <version>${wiremock.version}</version>
         <scope>test</scope>
         <exclusions>
