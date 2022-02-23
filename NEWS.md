@@ -1,4 +1,4 @@
-## v1.78.0 2022-02-23
+## v1.8.0 2022-02-23
 * FST-19: Upgrade to RAML Module Builder 33.2.6
 * FST-21: wiremock-jre8:2.32.0 fixing security vulnerabilities
 * FST-22: Update log4j-slf4j-impl from 2.16.0 to 2.17.1
