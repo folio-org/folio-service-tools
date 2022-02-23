@@ -24,16 +24,16 @@
   </licenses>
 
   <properties>
-    <vertx.version>4.2.4</vertx.version>
-    <raml-module-builder.version>33.2.4</raml-module-builder.version>
+    <vertx.version>4.2.5</vertx.version>
+    <raml-module-builder.version>33.2.6</raml-module-builder.version>
     <junit.version>4.13.2</junit.version>
-    <mockito.version>4.2.0</mockito.version>
+    <mockito.version>4.3.1</mockito.version>
     <wiremock.version>2.32.0</wiremock.version>
-    <rest-assured.version>4.4.0</rest-assured.version>
+    <rest-assured.version>4.5.1</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
+    <log4j.version>2.17.1</log4j.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <log4j.version>2.17.1</log4j.version>
   </properties>
 
   <dependencyManagement>
@@ -108,7 +108,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.5</version>
+          <version>0.8.7</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -125,7 +125,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.10.0</version>
         <configuration>
           <release>11</release>
           <encoding>UTF-8</encoding>
