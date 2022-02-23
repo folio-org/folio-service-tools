@@ -16,10 +16,13 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
+import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
 import org.apache.commons.lang3.StringUtils;
 
 import org.folio.common.OkapiParams;
 import org.folio.rest.client.ConfigurationsClient;
+import org.folio.rest.tools.utils.VertxUtils;
 
 public class ModConfiguration implements Configuration {
 
@@ -113,11 +116,19 @@ public class ModConfiguration implements Configuration {
   private Future<JsonObject> getConfigObject(String code, OkapiParams params) {
     Promise<JsonObject> result = Promise.promise();
 
+    WebClientOptions options = new WebClientOptions();
+    options.setLogActivity(true);
+    options.setKeepAlive(true);
+    options.setConnectTimeout(2000);
+    options.setIdleTimeout(5000);
+    var webClient = WebClient.create(VertxUtils.getVertxFromContextOrNew(), options);
+
     try {
       ConfigurationsClient configurationsClient = new ConfigurationsClient(
         params.getUrl(),
         params.getTenant(),
-        params.getToken()
+        params.getToken(),
+        webClient
       );
 
       String query = format(PROP_BY_CODE_QUERY, module, code);

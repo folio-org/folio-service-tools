@@ -2,8 +2,8 @@ package org.folio.db.exc.translation.postgresql;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -31,23 +31,21 @@ import org.folio.test.junit.TestStartLoggingRule;
 @RunWith(Theories.class)
 public class PSQLStateTest {
 
+  @DataPoints("invalid-codes")
+  public static String[] invalidCodes = TestData.generateInvalidCodes();
+  @DataPoints("valid-codes")
+  public static String[] validCodes = TestData.generateValidCodes();
   @Rule
   public TestRule startLogger = TestStartLoggingRule.instance();
   @Rule
   public ExpectedException thrown = ExpectedException.none();
-
-  @DataPoints("invalid-codes")
-  public static String[] invalidCodes = TestData.generateInvalidCodes();
-
-  @DataPoints("valid-codes")
-  public static String[] validCodes = TestData.generateValidCodes();
 
   @Test
   public void getCodeReturnsAlphaNumStringOf5Chars() {
     for (PSQLState state : PSQLState.values()) {
       String code = state.getCode();
 
-      assertThat(code, not(isEmptyOrNullString()));
+      assertThat(code, not(emptyOrNullString()));
       assertThat(code.length(), is(5));
       assertThat(StringUtils.isAlphanumeric(code), is(true));
     }
@@ -57,7 +55,7 @@ public class PSQLStateTest {
   public void getCodeClassReturnsFirst2CharsOfCode() {
     for (PSQLState state : PSQLState.values()) {
       assertThat(state.getCodeClass(), allOf(
-        not(isEmptyOrNullString()),
+        not(emptyOrNullString()),
         is(state.getCodeClass().substring(0, 2))
       ));
     }

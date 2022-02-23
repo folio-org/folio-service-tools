@@ -32,7 +32,7 @@ public class Constraint {
     // - replace null with empty array
     // - remove all nulls from the array
     String[] cols = ArrayUtils.nullToEmpty(columns);
-    cols = ArrayUtils.removeAllOccurences(cols, null);
+    cols = ArrayUtils.removeAllOccurrences(cols, null);
 
     this.type = type;
     this.name = name;
