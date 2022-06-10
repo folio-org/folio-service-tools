@@ -68,6 +68,7 @@ public final class DbUtils {
       .thenCombine(rollbackFuture, (o, aBoolean) -> mutableResult.getValue());
   }
 
+  @Deprecated
   public static <T> Future<T> executeInTransactionWithVertxFuture(String tenantId, Vertx vertx,
                                                                   BiFunction<PostgresClient,
                                                                     AsyncResult<SQLConnection>, Future<T>> action) {
