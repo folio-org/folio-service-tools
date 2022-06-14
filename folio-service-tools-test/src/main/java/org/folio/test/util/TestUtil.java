@@ -100,7 +100,7 @@ public class TestUtil {
 
   public static void mockResponseList(UrlPathPattern urlPattern, ResponseDefinitionBuilder... responses) {
     int scenarioStep = 0;
-    String scenarioName = "Scenario -" + UUID.randomUUID().toString();
+    String scenarioName = "Scenario -" + UUID.randomUUID();
     for (ResponseDefinitionBuilder response : responses) {
       if (scenarioStep == 0) {
         stubFor(
