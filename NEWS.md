@@ -1,3 +1,8 @@
+## v1.9.0 2022-06-17
+* FST-19: Upgrade to RAML Module Builder 34.0.0
+* FST-27: Publish javadoc and sources to maven repository
+* FST-24: jackson-databind 2.13.2.1 Denial of Service (CVE-2020-36518)
+
 ## v1.8.0 2022-02-23
 * FST-19: Upgrade to RAML Module Builder 33.2.6
 * FST-21: wiremock-jre8:2.32.0 fixing security vulnerabilities
