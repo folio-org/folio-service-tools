@@ -25,8 +25,8 @@
 
   <properties>
     <log4j.version>2.17.2</log4j.version>
-    <vertx.version>4.3.1</vertx.version>
-    <raml-module-builder.version>34.0.0</raml-module-builder.version>
+    <vertx.version>4.3.3</vertx.version>
+    <raml-module-builder.version>34.0.2</raml-module-builder.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -34,7 +34,7 @@
     <!-- Test dependencies versions -->
     <junit.version>4.13.2</junit.version>
     <mockito.version>4.6.1</mockito.version>
-    <wiremock.version>2.33.2</wiremock.version>
+    <wiremock.version>2.34.0</wiremock.version>
     <rest-assured.version>5.1.1</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
 
