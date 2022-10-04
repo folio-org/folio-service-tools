@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.impl.RowImpl;
 import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.impl.RowDesc;
 import org.junit.Test;
 
 import org.folio.rest.persist.helpers.LocalRowSet;
@@ -162,9 +161,9 @@ public class RowSetUtilsTest {
   }
 
   private LocalRowSet getTestRowSet() {
-    RowImpl row1 = new RowImpl(new RowDesc(Arrays.asList("id", "name")));
+    RowImpl row1 = new RowImpl(TestRowDesc.create("id", "name"));
     row1.addInteger(1).addString("test name1");
-    RowImpl row2 = new RowImpl(new RowDesc(Arrays.asList("id", "name")));
+    RowImpl row2 = new RowImpl(TestRowDesc.create("id", "name"));
     row2.addInteger(2).addString("test name2");
     return new LocalRowSet(2).withRows(Arrays.asList(row1, row2));
   }
