@@ -1,3 +1,7 @@
+## v1.10.0 IN_PROGRESS
+* FST-29: Vertx 4.3.3, RMB 34.0.2, Wiremock 2.34.0 fixing vulnerabilities
+* FST-30: Upgrade to RAML Module Builder 35.0.0
+
 ## v1.9.0 2022-06-17
 * FST-19: Upgrade to RAML Module Builder 34.0.0
 * FST-27: Publish javadoc and sources to maven repository
