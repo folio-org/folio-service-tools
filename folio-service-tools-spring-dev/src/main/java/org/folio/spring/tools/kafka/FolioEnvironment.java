@@ -9,10 +9,10 @@ import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.annotation.Validated;
 
 @Data
@@ -20,7 +20,7 @@ import org.springframework.validation.annotation.Validated;
 @Configuration
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
-@ConditionalOnClass({EnableKafka.class})
+@ConditionalOnBean({KafkaTemplate.class})
 @ConfigurationProperties(prefix = "application")
 public class FolioEnvironment {
 

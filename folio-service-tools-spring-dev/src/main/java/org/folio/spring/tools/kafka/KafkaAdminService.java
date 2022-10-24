@@ -27,7 +27,7 @@ public class KafkaAdminService {
   /**
    * Creates kafka topics using existing configuration in application.kafka.topics.
    */
-  public void createKafkaTopics(String tenantId) {
+  public void createTopics(String tenantId) {
     var configTopics = kafkaProperties.getTopics();
     var newTopics = toTenantSpecificTopic(configTopics, tenantId);
 
@@ -43,7 +43,7 @@ public class KafkaAdminService {
   }
 
   /**
-   * Restarts kafka event listeners in mod-search application.
+   * Restarts kafka event listeners in module.
    */
   public void restartEventListeners() {
     kafkaListenerEndpointRegistry.getAllListenerContainers().forEach(container -> {

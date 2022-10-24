@@ -32,7 +32,7 @@ public class FolioKafkaProperties {
   private long retryDeliveryAttempts = 5;
 
   /**
-   * What topics should be created by mod-search.
+   * What topics should be created by module.
    */
   private List<KafkaTopic> topics;
 

@@ -42,7 +42,7 @@ class KafkaAdminServiceTest {
       FolioKafkaProperties.KafkaTopic.of("topic2", null, (short) 2),
       FolioKafkaProperties.KafkaTopic.of("topic3", 30, (short) -1)));
 
-    kafkaAdminService.createKafkaTopics("test_tenant");
+    kafkaAdminService.createTopics("test_tenant");
     verify(kafkaAdmin).initialize();
 
     var beansOfType = applicationContext.getBeansOfType(NewTopic.class);
