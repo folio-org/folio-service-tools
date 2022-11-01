@@ -28,5 +28,7 @@ public class PostgresContainerExtension implements BeforeAllCallback, AfterAllCa
   @Override
   public void afterAll(ExtensionContext context) {
     System.clearProperty(URL_PROPERTY_NAME);
+    System.clearProperty(USERNAME_PROPERTY_NAME);
+    System.clearProperty(PASSWORD_PROPERTY_NAME);
   }
 }

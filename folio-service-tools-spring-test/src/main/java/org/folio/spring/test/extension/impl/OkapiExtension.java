@@ -21,7 +21,8 @@ public class OkapiExtension implements BeforeAllCallback, AfterAllCallback {
   private static final WireMockServer WIRE_MOCK = new WireMockServer(wireMockConfig().port(nextFreePort()));
 
   private static int nextFreePort() {
-    return nextFreePort(ThreadLocalRandom.current().ints(49152, 65535).iterator());
+    return nextFreePort(ThreadLocalRandom.current() //NOSONAR
+      .ints(49152, 65535).iterator());
   }
 
   private static int nextFreePort(PrimitiveIterator.OfInt portsToTry) {
