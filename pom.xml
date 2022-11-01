@@ -10,6 +10,7 @@
     <module>folio-service-tools-dev</module>
     <module>folio-service-tools-test</module>
     <module>folio-service-tools-spring-dev</module>
+    <module>folio-service-tools-spring-test</module>
   </modules>
 
   <name>folio-service-tools</name>
@@ -32,12 +33,12 @@
     <log4j.version>2.19.0</log4j.version>
     <vertx.version>4.3.3</vertx.version>
     <raml-module-builder.version>35.0.0</raml-module-builder.version>
+    <spring-boot.version>2.7.5</spring-boot.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- Test dependencies versions -->
-    <junit.version>4.13.2</junit.version>
     <mockito.version>4.8.0</mockito.version>
     <wiremock.version>2.34.0</wiremock.version>
     <rest-assured.version>5.2.0</rest-assured.version>
@@ -56,6 +57,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.folio</groupId>
         <artifactId>domain-models-runtime</artifactId>
@@ -79,12 +87,6 @@
         <version>${log4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>io.rest-assured</groupId>
