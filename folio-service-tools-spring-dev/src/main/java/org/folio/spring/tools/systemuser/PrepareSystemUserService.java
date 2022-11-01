@@ -31,12 +31,6 @@ public class PrepareSystemUserService {
   private final PermissionsClient permissionsClient;
   private final SystemUserProperties systemUserProperties;
 
-  @SneakyThrows
-  private static List<String> getResourceLines(String permissionsFilePath) {
-    var resource = new ClassPathResource(permissionsFilePath);
-    return IOUtils.readLines(resource.getInputStream(), StandardCharsets.UTF_8);
-  }
-
   public void setupSystemUser() {
     log.info("Preparing system user...");
     var folioUser = getFolioUser(systemUserProperties.username());
@@ -105,4 +99,9 @@ public class PrepareSystemUserService {
       new User.Personal(systemUserProperties.username()));
   }
 
+  @SneakyThrows
+  private List<String> getResourceLines(String permissionsFilePath) {
+    var resource = new ClassPathResource(permissionsFilePath);
+    return IOUtils.readLines(resource.getInputStream(), StandardCharsets.UTF_8);
+  }
 }
