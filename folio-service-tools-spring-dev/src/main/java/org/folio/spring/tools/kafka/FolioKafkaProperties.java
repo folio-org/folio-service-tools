@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties("application.kafka")
+@ConfigurationProperties("folio.kafka")
 public class FolioKafkaProperties {
 
   /**
