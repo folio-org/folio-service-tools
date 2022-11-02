@@ -1,6 +1,7 @@
 package org.folio.spring.tools.kafka;
 
 import lombok.experimental.UtilityClass;
+import org.folio.spring.tools.config.properties.FolioEnvironment;
 
 @UtilityClass
 public class KafkaUtils {

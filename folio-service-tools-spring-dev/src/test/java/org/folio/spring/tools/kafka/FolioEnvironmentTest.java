@@ -3,10 +3,11 @@ package org.folio.spring.tools.kafka;
 import static java.lang.System.clearProperty;
 import static java.lang.System.setProperty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.folio.spring.tools.kafka.FolioEnvironment.getFolioEnvName;
+import static org.folio.spring.tools.config.properties.FolioEnvironment.getFolioEnvName;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
+import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,7 +49,7 @@ class FolioEnvironmentTest {
   void shouldThrowExceptionWhenEnvHasDisallowedChars(String env) {
     try (var validatorFactory = Validation.buildDefaultValidatorFactory()) {
       var validator = validatorFactory.getValidator();
-      var folioEnvironment = FolioEnvironment.of(env);
+      var folioEnvironment = FolioEnvironment.of(env, "");
       var validationResponse = validator.validate(folioEnvironment);
       assertThat(validationResponse).isNotEmpty()
         .map(ConstraintViolation::getMessage)
