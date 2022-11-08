@@ -29,6 +29,10 @@ Requirements:
     * perms.users.item.post
     * perms.users.assign.immutable
     * perms.users.assign.mutable
+* Update ModuleDescriptor with requires interfaces:
+    * login
+    * permissions
+    * users
 
 ### Utilization
 
@@ -53,3 +57,21 @@ Then next actions are requires:
 2. Inject `KafkaAdminService` bean to the class
 3. Override `afterTenantUpdate` and use `createTopics()` for topics creations and `restartEventListeners()` for 
 restarting Kafka event listeners in module
+
+## Retry mechanism for batch processing
+
+`MessageBatchProcessor` consumes batch of values as list and tries to process them using the strategy with retry.
+At first, a batch will be retried by the specified retry policy, then, if it's failing, it would be processed by single value at one time, if the value would be failed to process - failedValueConsumer will be executed.
+
+`MessageBatchProcessor` requires RetryTemplate bean name to be specified in `consumeBatchWithFallback` method.
+Configure your own `RetryTemplate` bean or use already defined default beans.
+To make `MessageBatchProcessor` configured and created as Spring bean `folio.retry.enabled = true` should be specified in application properties.
+
+Default retry policies:
+
+| RetryTemplate bean                | Attempts | Backoff | Attempts config property            | Backoff config proerty        |
+|-----------------------------------|----------|---------|-------------------------------------|-------------------------------|
+| DEFAULT_RETRY_TEMPLATE_NAME       | 5        | 1000    | -                                   | -                             |
+| DEFAULT_KAFKA_RETRY_TEMPLATE_NAME | 5        | 1000    | folio.kafka.retry-delivery-attempts | folio.kafka.retry-interval-ms |
+
+
