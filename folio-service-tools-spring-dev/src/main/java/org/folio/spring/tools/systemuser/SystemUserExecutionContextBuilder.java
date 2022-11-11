@@ -1,5 +1,7 @@
 package org.folio.spring.tools.systemuser;
 
+import static java.util.Collections.singleton;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 import org.folio.spring.FolioExecutionContext;
 import org.folio.spring.FolioModuleMetadata;
+import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.tools.model.SystemUser;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +26,16 @@ public class SystemUserExecutionContextBuilder {
   }
 
   public FolioExecutionContext forSystemUser(SystemUser systemUser) {
+    Map<String, Collection<String>> headers = Map.of(
+      XOkapiHeaders.URL, singleton(systemUser.okapiUrl()),
+      XOkapiHeaders.TENANT, singleton(systemUser.tenantId()),
+      XOkapiHeaders.TOKEN, singleton(systemUser.token())
+    );
     return builder()
       .withTenantId(systemUser.tenantId())
       .withOkapiUrl(systemUser.okapiUrl())
       .withToken(systemUser.token())
+      .withOkapiHeaders(headers)
       .build();
   }
 
