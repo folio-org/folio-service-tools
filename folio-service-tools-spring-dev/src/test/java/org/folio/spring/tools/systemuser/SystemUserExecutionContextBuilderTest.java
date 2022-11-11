@@ -28,4 +28,22 @@ class SystemUserExecutionContextBuilderTest {
     assertThat(context.getOkapiHeaders()).isNotNull().hasSize(3);
     assertThat(context.getFolioModuleMetadata()).isNotNull();
   }
+
+  @Test
+  void canCreateContextWithNullValues() {
+    var systemUser = SystemUser.builder()
+      .token(null).username("username")
+      .okapiUrl(null).tenantId(null)
+      .build();
+
+    var context = builder.forSystemUser(systemUser);
+
+    assertThat(context.getTenantId()).isNull();
+    assertThat(context.getToken()).isNull();
+    assertThat(context.getOkapiUrl()).isNull();
+
+    assertThat(context.getAllHeaders()).isNotNull();
+    assertThat(context.getOkapiHeaders()).isNotNull().isEmpty();
+    assertThat(context.getFolioModuleMetadata()).isNotNull();
+  }
 }
