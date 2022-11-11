@@ -25,7 +25,7 @@ class SystemUserExecutionContextBuilderTest {
     assertThat(context.getOkapiUrl()).isEqualTo("okapi");
 
     assertThat(context.getAllHeaders()).isNotNull();
-    assertThat(context.getOkapiHeaders()).isNotNull();
+    assertThat(context.getOkapiHeaders()).isNotNull().hasSize(3);
     assertThat(context.getFolioModuleMetadata()).isNotNull();
   }
 }
