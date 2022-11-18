@@ -16,6 +16,10 @@
     <testcontainer.version>1.17.5</testcontainer.version>
     <wiremock.version>2.27.2</wiremock.version>
     <awaitility.version>4.2.0</awaitility.version>
+
+    <sonar.exclusions>
+      src/main/java/**DatabaseCleanupExtension.*
+    </sonar.exclusions>
   </properties>
 
   <dependencies>
