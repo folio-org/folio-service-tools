@@ -92,7 +92,7 @@ class PrepareSystemUserServiceTest {
   }
 
   private ResultList<UsersClient.User> userExistsResponse() {
-    return asSinglePage(new UsersClient.User("id", "username", true, new Personal("lastName")));
+    return asSinglePage(new UsersClient.User("id", "username", true, new Personal("firstName","lastName")));
   }
 
   private ResultList<UsersClient.User> userNotExistResponse() {

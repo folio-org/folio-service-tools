@@ -96,7 +96,7 @@ public class PrepareSystemUserService {
 
   private User prepareUserObject(String id) {
     return new User(id, systemUserProperties.username(), true,
-      new User.Personal(systemUserProperties.username()));
+      new User.Personal(systemUserProperties.username(),systemUserProperties.username()));
   }
 
   @SneakyThrows
