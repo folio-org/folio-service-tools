@@ -23,6 +23,14 @@ public interface UsersClient {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Personal(String firstName, String lastName) {
+      public Personal(String lastName) {
+        this(null, lastName);
+      }
+
+      public Personal(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+      }
     }
   }
 }
