@@ -22,7 +22,15 @@ public interface UsersClient {
   record User(String id, String username, boolean active, Personal personal) {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Personal(String lastName) {
+    public record Personal(String firstName, String lastName) {
+      public Personal(String lastName) {
+        this(null, lastName);
+      }
+
+      public Personal(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+      }
     }
   }
 }
