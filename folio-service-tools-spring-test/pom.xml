@@ -12,7 +12,6 @@
   <artifactId>folio-service-tools-spring-test</artifactId>
 
   <properties>
-    <folio-spring-base.version>6.0.0-SNAPSHOT</folio-spring-base.version>
     <testcontainer.version>1.17.5</testcontainer.version>
     <wiremock.version>2.27.2</wiremock.version>
     <awaitility.version>4.2.0</awaitility.version>

@@ -12,8 +12,6 @@
   <artifactId>folio-service-tools-spring-dev</artifactId>
 
   <properties>
-    <folio-spring-base.version>6.0.0-SNAPSHOT</folio-spring-base.version>
-
     <sonar.exclusions>
       src/main/java/org/folio/search/SearchApplication.java,
       src/main/java/org/folio/spring/tools/config/**,
