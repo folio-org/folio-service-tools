@@ -36,6 +36,12 @@ public final class DbUtils {
   private DbUtils() {
   }
 
+  /**
+   * @deprecated Use {@link PostgresClient#getInstance(Vertx)}
+   *             .{@link PostgresClient#withTrans(java.util.function.Function) withTrans(action)}
+   *             .{@link Future#toCompletionStage() toCompletionStage()}
+   *             .{@link CompletionStage#toCompletableFuture() toCompletableFuture()}) instead.
+   */
   @Deprecated
   public static <T> CompletableFuture<T> executeInTransaction(String tenantId, Vertx vertx,
                                                               BiFunction<PostgresClient, AsyncResult<SQLConnection>, CompletableFuture<T>> action) {
@@ -68,6 +74,10 @@ public final class DbUtils {
       .thenCombine(rollbackFuture, (o, aBoolean) -> mutableResult.getValue());
   }
 
+  /**
+   * @deprecated Use {@link PostgresClient#getInstance(Vertx)}.{@link PostgresClient#withTrans(java.util.function.Function) withTrans(action)}
+   *             instead.
+   */
   @Deprecated
   public static <T> Future<T> executeInTransactionWithVertxFuture(String tenantId, Vertx vertx,
                                                                   BiFunction<PostgresClient,
