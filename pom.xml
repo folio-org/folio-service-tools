@@ -24,9 +24,13 @@
   </licenses>
 
   <properties>
+    <java.version>11</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <log4j.version>2.19.0</log4j.version>
-    <vertx.version>4.3.3</vertx.version>
-    <raml-module-builder.version>35.0.0</raml-module-builder.version>
+    <vertx.version>4.3.7</vertx.version>
+    <raml-module-builder.version>35.0.5</raml-module-builder.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -35,6 +39,7 @@
     <junit.version>4.13.2</junit.version>
     <mockito.version>4.8.0</mockito.version>
     <wiremock.version>2.34.0</wiremock.version>
+    <jetty.version>9.4.49.v20220914</jetty.version>
     <rest-assured.version>5.2.0</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
 
@@ -140,7 +145,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <release>11</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
