@@ -1,3 +1,7 @@
+## v1.11.0 2023-02-10
+* FST-40: RMB 35.0.5, Vert.x 4.3.8
+* FST-41: DbUtils transaction: Explain deprecation, fix unit tests
+
 ## v1.10.0 2022-10-18
 * FST-29: Vertx 4.3.3, RMB 34.0.2, Wiremock 2.34.0 fixing vulnerabilities
 * FST-30: Upgrade to RAML Module Builder 35.0.0
