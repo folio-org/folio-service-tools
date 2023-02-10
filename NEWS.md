@@ -1,3 +1,13 @@
+## v3.0.0 2023-02-10
+* FST-32 Migrate to Java 17
+* FST-32 Implement Kafka topic creation
+* FST-34 Implement mechanism of system user creation
+* FST-35 Add batch message processor with fallback
+* FST-36 Add DatabaseCleanup extension for tests
+* FST-37 Migration Spring boot v3
+* FST-40 RMB 35.0.5, Vert.x 4.3.7
+* FST-41 DbUtils transaction: Explain deprecation, fix unit tests
+
 ## v1.10.0 2022-10-18
 * FST-29: Vertx 4.3.3, RMB 34.0.2, Wiremock 2.34.0 fixing vulnerabilities
 * FST-30: Upgrade to RAML Module Builder 35.0.0
