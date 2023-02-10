@@ -9,6 +9,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -19,9 +21,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import io.vertx.core.json.JsonObject;
-import io.vertx.pgclient.impl.RowImpl;
 import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.impl.RowDesc;
 import org.junit.Test;
 
 import org.folio.rest.persist.helpers.LocalRowSet;
@@ -162,10 +162,14 @@ public class RowSetUtilsTest {
   }
 
   private LocalRowSet getTestRowSet() {
-    RowImpl row1 = new RowImpl(new RowDesc(Arrays.asList("id", "name")));
-    row1.addInteger(1).addString("test name1");
-    RowImpl row2 = new RowImpl(new RowDesc(Arrays.asList("id", "name")));
-    row2.addInteger(2).addString("test name2");
-    return new LocalRowSet(2).withRows(Arrays.asList(row1, row2));
+    Row row1 = mock(Row.class);
+    Row row2 = mock(Row.class);
+    when(row1.getInteger("id")).thenReturn(1);
+    when(row2.getInteger("id")).thenReturn(2);
+    when(row1.getString("name")).thenReturn("test name1");
+    when(row2.getString("name")).thenReturn("test name2");
+    when(row1.getColumnName(0)).thenReturn("id");
+    when(row1.getColumnName(1)).thenReturn("name");
+    return new LocalRowSet(2).withRows(Arrays.asList(row1, row2)).withColumns(List.of("id", "name"));
   }
 }
