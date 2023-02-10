@@ -49,6 +49,16 @@ class PrepareSystemUserServiceTest {
   }
 
   @Test
+  void shouldCreateSystemUserWhenNullResponse() {
+    when(usersClient.query(any())).thenReturn(null);
+
+    prepareSystemUser(systemUserProperties());
+
+    verify(usersClient).saveUser(any());
+    verify(permissionsClient).assignPermissionsToUser(any());
+  }
+
+  @Test
   void shouldNotCreateSystemUserWhenExists() {
     when(usersClient.query(any())).thenReturn(userExistsResponse());
     when(permissionsClient.getUserPermissions(any())).thenReturn(ResultList.empty());
