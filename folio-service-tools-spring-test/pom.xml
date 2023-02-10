@@ -12,7 +12,7 @@
   <artifactId>folio-service-tools-spring-test</artifactId>
 
   <properties>
-    <testcontainer.version>1.17.5</testcontainer.version>
+    <testcontainer.version>1.17.6</testcontainer.version>
     <wiremock.version>2.27.2</wiremock.version>
     <awaitility.version>4.2.0</awaitility.version>
 
