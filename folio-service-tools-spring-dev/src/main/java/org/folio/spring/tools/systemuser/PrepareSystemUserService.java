@@ -52,7 +52,7 @@ public class PrepareSystemUserService {
 
   private Optional<User> getFolioUser(String username) {
     var users = usersClient.query("username==" + username);
-    return users.getResult().stream().findFirst();
+    return (users == null || users.getResult() == null) ? Optional.empty() : users.getResult().stream().findFirst();
   }
 
   private void createFolioUser(String id) {
