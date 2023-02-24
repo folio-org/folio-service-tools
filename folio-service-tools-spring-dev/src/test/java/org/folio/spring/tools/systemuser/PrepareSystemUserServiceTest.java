@@ -1,5 +1,6 @@
 package org.folio.spring.tools.systemuser;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.folio.spring.tools.model.ResultList.asSinglePage;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,6 +18,8 @@ import org.folio.spring.tools.client.UsersClient.User.Personal;
 import org.folio.spring.tools.model.ResultList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -29,6 +32,9 @@ class PrepareSystemUserServiceTest {
   private AuthnClient authnClient;
   @Mock
   private PermissionsClient permissionsClient;
+
+  @Captor
+  private ArgumentCaptor<UsersClient.User> userArgumentCaptor;
 
   private static SystemUserProperties systemUserProperties() {
     return new SystemUserProperties("username", "password", "system", "permissions/test-permissions.csv");
@@ -44,8 +50,12 @@ class PrepareSystemUserServiceTest {
 
     prepareSystemUser(systemUserProperties());
 
-    verify(usersClient).saveUser(any());
+    verify(usersClient).saveUser(userArgumentCaptor.capture());
     verify(permissionsClient).assignPermissionsToUser(any());
+
+    assertThat(userArgumentCaptor.getValue())
+      .extracting("username", "active", "personal.lastName")
+      .containsExactly(systemUserProperties().username(), true, systemUserProperties().lastname());
   }
 
   @Test
