@@ -1,3 +1,7 @@
+## v3.0.1 2023-02-24
+### Bug fixes
+* Use lastname property for lastname in system-user creation ([FST-44](https://issues.folio.org/browse/FST-44))
+
 ## v3.0.0 2023-02-10
 * FST-32 Migrate to Java 17
 * FST-32 Implement Kafka topic creation
