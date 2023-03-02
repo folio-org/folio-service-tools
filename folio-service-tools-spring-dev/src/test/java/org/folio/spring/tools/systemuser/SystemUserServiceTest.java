@@ -99,7 +99,6 @@ class SystemUserServiceTest {
     var systemUser = systemUserValue();
 
     when(authnClient.getApiKey(new UserCredentials("username", "password"))).thenReturn(expectedResponse);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var actual = systemUserService(systemUserProperties()).authSystemUser(systemUser);
@@ -112,7 +111,6 @@ class SystemUserServiceTest {
     when(expectedResponse.getHeaders()).thenReturn(new HttpHeaders());
 
     var systemUser = systemUserValue();
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
 
     var systemUserService = systemUserService(systemUserProperties());
     assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser))
@@ -128,7 +126,6 @@ class SystemUserServiceTest {
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var systemUser = systemUserValue();
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
 
     var systemUserService = systemUserService(systemUserProperties());
     assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser))
