@@ -8,6 +8,7 @@ import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.scope.FolioExecutionContextSetter;
 import org.folio.spring.tools.client.AuthnClient;
 import org.folio.spring.tools.client.AuthnClient.UserCredentials;
+import org.folio.spring.tools.client.UsersClient;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.folio.spring.tools.model.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class SystemUserService {
   private final SystemUserProperties systemUserProperties;
   private final FolioEnvironment environment;
   private final AuthnClient authnClient;
+  private final PrepareSystemUserService prepareUserService;
 
   private Cache<String, SystemUser> systemUserCache;
 
@@ -47,14 +49,12 @@ public class SystemUserService {
    * @return token value
    */
   public String authSystemUser(SystemUser user) {
-    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(user))) {
-      var response = authnClient.getApiKey(new UserCredentials(user.username(), systemUserProperties.password()));
+    var response = authnClient.getApiKey(new UserCredentials(user.username(), systemUserProperties.password()));
 
-      return Optional.ofNullable(response.getHeaders().get(XOkapiHeaders.TOKEN))
-        .filter(list -> !CollectionUtils.isEmpty(list))
-        .map(list -> list.get(0))
-        .orElseThrow(() -> new IllegalStateException(String.format("User [%s] cannot log in", user.username())));
-    }
+    return Optional.ofNullable(response.getHeaders().get(XOkapiHeaders.TOKEN))
+      .filter(list -> !CollectionUtils.isEmpty(list))
+      .map(list -> list.get(0))
+      .orElseThrow(() -> new IllegalStateException(String.format("User [%s] cannot log in", user.username())));
   }
 
   @Autowired(required = false)
@@ -70,10 +70,18 @@ public class SystemUserService {
       .okapiUrl(environment.getOkapiUrl())
       .build();
 
-    var token = authSystemUser(systemUser);
-
-    log.info("Token for system user has been issued [tenantId={}]", tenantId);
-    return systemUser.withToken(token);
+    // create context for authentication
+    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
+      var token = authSystemUser(systemUser);
+      systemUser = systemUser.withToken(token);
+      log.info("Token for system user has been issued [tenantId={}]", tenantId);
+    }
+    // create context for user with token for getting user id
+    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
+      var userId = prepareUserService.getFolioUser(systemUserProperties.username())
+        .map(UsersClient.User::id).orElse(null);
+      return systemUser.withUserId(userId);
+    }
   }
 
 }
