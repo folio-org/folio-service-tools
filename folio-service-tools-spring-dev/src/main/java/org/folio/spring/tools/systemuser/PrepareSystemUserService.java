@@ -51,7 +51,9 @@ public class PrepareSystemUserService {
   }
 
   public Optional<User> getFolioUser(String username) {
+    log.info("get user: " + username);
     var users = usersClient.query("username==" + username);
+    log.info(users);
     return (users == null || users.getResult() == null) ? Optional.empty() : users.getResult().stream().findFirst();
   }
 
