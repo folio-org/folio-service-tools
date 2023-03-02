@@ -8,6 +8,7 @@ import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.scope.FolioExecutionContextSetter;
 import org.folio.spring.tools.client.AuthnClient;
 import org.folio.spring.tools.client.AuthnClient.UserCredentials;
+import org.folio.spring.tools.client.UsersClient;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.folio.spring.tools.model.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class SystemUserService {
   private final SystemUserProperties systemUserProperties;
   private final FolioEnvironment environment;
   private final AuthnClient authnClient;
+  private final PrepareSystemUserService prepareUserService;
 
   private Cache<String, SystemUser> systemUserCache;
 
@@ -71,9 +73,11 @@ public class SystemUserService {
       .build();
 
     var token = authSystemUser(systemUser);
+    var userId = prepareUserService.getFolioUser(systemUserProperties.username())
+      .map(UsersClient.User::id).orElse(null);
 
     log.info("Token for system user has been issued [tenantId={}]", tenantId);
-    return systemUser.withToken(token);
+    return systemUser.withToken(token).withUserId(userId);
   }
 
 }
