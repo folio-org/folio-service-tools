@@ -49,14 +49,12 @@ public class SystemUserService {
    * @return token value
    */
   public String authSystemUser(SystemUser user) {
-    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(user))) {
-      var response = authnClient.getApiKey(new UserCredentials(user.username(), systemUserProperties.password()));
+    var response = authnClient.getApiKey(new UserCredentials(user.username(), systemUserProperties.password()));
 
-      return Optional.ofNullable(response.getHeaders().get(XOkapiHeaders.TOKEN))
-        .filter(list -> !CollectionUtils.isEmpty(list))
-        .map(list -> list.get(0))
-        .orElseThrow(() -> new IllegalStateException(String.format("User [%s] cannot log in", user.username())));
-    }
+    return Optional.ofNullable(response.getHeaders().get(XOkapiHeaders.TOKEN))
+      .filter(list -> !CollectionUtils.isEmpty(list))
+      .map(list -> list.get(0))
+      .orElseThrow(() -> new IllegalStateException(String.format("User [%s] cannot log in", user.username())));
   }
 
   @Autowired(required = false)
@@ -72,12 +70,18 @@ public class SystemUserService {
       .okapiUrl(environment.getOkapiUrl())
       .build();
 
-    var token = authSystemUser(systemUser);
-    var userId = prepareUserService.getFolioUser(systemUserProperties.username())
-      .map(UsersClient.User::id).orElse(null);
-
-    log.info("Token for system user has been issued [tenantId={}]", tenantId);
-    return systemUser.withToken(token).withUserId(userId);
+    // create context for authentication
+    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
+      var token = authSystemUser(systemUser);
+      systemUser = systemUser.withToken(token);
+      log.info("Token for system user has been issued [tenantId={}]", tenantId);
+    }
+    // create context for user with token for getting user id
+    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
+      var userId = prepareUserService.getFolioUser(systemUserProperties.username())
+        .map(UsersClient.User::id).orElse(null);
+      return systemUser.withUserId(userId);
+    }
   }
 
 }
