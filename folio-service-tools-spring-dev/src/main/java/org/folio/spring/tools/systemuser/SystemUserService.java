@@ -10,6 +10,7 @@ import org.folio.spring.tools.client.AuthnClient;
 import org.folio.spring.tools.client.AuthnClient.UserCredentials;
 import org.folio.spring.tools.client.UsersClient;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
+import org.folio.spring.tools.context.ExecutionContextBuilder;
 import org.folio.spring.tools.model.SystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import org.springframework.util.CollectionUtils;
 @RequiredArgsConstructor
 public class SystemUserService {
 
-  private final SystemUserExecutionContextBuilder contextBuilder;
+  private final ExecutionContextBuilder contextBuilder;
   private final SystemUserProperties systemUserProperties;
   private final FolioEnvironment environment;
   private final AuthnClient authnClient;

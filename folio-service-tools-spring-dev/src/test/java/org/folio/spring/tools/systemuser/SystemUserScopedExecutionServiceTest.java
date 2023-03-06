@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.concurrent.Callable;
 import org.folio.spring.DefaultFolioExecutionContext;
 import org.folio.spring.FolioExecutionContext;
+import org.folio.spring.tools.context.ExecutionContextBuilder;
 import org.folio.spring.tools.model.SystemUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class SystemUserScopedExecutionServiceTest {
   @InjectMocks
   private SystemUserScopedExecutionService systemUserScopedExecutionService;
   @Mock
-  private SystemUserExecutionContextBuilder contextBuilder;
+  private ExecutionContextBuilder contextBuilder;
   @Mock
   private SystemUserService systemUserService;
   @Mock

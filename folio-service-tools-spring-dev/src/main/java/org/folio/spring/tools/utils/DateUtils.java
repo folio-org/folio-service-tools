@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class DateUtils {
 
-  public static OffsetDateTime fromTimestamp(Timestamp value) {
+  public static OffsetDateTime toOffsetDateTime(Timestamp value) {
     return value != null ? OffsetDateTime.from(value.toInstant().atZone(ZoneId.systemDefault())) : null;
   }
 
