@@ -67,7 +67,7 @@ class SystemUserServiceTest {
       .thenReturn(Optional.of(new UsersClient.User(expectedUserId.toString(), "username",
         true, new UsersClient.User.Personal("last"))));
     when(environment.getOkapiUrl()).thenReturn(OKAPI_URL);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
+    when(contextBuilder.forSystemUser(any())).thenReturn(context);
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var actual = systemUserService(systemUserProperties()).getAuthedSystemUser(TENANT_ID);

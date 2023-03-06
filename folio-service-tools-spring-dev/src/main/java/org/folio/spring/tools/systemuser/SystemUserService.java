@@ -69,12 +69,18 @@ public class SystemUserService {
       .username(systemUserProperties.username())
       .okapiUrl(environment.getOkapiUrl())
       .build();
+
+    // create context for authentication
     try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
       var token = authSystemUser(systemUser);
+      systemUser = systemUser.withToken(token);
+      log.info("Token for system user has been issued [tenantId={}]", tenantId);
+    }
+    // create context for user with token for getting user id
+    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
       var userId = prepareUserService.getFolioUser(systemUserProperties.username())
         .map(UsersClient.User::id).orElse(null);
-      log.info("Token for system user has been issued [tenantId={}]", tenantId);
-      return systemUser.withToken(token).withUserId(userId);
+      return systemUser.withUserId(userId);
     }
   }
 
