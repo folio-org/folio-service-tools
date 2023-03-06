@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = {
   "org.folio.spring.tools.client",
+  "org.folio.spring.tools.context",
   "org.folio.spring.tools.systemuser",
   "org.folio.spring.tools.config.properties",
 })

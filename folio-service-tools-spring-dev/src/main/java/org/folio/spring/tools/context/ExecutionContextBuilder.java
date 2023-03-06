@@ -1,0 +1,148 @@
+package org.folio.spring.tools.context;
+
+import static java.util.Collections.singleton;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.With;
+import org.folio.spring.FolioExecutionContext;
+import org.folio.spring.FolioModuleMetadata;
+import org.folio.spring.integration.XOkapiHeaders;
+import org.folio.spring.tools.model.SystemUser;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class ExecutionContextBuilder {
+
+  private final FolioModuleMetadata moduleMetadata;
+
+  private static String getHeaderValue(MessageHeaders headers, String headerName) {
+    var headerValue = headers.get(headerName);
+    return headerValue == null
+           ? null
+           : new String((byte[]) headerValue, StandardCharsets.UTF_8);
+  }
+
+  public Builder builder() {
+    return new Builder(moduleMetadata);
+  }
+
+  public FolioExecutionContext forMessageHeaders(MessageHeaders headers) {
+    var tenantId = getHeaderValue(headers, XOkapiHeaders.TENANT);
+    var okapiUrl = getHeaderValue(headers, XOkapiHeaders.URL);
+    var token = getHeaderValue(headers, XOkapiHeaders.TOKEN);
+    var userId = getHeaderValue(headers, XOkapiHeaders.USER_ID);
+    var requestId = getHeaderValue(headers, XOkapiHeaders.REQUEST_ID);
+
+    return buildContext(okapiUrl, tenantId, token, userId, requestId);
+  }
+
+  public FolioExecutionContext forSystemUser(SystemUser systemUser) {
+    var okapiUrl = systemUser.okapiUrl();
+    var tenantId = systemUser.tenantId();
+    var token = systemUser.token();
+    var userId = systemUser.userId();
+
+    return buildContext(okapiUrl, tenantId, token, userId, null);
+  }
+
+  private FolioExecutionContext buildContext(String okapiUrl, String tenantId, String token, String userId,
+                                             String requestId) {
+    Map<String, Collection<String>> headers = new HashMap<>();
+    if (isNotBlank(okapiUrl)) {
+      headers.put(XOkapiHeaders.URL, singleton(okapiUrl));
+    }
+    if (isNotBlank(tenantId)) {
+      headers.put(XOkapiHeaders.TENANT, singleton(tenantId));
+    }
+    if (isNotBlank(token)) {
+      headers.put(XOkapiHeaders.TOKEN, singleton(token));
+    }
+    if (isNotBlank(userId)) {
+      headers.put(XOkapiHeaders.USER_ID, singleton(userId));
+    }
+
+    return builder()
+      .withTenantId(tenantId)
+      .withOkapiUrl(okapiUrl)
+      .withUserId(userId)
+      .withToken(token)
+      .withRequestId(requestId)
+      .withOkapiHeaders(headers)
+      .withAllHeaders(headers)
+      .build();
+  }
+
+  @With
+  @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  public static class Builder {
+
+    private final FolioModuleMetadata moduleMetadata;
+    private final Map<String, Collection<String>> allHeaders;
+    private final Map<String, Collection<String>> okapiHeaders;
+    private String tenantId;
+    private String okapiUrl;
+    private String token;
+    private String userId;
+    private String requestId;
+
+    public Builder(FolioModuleMetadata moduleMetadata) {
+      this.moduleMetadata = moduleMetadata;
+      this.allHeaders = new HashMap<>();
+      this.okapiHeaders = new HashMap<>();
+    }
+
+    public FolioExecutionContext build() {
+      return new FolioExecutionContext() {
+        @Override
+        public String getTenantId() {
+          return tenantId;
+        }
+
+        @Override
+        public String getOkapiUrl() {
+          return okapiUrl;
+        }
+
+        @Override
+        public String getToken() {
+          return token;
+        }
+
+        @Override
+        public UUID getUserId() {
+          return UUID.fromString(userId);
+        }
+
+        @Override
+        public String getRequestId() {
+          return requestId;
+        }
+
+        @Override
+        public Map<String, Collection<String>> getAllHeaders() {
+          return allHeaders;
+        }
+
+        @Override
+        public Map<String, Collection<String>> getOkapiHeaders() {
+          return okapiHeaders;
+        }
+
+        @Override
+        public FolioModuleMetadata getFolioModuleMetadata() {
+          return moduleMetadata;
+        }
+      };
+    }
+  }
+}
