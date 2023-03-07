@@ -50,7 +50,7 @@ public class PrepareSystemUserService {
     log.info("System user has been created");
   }
 
-  private Optional<User> getFolioUser(String username) {
+  public Optional<User> getFolioUser(String username) {
     var users = usersClient.query("username==" + username);
     return (users == null || users.getResult() == null) ? Optional.empty() : users.getResult().stream().findFirst();
   }

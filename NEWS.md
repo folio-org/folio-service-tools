@@ -1,3 +1,7 @@
+## v3.0.2 2023-03-07
+### Bug fixes
+* Add userId to FolioExecutionContext for system-user ([FST-46](https://issues.folio.org/browse/FST-46))
+
 ## v3.0.1 2023-02-24
 ### Bug fixes
 * Use lastname property for lastname in system-user creation ([FST-44](https://issues.folio.org/browse/FST-44))

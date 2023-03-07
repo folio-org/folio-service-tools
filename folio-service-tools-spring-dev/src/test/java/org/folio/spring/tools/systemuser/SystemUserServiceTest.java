@@ -10,10 +10,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import java.util.Optional;
+import java.util.UUID;
 import org.folio.spring.FolioExecutionContext;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.tools.client.AuthnClient;
 import org.folio.spring.tools.client.AuthnClient.UserCredentials;
+import org.folio.spring.tools.client.UsersClient;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.folio.spring.tools.model.SystemUser;
 import org.junit.jupiter.api.Test;
@@ -39,6 +42,8 @@ class SystemUserServiceTest {
   @Mock
   private FolioEnvironment environment;
   @Mock
+  private PrepareSystemUserService prepareSystemUserService;
+  @Mock
   private Cache<String, SystemUser> userCache;
 
   private static SystemUser systemUserValue() {
@@ -51,18 +56,23 @@ class SystemUserServiceTest {
 
   @Test
   void getAuthedSystemUser_positive() {
+    var expectedUserId = UUID.randomUUID();
     var expectedAuthToken = "x-okapi-token-value";
     var expectedHeaders = new HttpHeaders();
     expectedHeaders.add(XOkapiHeaders.TOKEN, expectedAuthToken);
     var systemUser = systemUserValue();
 
     when(authnClient.getApiKey(new UserCredentials("username", "password"))).thenReturn(expectedResponse);
+    when(prepareSystemUserService.getFolioUser("username"))
+      .thenReturn(Optional.of(new UsersClient.User(expectedUserId.toString(), "username",
+        true, new UsersClient.User.Personal("last"))));
     when(environment.getOkapiUrl()).thenReturn(OKAPI_URL);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
+    when(contextBuilder.forSystemUser(any())).thenReturn(context);
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var actual = systemUserService(systemUserProperties()).getAuthedSystemUser(TENANT_ID);
     assertThat(actual.token()).isEqualTo(expectedAuthToken);
+    assertThat(actual.userId()).isEqualTo(expectedUserId.toString());
   }
 
   @Test
@@ -89,7 +99,6 @@ class SystemUserServiceTest {
     var systemUser = systemUserValue();
 
     when(authnClient.getApiKey(new UserCredentials("username", "password"))).thenReturn(expectedResponse);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var actual = systemUserService(systemUserProperties()).authSystemUser(systemUser);
@@ -102,7 +111,6 @@ class SystemUserServiceTest {
     when(expectedResponse.getHeaders()).thenReturn(new HttpHeaders());
 
     var systemUser = systemUserValue();
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
 
     var systemUserService = systemUserService(systemUserProperties());
     assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser))
@@ -118,7 +126,6 @@ class SystemUserServiceTest {
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var systemUser = systemUserValue();
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(context);
 
     var systemUserService = systemUserService(systemUserProperties());
     assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser))
@@ -127,6 +134,6 @@ class SystemUserServiceTest {
   }
 
   private SystemUserService systemUserService(SystemUserProperties properties) {
-    return new SystemUserService(contextBuilder, properties, environment, authnClient);
+    return new SystemUserService(contextBuilder, properties, environment, authnClient, prepareSystemUserService);
   }
 }
