@@ -18,6 +18,7 @@ import org.folio.spring.tools.client.AuthnClient;
 import org.folio.spring.tools.client.AuthnClient.UserCredentials;
 import org.folio.spring.tools.client.UsersClient;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
+import org.folio.spring.tools.context.ExecutionContextBuilder;
 import org.folio.spring.tools.model.SystemUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ class SystemUserServiceTest {
   @Mock
   private AuthnClient authnClient;
   @Mock
-  private SystemUserExecutionContextBuilder contextBuilder;
+  private ExecutionContextBuilder contextBuilder;
   @Mock
   private ResponseEntity<String> expectedResponse;
   @Mock
@@ -60,12 +61,10 @@ class SystemUserServiceTest {
     var expectedAuthToken = "x-okapi-token-value";
     var expectedHeaders = new HttpHeaders();
     expectedHeaders.add(XOkapiHeaders.TOKEN, expectedAuthToken);
-    var systemUser = systemUserValue();
 
     when(authnClient.getApiKey(new UserCredentials("username", "password"))).thenReturn(expectedResponse);
-    when(prepareSystemUserService.getFolioUser("username"))
-      .thenReturn(Optional.of(new UsersClient.User(expectedUserId.toString(), "username",
-        true, new UsersClient.User.Personal("last"))));
+    when(prepareSystemUserService.getFolioUser("username")).thenReturn(Optional.of(
+      new UsersClient.User(expectedUserId.toString(), "username", true, new UsersClient.User.Personal("last"))));
     when(environment.getOkapiUrl()).thenReturn(OKAPI_URL);
     when(contextBuilder.forSystemUser(any())).thenReturn(context);
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
@@ -113,8 +112,7 @@ class SystemUserServiceTest {
     var systemUser = systemUserValue();
 
     var systemUserService = systemUserService(systemUserProperties());
-    assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser))
-      .isInstanceOf(IllegalStateException.class)
+    assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser)).isInstanceOf(IllegalStateException.class)
       .hasMessage("User [username] cannot log in");
   }
 
@@ -128,8 +126,7 @@ class SystemUserServiceTest {
     var systemUser = systemUserValue();
 
     var systemUserService = systemUserService(systemUserProperties());
-    assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser))
-      .isInstanceOf(IllegalStateException.class)
+    assertThatThrownBy(() -> systemUserService.authSystemUser(systemUser)).isInstanceOf(IllegalStateException.class)
       .hasMessage("User [username] cannot log in");
   }
 

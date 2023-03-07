@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.folio.spring.FolioExecutionContext;
 import org.folio.spring.scope.FolioExecutionContextSetter;
+import org.folio.spring.tools.context.ExecutionContextBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,14 @@ import org.springframework.stereotype.Service;
 public class SystemUserScopedExecutionService {
 
   private final FolioExecutionContext executionContext;
-  private final SystemUserExecutionContextBuilder contextBuilder;
+  private final ExecutionContextBuilder contextBuilder;
   private final SystemUserService systemUserService;
 
   /**
    * Executes given action in scope of system user.
    *
    * @param tenantId - The tenant name.
-   * @param action      - Job to be executed in tenant scope.
+   * @param action   - Job to be executed in tenant scope.
    * @param <T>      - Optional return value for the action.
    * @return Result of action.
    * @throws RuntimeException - Wrapped exception from the action.
@@ -36,7 +37,7 @@ public class SystemUserScopedExecutionService {
    * Executes given action in scope of system user.
    *
    * @param action - Job to be executed in tenant scope.
-   * @param <T> - Optional return value for the action.
+   * @param <T>    - Optional return value for the action.
    * @return Result of action.
    * @throws RuntimeException - Wrapped exception from the action.
    */

@@ -1,4 +1,4 @@
-package org.folio.spring.tools.systemuser;
+package org.folio.spring.tools.context;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -8,10 +8,10 @@ import org.folio.spring.FolioModuleMetadata;
 import org.folio.spring.tools.model.SystemUser;
 import org.junit.jupiter.api.Test;
 
-class SystemUserExecutionContextBuilderTest {
+class ExecutionContextBuilderTest {
 
-  private final SystemUserExecutionContextBuilder builder =
-    new SystemUserExecutionContextBuilder(mock(FolioModuleMetadata.class));
+  private final ExecutionContextBuilder builder =
+    new ExecutionContextBuilder(mock(FolioModuleMetadata.class));
 
   @Test
   void canCreateSystemUserContext() {

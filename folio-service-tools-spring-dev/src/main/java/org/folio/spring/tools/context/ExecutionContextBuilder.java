@@ -1,7 +1,8 @@
-package org.folio.spring.tools.systemuser;
+package org.folio.spring.tools.context;
 
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.folio.spring.tools.kafka.KafkaUtils.getHeaderValue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,16 +16,27 @@ import org.folio.spring.FolioExecutionContext;
 import org.folio.spring.FolioModuleMetadata;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.tools.model.SystemUser;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SystemUserExecutionContextBuilder {
+public class ExecutionContextBuilder {
 
   private final FolioModuleMetadata moduleMetadata;
 
   public Builder builder() {
     return new Builder(moduleMetadata);
+  }
+
+  public FolioExecutionContext forMessageHeaders(MessageHeaders headers) {
+    var tenantId = getHeaderValue(XOkapiHeaders.TENANT, headers);
+    var okapiUrl = getHeaderValue(XOkapiHeaders.URL, headers);
+    var token = getHeaderValue(XOkapiHeaders.TOKEN, headers);
+    var userId = getHeaderValue(XOkapiHeaders.USER_ID, headers);
+    var requestId = getHeaderValue(XOkapiHeaders.REQUEST_ID, headers);
+
+    return buildContext(okapiUrl, tenantId, token, userId, requestId);
   }
 
   public FolioExecutionContext forSystemUser(SystemUser systemUser) {
@@ -33,6 +45,11 @@ public class SystemUserExecutionContextBuilder {
     var token = systemUser.token();
     var userId = systemUser.userId();
 
+    return buildContext(okapiUrl, tenantId, token, userId, null);
+  }
+
+  private FolioExecutionContext buildContext(String okapiUrl, String tenantId, String token, String userId,
+                                             String requestId) {
     Map<String, Collection<String>> headers = new HashMap<>();
     if (isNotBlank(okapiUrl)) {
       headers.put(XOkapiHeaders.URL, singleton(okapiUrl));
@@ -52,7 +69,9 @@ public class SystemUserExecutionContextBuilder {
       .withOkapiUrl(okapiUrl)
       .withUserId(userId)
       .withToken(token)
+      .withRequestId(requestId)
       .withOkapiHeaders(headers)
+      .withAllHeaders(headers)
       .build();
   }
 
@@ -67,6 +86,7 @@ public class SystemUserExecutionContextBuilder {
     private String okapiUrl;
     private String token;
     private String userId;
+    private String requestId;
 
     public Builder(FolioModuleMetadata moduleMetadata) {
       this.moduleMetadata = moduleMetadata;
@@ -93,7 +113,12 @@ public class SystemUserExecutionContextBuilder {
 
         @Override
         public UUID getUserId() {
-          return isNotBlank(userId) ? UUID.fromString(userId) : FolioExecutionContext.super.getUserId();
+          return UUID.fromString(userId);
+        }
+
+        @Override
+        public String getRequestId() {
+          return requestId;
         }
 
         @Override
