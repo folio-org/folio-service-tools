@@ -113,7 +113,7 @@ public class ExecutionContextBuilder {
 
         @Override
         public UUID getUserId() {
-          return UUID.fromString(userId);
+          return isNotBlank(userId) ? UUID.fromString(userId) : FolioExecutionContext.super.getUserId();
         }
 
         @Override
