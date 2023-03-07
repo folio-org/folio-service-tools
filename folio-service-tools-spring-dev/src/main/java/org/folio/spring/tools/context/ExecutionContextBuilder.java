@@ -2,8 +2,8 @@ package org.folio.spring.tools.context;
 
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.folio.spring.tools.kafka.KafkaUtils.getHeaderValue;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,23 +25,16 @@ public class ExecutionContextBuilder {
 
   private final FolioModuleMetadata moduleMetadata;
 
-  private static String getHeaderValue(MessageHeaders headers, String headerName) {
-    var headerValue = headers.get(headerName);
-    return headerValue == null
-           ? null
-           : new String((byte[]) headerValue, StandardCharsets.UTF_8);
-  }
-
   public Builder builder() {
     return new Builder(moduleMetadata);
   }
 
   public FolioExecutionContext forMessageHeaders(MessageHeaders headers) {
-    var tenantId = getHeaderValue(headers, XOkapiHeaders.TENANT);
-    var okapiUrl = getHeaderValue(headers, XOkapiHeaders.URL);
-    var token = getHeaderValue(headers, XOkapiHeaders.TOKEN);
-    var userId = getHeaderValue(headers, XOkapiHeaders.USER_ID);
-    var requestId = getHeaderValue(headers, XOkapiHeaders.REQUEST_ID);
+    var tenantId = getHeaderValue(XOkapiHeaders.TENANT, headers);
+    var okapiUrl = getHeaderValue(XOkapiHeaders.URL, headers);
+    var token = getHeaderValue(XOkapiHeaders.TOKEN, headers);
+    var userId = getHeaderValue(XOkapiHeaders.USER_ID, headers);
+    var requestId = getHeaderValue(XOkapiHeaders.REQUEST_ID, headers);
 
     return buildContext(okapiUrl, tenantId, token, userId, requestId);
   }
