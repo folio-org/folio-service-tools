@@ -38,6 +38,7 @@ class ExecutionContextBuilderTest {
     var systemUser = SystemUser.builder()
       .token(null).username("username")
       .okapiUrl(null).tenantId(null)
+      .userId(null)
       .build();
 
     var context = builder.forSystemUser(systemUser);
