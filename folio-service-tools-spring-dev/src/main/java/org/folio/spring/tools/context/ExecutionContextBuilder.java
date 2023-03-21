@@ -63,6 +63,9 @@ public class ExecutionContextBuilder {
     if (isNotBlank(userId)) {
       headers.put(XOkapiHeaders.USER_ID, singleton(userId));
     }
+    if (isNotBlank(requestId)) {
+      headers.put(XOkapiHeaders.REQUEST_ID, singleton(requestId));
+    }
 
     return builder()
       .withTenantId(tenantId)
