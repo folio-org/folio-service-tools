@@ -63,6 +63,9 @@ public class ExecutionContextBuilder {
     if (isNotBlank(userId)) {
       headers.put(XOkapiHeaders.USER_ID, singleton(userId));
     }
+    if (isNotBlank(requestId)) {
+      headers.put(XOkapiHeaders.REQUEST_ID, singleton(requestId));
+    }
 
     return builder()
       .withTenantId(tenantId)
@@ -113,7 +116,7 @@ public class ExecutionContextBuilder {
 
         @Override
         public UUID getUserId() {
-          return UUID.fromString(userId);
+          return isNotBlank(userId) ? UUID.fromString(userId) : FolioExecutionContext.super.getUserId();
         }
 
         @Override

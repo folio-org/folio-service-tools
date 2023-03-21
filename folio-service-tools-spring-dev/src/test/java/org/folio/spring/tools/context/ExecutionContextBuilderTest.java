@@ -3,10 +3,13 @@ package org.folio.spring.tools.context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import java.util.Map;
 import java.util.UUID;
 import org.folio.spring.FolioModuleMetadata;
+import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.tools.model.SystemUser;
 import org.junit.jupiter.api.Test;
+import org.springframework.messaging.MessageHeaders;
 
 class ExecutionContextBuilderTest {
 
@@ -14,7 +17,7 @@ class ExecutionContextBuilderTest {
     new ExecutionContextBuilder(mock(FolioModuleMetadata.class));
 
   @Test
-  void canCreateSystemUserContext() {
+  void canCreateSystemUserContextForSystemUser() {
     var userId = UUID.randomUUID();
     var systemUser = SystemUser.builder()
       .token("token").username("username")
@@ -34,10 +37,33 @@ class ExecutionContextBuilderTest {
   }
 
   @Test
+  void canCreateSystemUserContextForMessageHeaders() {
+    var userId = UUID.randomUUID();
+    var messageHeaders = new MessageHeaders(Map.of(
+      XOkapiHeaders.TOKEN, "token".getBytes(),
+      XOkapiHeaders.TENANT, "tenant".getBytes(),
+      XOkapiHeaders.URL, "okapi".getBytes(),
+      XOkapiHeaders.USER_ID, userId.toString().getBytes(),
+      XOkapiHeaders.REQUEST_ID, "request".getBytes()));
+    var context = builder.forMessageHeaders(messageHeaders);
+
+    assertThat(context.getTenantId()).isEqualTo("tenant");
+    assertThat(context.getToken()).isEqualTo("token");
+    assertThat(context.getOkapiUrl()).isEqualTo("okapi");
+    assertThat(context.getRequestId()).isEqualTo("request");
+    assertThat(context.getUserId()).isEqualTo(userId);
+
+    assertThat(context.getAllHeaders()).isNotNull();
+    assertThat(context.getOkapiHeaders()).isNotNull().hasSize(5);
+    assertThat(context.getFolioModuleMetadata()).isNotNull();
+  }
+
+  @Test
   void canCreateContextWithNullValues() {
     var systemUser = SystemUser.builder()
       .token(null).username("username")
       .okapiUrl(null).tenantId(null)
+      .userId(null)
       .build();
 
     var context = builder.forSystemUser(systemUser);
