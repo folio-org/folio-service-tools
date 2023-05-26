@@ -49,7 +49,7 @@ public class KafkaAdminService {
   public void deleteTopicsByTenant(String tenantId) {
     var configTopics = kafkaProperties.getTopics();
     var topicsToDelete = configTopics.stream()
-      .map(FolioKafkaProperties.KafkaTopic::getName)
+      .map(topic->getTenantTopicName(topic.getName(), tenantId))
       .filter(name -> name.startsWith(FolioEnvironment.getFolioEnvName() + "." + tenantId + "."))
       .toList();
     log.info("Deleting topics for tenantId {}: [topics: {}]", tenantId, topicsToDelete);

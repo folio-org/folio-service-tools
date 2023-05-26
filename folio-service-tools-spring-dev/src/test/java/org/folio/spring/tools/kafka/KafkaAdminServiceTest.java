@@ -63,11 +63,11 @@ class KafkaAdminServiceTest {
   @Test
   void deleteKafkaTopics_positive() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
-    kafkaTopic.setName("folio.test_tenant.topic");
+    kafkaTopic.setName("test_topic");
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
 
     kafkaAdminService.deleteTopicsByTenant("test_tenant");
-    verify(kafkaAdminClient).deleteTopics(List.of("folio.test_tenant.topic"));
+    verify(kafkaAdminClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
   }
 
   @Test
