@@ -50,6 +50,7 @@ public class KafkaAdminService {
                                                              .filter(t -> t.getName().contains("." + tenantId + "."))
                                                              .map(FolioKafkaProperties.KafkaTopic::getName)
                                                              .toList();
+    log.info("Deleting topics for tenantId {}: [topics: {}]", tenantId, topicsToDelete);
     kafkaAdminClient.deleteTopics(topicsToDelete);
   }
 
