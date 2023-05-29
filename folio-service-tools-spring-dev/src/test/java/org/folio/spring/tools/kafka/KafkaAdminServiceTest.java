@@ -66,7 +66,7 @@ class KafkaAdminServiceTest {
     kafkaTopic.setName("test_topic");
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
 
-    kafkaAdminService.deleteTopicsByTenant("test_tenant");
+    kafkaAdminService.deleteTopics("test_tenant");
     verify(kafkaAdminClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
   }
 
