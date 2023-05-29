@@ -68,7 +68,8 @@ public class KafkaAdminService {
   private List<NewTopic> toTenantSpecificTopic(List<FolioKafkaProperties.KafkaTopic> localConfigTopics,
     String tenantId) {
     return localConfigTopics.stream()
-      .map(topic -> toKafkaTopic(topic, tenantId)).toList();
+      .map(topic -> toKafkaTopic(topic, tenantId))
+      .toList();
   }
 
   private NewTopic toKafkaTopic(FolioKafkaProperties.KafkaTopic topic, String tenantId) {
