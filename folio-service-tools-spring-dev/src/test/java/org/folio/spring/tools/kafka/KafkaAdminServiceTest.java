@@ -2,12 +2,13 @@ package org.folio.spring.tools.kafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.junit.jupiter.api.Test;
@@ -36,8 +37,6 @@ class KafkaAdminServiceTest {
   private KafkaAdmin kafkaAdmin;
   @MockBean
   private FolioKafkaProperties kafkaProperties;
-  @MockBean
-  private KafkaAdminClient kafkaAdminClient;
 
   @Test
   void createKafkaTopics_positive() {
@@ -62,9 +61,11 @@ class KafkaAdminServiceTest {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
+    var kafkaClient = mock(AdminClient.class);
+    mockStatic(AdminClient.class, (invocation) -> kafkaClient);
 
     kafkaAdminService.deleteTopics("test_tenant");
-    verify(kafkaAdminClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
+    verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
   }
 
   @Test
