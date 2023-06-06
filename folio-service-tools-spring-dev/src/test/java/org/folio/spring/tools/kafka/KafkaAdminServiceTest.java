@@ -1,6 +1,7 @@
 package org.folio.spring.tools.kafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -60,11 +61,30 @@ class KafkaAdminServiceTest {
   void deleteKafkaTopics_positive() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
+
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
     var kafkaClient = mock(AdminClient.class);
-    mockStatic(AdminClient.class, (invocation) -> kafkaClient);
+    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+      kafkaAdminService.deleteTopics("test_tenant");
+    }
 
-    kafkaAdminService.deleteTopics("test_tenant");
+    verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
+  }
+
+  @Test
+  void deleteKafkaTopics_negative_shouldHandleException() {
+    var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
+    kafkaTopic.setName("test_topic");
+
+    var kafkaClient = mock(AdminClient.class);
+    when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
+    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+      when(kafkaClient.deleteTopics(anyCollection()))
+        .thenThrow(new IllegalStateException());
+
+      kafkaAdminService.deleteTopics("test_tenant");
+    }
+
     verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
   }
 
