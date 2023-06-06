@@ -6,7 +6,7 @@ import static org.folio.spring.tools.kafka.KafkaUtils.getTenantTopicName;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class KafkaAdminService {
 
   private final KafkaAdmin kafkaAdmin;
-  private final KafkaAdminClient kafkaAdminClient;
   private final BeanFactory beanFactory;
   private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
   private final FolioKafkaProperties kafkaProperties;
@@ -49,7 +48,11 @@ public class KafkaAdminService {
       .map(topic -> getTenantTopicName(topic.getName(), tenantId))
       .toList();
     log.info("Deleting topics for tenantId {}: [topics: {}]", tenantId, topicsToDelete);
-    kafkaAdminClient.deleteTopics(topicsToDelete);
+    try (var kafkaClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+      kafkaClient.deleteTopics(topicsToDelete);
+    } catch (Exception ex) {
+      log.warn("Unable to delete topics: {}", topicsToDelete, ex);
+    }
   }
 
   /**
