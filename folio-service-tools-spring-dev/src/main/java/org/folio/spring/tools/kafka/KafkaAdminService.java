@@ -1,12 +1,12 @@
 package org.folio.spring.tools.kafka;
 
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 import static org.folio.spring.tools.kafka.KafkaUtils.getTenantTopicName;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class KafkaAdminService {
 
   private final KafkaAdmin kafkaAdmin;
+  private final KafkaAdminClient kafkaAdminClient;
   private final BeanFactory beanFactory;
   private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
   private final FolioKafkaProperties kafkaProperties;
@@ -42,6 +43,15 @@ public class KafkaAdminService {
     kafkaAdmin.initialize();
   }
 
+  public void deleteTopics(String tenantId) {
+    var configTopics = kafkaProperties.getTopics();
+    var topicsToDelete = configTopics.stream()
+      .map(topic -> getTenantTopicName(topic.getName(), tenantId))
+      .toList();
+    log.info("Deleting topics for tenantId {}: [topics: {}]", tenantId, topicsToDelete);
+    kafkaAdminClient.deleteTopics(topicsToDelete);
+  }
+
   /**
    * Restarts kafka event listeners in module.
    */
@@ -56,10 +66,10 @@ public class KafkaAdminService {
   }
 
   private List<NewTopic> toTenantSpecificTopic(List<FolioKafkaProperties.KafkaTopic> localConfigTopics,
-                                               String tenantId) {
+    String tenantId) {
     return localConfigTopics.stream()
       .map(topic -> toKafkaTopic(topic, tenantId))
-      .collect(toList());
+      .toList();
   }
 
   private NewTopic toKafkaTopic(FolioKafkaProperties.KafkaTopic topic, String tenantId) {

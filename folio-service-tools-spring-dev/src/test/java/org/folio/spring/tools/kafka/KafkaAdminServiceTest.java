@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ class KafkaAdminServiceTest {
   private KafkaAdmin kafkaAdmin;
   @MockBean
   private FolioKafkaProperties kafkaProperties;
+  @MockBean
+  private KafkaAdminClient kafkaAdminClient;
 
   @Test
   void createKafkaTopics_positive() {
@@ -52,6 +55,16 @@ class KafkaAdminServiceTest {
       new NewTopic("folio.test_tenant.topic2", Optional.empty(), Optional.of((short) 2)),
       new NewTopic("folio.test_tenant.topic3", Optional.of(30), Optional.of((short) -1))
     ));
+  }
+
+  @Test
+  void deleteKafkaTopics_positive() {
+    FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
+    kafkaTopic.setName("test_topic");
+    when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
+
+    kafkaAdminService.deleteTopics("test_tenant");
+    verify(kafkaAdminClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
   }
 
   @Test
