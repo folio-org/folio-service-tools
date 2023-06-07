@@ -3,79 +3,69 @@ package org.folio.common.pf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assume.assumeThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.folio.common.pf.TestData.fNegate;
 import static org.folio.common.pf.TestData.fPositiveIntMsg;
 import static org.folio.common.pf.TestData.intsOfEveryKind;
 import static org.folio.common.pf.TestData.positiveInt;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.function.Function;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.folio.test.junit.TestStartLoggingRule;
+class ComposeTest {
 
-@RunWith(Theories.class)
-public class ComposeTest {
-
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   private PartialFunction<Integer, String> pf = new PartialFunctionImpl<>(positiveInt, fPositiveIntMsg);
   private Function<Integer, Integer> before = fNegate;
 
   private Compose<Integer, Integer, String> compose = new Compose<>(pf, before);
 
-  @DataPoints
   public static Integer[] testData() {
     return intsOfEveryKind();
   }
 
   @Test
-  public void notCreateWithNPEIfPartialFuncIsNull() {
-    thrown.expect(NullPointerException.class);
-
-    new Compose<>(null, before);
+  void notCreateWithNPEIfPartialFuncIsNull() {
+    assertThrows(NullPointerException.class, () -> new Compose<>(null, before));
   }
 
   @Test
-  public void notCreateWithNPEIfBeforeFuncIsNull() {
-    thrown.expect(NullPointerException.class);
-
-    new Compose<>(pf, null);
+  void notCreateWithNPEIfBeforeFuncIsNull() {
+    assertThrows(NullPointerException.class, () -> new Compose<>(pf, null));
   }
 
-  @Theory
-  public void isDefinedIfPartialFuncDefinedForBeforeFuncResult(Integer i) {
+  @ParameterizedTest
+  @MethodSource("testData")
+  void isDefinedIfPartialFuncDefinedForBeforeFuncResult(Integer i) {
     boolean expected = pf.isDefinedAt(before.apply(i));
 
     assertThat(compose.isDefinedAt(i), is(expected));
   }
 
-  @Theory
-  public void applyResultEqualToPartialFunctionAppliedToBeforeFunc(Integer i) {
-    assumeThat(compose.isDefinedAt(i), is(true));
+  @ParameterizedTest
+  @MethodSource("testData")
+  void applyResultEqualToPartialFunctionAppliedToBeforeFunc(Integer i) {
+    assumeTrue(compose.isDefinedAt(i));
 
     assertThat(compose.apply(i), is(pf.apply(before.apply(i))));
   }
 
-  @Theory
-  public void notAppliedIfPartialFuncNotDefinedForBeforeFuncResult(Integer i) {
-    assumeThat(pf.isDefinedAt(before.apply(i)), is(false));
+  @ParameterizedTest
+  @MethodSource("testData")
+  void notAppliedIfPartialFuncNotDefinedForBeforeFuncResult(Integer i) {
+    assumeFalse(pf.isDefinedAt(before.apply(i)));
 
-    thrown.expect(NotDefinedException.class);
-    thrown.expectMessage(containsString(i.toString()));
-
-    compose.apply(i);
+    NotDefinedException thrown = assertThrows(NotDefinedException.class, () -> compose.apply(i));
+    assertThat(thrown.getMessage(), containsString(i.toString()));
   }
 }

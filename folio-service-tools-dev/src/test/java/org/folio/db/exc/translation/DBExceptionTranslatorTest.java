@@ -1,56 +1,50 @@
 package org.folio.db.exc.translation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.vertx.core.Future;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.folio.db.exc.DatabaseException;
-import org.folio.test.junit.TestStartLoggingRule;
 
-public class DBExceptionTranslatorTest {
+class DBExceptionTranslatorTest {
 
   private static final Throwable INCOMING_EXC = new Exception("Incoming");
   private static final DatabaseException TRANSLATED_EXC = new DatabaseException("Translated");
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   private TestTranslator translator;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     translator = new TestTranslator(true, TRANSLATED_EXC);
   }
 
   @Test
-  public void translateFailsIfNotAcceptable() {
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Exception is not acceptable and cannot be translated");
-
+  void translateFailsIfNotAcceptable() {
     translator.setAcceptable(false);
-
-    translator.translate(INCOMING_EXC);
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> translator.translate(INCOMING_EXC));
+    assertThat(thrown.getMessage(), containsString("Exception is not acceptable and cannot be translated"));
   }
 
   @Test
-  public void translateProcessesExceptionIfAcceptable() {
+  void translateProcessesExceptionIfAcceptable() {
     DatabaseException exc = translator.translate(INCOMING_EXC);
 
     assertThat(exc, sameInstance(TRANSLATED_EXC));
   }
 
   @Test
-  public void translateOrPassByReturnsFutureWithTranslatedIfAcceptable() {
+  void translateOrPassByReturnsFutureWithTranslatedIfAcceptable() {
     Future<Object> future = translator.translateOrPassBy().apply(INCOMING_EXC);
 
     assertThat(future.failed(), is(true));
@@ -58,7 +52,7 @@ public class DBExceptionTranslatorTest {
   }
 
   @Test
-  public void translateOrPassByReturnsFutureWithIncomingIfNotAcceptable() {
+  void translateOrPassByReturnsFutureWithIncomingIfNotAcceptable() {
     translator.setAcceptable(false);
 
     Future<Object> future = translator.translateOrPassBy().apply(INCOMING_EXC);

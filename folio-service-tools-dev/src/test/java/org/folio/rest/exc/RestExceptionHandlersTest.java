@@ -1,22 +1,29 @@
 package org.folio.rest.exc;
 
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
+import io.vertx.core.Promise;
+import io.vertx.core.Future;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.junit.Test;
+import org.folio.rest.tools.utils.ValidationHelper;
+import org.junit.jupiter.api.Test;
 
 import org.folio.common.pf.PartialFunction;
 import org.folio.cql2pgjson.exception.CQL2PgJSONException;
@@ -27,8 +34,11 @@ import org.folio.db.exc.InvalidUUIDException;
 import org.folio.db.exc.translation.postgresql.InformationMessageConstants;
 import org.folio.rest.persist.PgExceptionUtil;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
-public class RestExceptionHandlersTest {
+class RestExceptionHandlersTest {
 
   private static void verifyResponse(Response response, int expectedStatus, String expectedMsg) {
     assertThat(response, notNullValue());
@@ -38,7 +48,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void badReqHandlerCreates400ResponseForBadReqException() {
+  void badReqHandlerCreates400ResponseForBadReqException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new BadRequestException("BAD"));
@@ -47,7 +57,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void badReqHandlerCreates400ResponseForCQLQueryValidationException() {
+  void badReqHandlerCreates400ResponseForCQLQueryValidationException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Exception cause = new Exception("INVALID");
@@ -57,7 +67,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void badReqHandlerCreates400ResponseForInvalidUUID() {
+  void badReqHandlerCreates400ResponseForInvalidUUID() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(PgExceptionUtil.createPgExceptionFromMap(
@@ -70,7 +80,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void badReqHandlerCreates400ResponseForCQL2PgJSONException() {
+  void badReqHandlerCreates400ResponseForCQL2PgJSONException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new CQL2PgJSONException("EXC"));
@@ -79,7 +89,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void badReqHandlerCreates400ResponseForInvalidUUIDExc() {
+  void badReqHandlerCreates400ResponseForInvalidUUIDExc() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseBadRequestHandler();
 
     Response response = handler.apply(new InvalidUUIDException("UUID", "22P02", "11111111"));
@@ -88,7 +98,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void notFoundHandlerCreates404ResponseForNotFoundException() {
+  void notFoundHandlerCreates404ResponseForNotFoundException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseNotFoundHandler();
 
     Response response = handler.apply(new NotFoundException("NOTFOUND"));
@@ -97,7 +107,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void unauthorizedHandlerCreates401ResponseForNotAuthorizedException() {
+  void unauthorizedHandlerCreates401ResponseForNotAuthorizedException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnauthorizedHandler();
 
     Response response = handler.apply(new NotAuthorizedException("NOTAUTH"));
@@ -106,7 +116,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void unauthorizedHandlerCreates401ResponseForAuthorizationException() {
+  void unauthorizedHandlerCreates401ResponseForAuthorizationException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnauthorizedHandler();
 
     Response response = handler.apply(new NotAuthorizedException("NOTAUTH"));
@@ -115,7 +125,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void unprocessableHandlerCreates422ResponseForConstraintViolationException() {
+  void unprocessableHandlerCreates422ResponseForConstraintViolationException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnprocessableHandler();
 
     Response response = handler.apply(new ConstraintViolationException("PK", "23505",
@@ -125,7 +135,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void unprocessableHandlerCreates422ResponseForDataException() {
+  void unprocessableHandlerCreates422ResponseForDataException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnprocessableHandler();
 
     Response response = handler.apply(new DataException("DATA"));
@@ -134,18 +144,45 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void generalHandlerCreates500Response() {
+  void generalHandlerCreates500ResponseWhenRunWithJavaVersionLessThan17() {
+    Promise<javax.ws.rs.core.Response> promise = mock(Promise.class);
+    javax.ws.rs.core.Response javaxResponse = mock(javax.ws.rs.core.Response.class);
+    Future<javax.ws.rs.core.Response> future = mock(Future.class);
+    when(javaxResponse.getStatus()).thenReturn(SC_INTERNAL_SERVER_ERROR);
+    when(javaxResponse.getHeaderString("Content-Type")).thenReturn("text/plain");
+    when(javaxResponse.getEntity()).thenReturn("Internal Error");
+
+    try (MockedStatic<Promise> mockPromise = Mockito.mockStatic(Promise.class)) {
+      try (MockedStatic<ValidationHelper> mockedValidation = Mockito.mockStatic(ValidationHelper.class)) {
+        mockedValidation.when(() -> ValidationHelper.handleError(any(), any())).thenAnswer((Answer<Void>) invocation -> null);
+        mockPromise.when(Promise::promise).thenReturn(promise);
+        when(promise.future()).thenReturn(future);
+        when(future.succeeded()).thenReturn(true);
+        when(future.result()).thenReturn(javaxResponse);
+
+        PartialFunction<Throwable, Response> handler = RestExceptionHandlers.generalHandler();
+        Response response = handler.apply(new Exception("GENERAL"));
+
+        assertThat(response, notNullValue());
+        assertThat(response.getStatus(), is(SC_INTERNAL_SERVER_ERROR));
+        assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
+      }
+    }
+  }
+
+  @Test
+  void generalHandlerCreates500ResponseWhenRunWithJavaVersion17OrAbove() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.generalHandler();
 
     Response response = handler.apply(new Exception("GENERAL"));
 
     assertThat(response, notNullValue());
-    assertThat(response.getStatus(), is(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+    assertThat(response.getStatus(), is(SC_INTERNAL_SERVER_ERROR));
     assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
   }
 
   @Test
-  public void completionCauseUnwrapsCompletionException() {
+  void completionCauseUnwrapsCompletionException() {
     Function<Throwable, Throwable> completionCause = RestExceptionHandlers.completionCause();
 
     Exception cause = new Exception();
@@ -155,7 +192,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void completionCauseReturnsCompletionExceptionIfNoCause() {
+  void completionCauseReturnsCompletionExceptionIfNoCause() {
     Function<Throwable, Throwable> completionCause = RestExceptionHandlers.completionCause();
 
     CompletionException completionException = new CompletionException(null);
@@ -165,7 +202,7 @@ public class RestExceptionHandlersTest {
   }
 
   @Test
-  public void completionCauseReturnsExceptionIfNotCompletionException() {
+  void completionCauseReturnsExceptionIfNotCompletionException() {
     Function<Throwable, Throwable> completionCause = RestExceptionHandlers.completionCause();
 
     Exception exception = new Exception(new Exception("cause"));

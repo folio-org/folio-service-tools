@@ -7,24 +7,22 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import org.folio.test.junit.TestStartLoggingRule;
-
-public class ConstraintTest {
+class ConstraintTest {
 
   private static final String CONS_NAME = "foo_constraint";
   private static final String CONS_TABLE = "foo_table";
   private static final String CONS_COL_1 = "foo_col1";
   private static final String CONS_COL_2 = "foo_col2";
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   @Test
-  public void constructsPrimaryKeyConstraint() {
+  void constructsPrimaryKeyConstraint() {
     Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, CONS_COL_1, CONS_COL_2);
 
     assertThat(cons.getType(), is(Constraint.Type.PRIMARY_KEY));
@@ -34,7 +32,7 @@ public class ConstraintTest {
   }
 
   @Test
-  public void constructsForeignKeyConstraint() {
+  void constructsForeignKeyConstraint() {
     Constraint cons = Constraint.foreignKey(CONS_NAME, CONS_TABLE, CONS_COL_1);
 
     assertThat(cons.getType(), is(Constraint.Type.FOREIGN_KEY));
@@ -44,7 +42,7 @@ public class ConstraintTest {
   }
 
   @Test
-  public void constructsUniqueConstraint() {
+  void constructsUniqueConstraint() {
     Constraint cons = Constraint.unique(CONS_NAME, CONS_TABLE, CONS_COL_2);
 
     assertThat(cons.getType(), is(Constraint.Type.UNIQUE));
@@ -54,7 +52,7 @@ public class ConstraintTest {
   }
 
   @Test
-  public void constructsCheckConstraint() {
+  void constructsCheckConstraint() {
     Constraint cons = Constraint.check(CONS_NAME, CONS_TABLE);
 
     assertThat(cons.getType(), is(Constraint.Type.CHECK));
@@ -64,7 +62,7 @@ public class ConstraintTest {
   }
 
   @Test
-  public void constructsNotNullConstraint() {
+  void constructsNotNullConstraint() {
     Constraint cons = Constraint.notNull(CONS_NAME, CONS_TABLE, CONS_COL_1);
 
     assertThat(cons.getType(), is(Constraint.Type.NOT_NULL));
@@ -74,7 +72,7 @@ public class ConstraintTest {
   }
 
   @Test
-  public void constructsOtherConstraint() {
+  void constructsOtherConstraint() {
     Constraint cons = Constraint.other(CONS_NAME, CONS_TABLE);
 
     assertThat(cons.getType(), is(Constraint.Type.OTHER));
@@ -84,14 +82,14 @@ public class ConstraintTest {
   }
 
   @Test
-  public void filtersOutNullColumns() {
+  void filtersOutNullColumns() {
     Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, null, CONS_COL_2, null);
 
     assertThat(cons.getColumns(), containsInAnyOrder(CONS_COL_2));
   }
 
   @Test
-  public void basicEquals() {
+  void basicEquals() {
     Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, CONS_COL_1, CONS_COL_2);
 
     boolean result = cons.equals(Constraint.primaryKey(CONS_NAME, CONS_TABLE, CONS_COL_1, CONS_COL_2));
@@ -105,7 +103,7 @@ public class ConstraintTest {
   }
 
   @Test
-  public void basicToString() {
+  void basicToString() {
     Constraint cons = Constraint.primaryKey(CONS_NAME, CONS_TABLE, CONS_COL_1, CONS_COL_2);
 
     String str = cons.toString();

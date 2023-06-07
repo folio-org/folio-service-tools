@@ -5,54 +5,53 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.vertx.core.Future;
 import org.apache.commons.lang3.Validate;
+import org.folio.test.extensions.TestStartLoggingExtension;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-
-import org.folio.test.junit.TestStartLoggingRule;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
-public class ValidationTest {
+class ValidationTest {
 
   private static final Randomizer<String> stringRandomizer = new StringRandomizer();
 
   private Validation validation;
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
 
-  @Before
+  @BeforeEach
   public void setUp() {
     validation = Validation.instance();
   }
 
-  @Test(expected = NullPointerException.class)
-  public void addTestsFailedwithNPEIfTestMethodNull() {
-    validation.addTest("test", null);
+  @Test
+  void addTestsFailedwithNPEIfTestMethodNull() {
+    assertThrows(NullPointerException.class, () -> validation.addTest("test", null));
   }
 
   @Test
-  public void addTestsAcceptsNullTestValue() {
+  void addTestsAcceptsNullTestValue() {
     try {
       validation.addTest(null, new AcceptAll<>());
     } catch (NullPointerException e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 
   @Test
-  public void validateReturnsCompletedFutureIfAllTestsPass() {
+  void validateReturnsCompletedFutureIfAllTestsPass() {
     String testValue = stringRandomizer.getRandomValue();
 
     validation
@@ -66,7 +65,7 @@ public class ValidationTest {
   }
 
   @Test
-  public void validateReturnsCompletedFutureIfNoTests() {
+  void validateReturnsCompletedFutureIfNoTests() {
     Future<Void> result = validation.validate();
 
     assertThat(result, notNullValue());
@@ -74,7 +73,7 @@ public class ValidationTest {
   }
 
   @Test
-  public void validateReturnsFailedFutureIfTestThrowsNPE() {
+  void validateReturnsFailedFutureIfTestThrowsNPE() {
     String testValue = null;
 
     validation
@@ -89,7 +88,7 @@ public class ValidationTest {
   }
 
   @Test
-  public void validateReturnsFailedFutureIfTestThrowsIllArgExc() {
+  void validateReturnsFailedFutureIfTestThrowsIllArgExc() {
     String testValue = stringRandomizer.getRandomValue();
 
     validation

@@ -2,10 +2,12 @@ package org.folio.db.exc.translation.postgresql;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
@@ -13,35 +15,29 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.folio.test.extensions.TestStartLoggingExtension;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.collection.SetRandomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.folio.test.junit.TestStartLoggingRule;
+class PSQLStateTest {
 
-@RunWith(Theories.class)
-public class PSQLStateTest {
+  public static String[] invalidCodes() {
+    return TestData.generateInvalidCodes();
+  }
 
-  @DataPoints("invalid-codes")
-  public static String[] invalidCodes = TestData.generateInvalidCodes();
-  @DataPoints("valid-codes")
-  public static String[] validCodes = TestData.generateValidCodes();
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  public static String[] validCodes() {
+    return TestData.generateValidCodes();
+  }
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   @Test
-  public void getCodeReturnsAlphaNumStringOf5Chars() {
+  void getCodeReturnsAlphaNumStringOf5Chars() {
     for (PSQLState state : PSQLState.values()) {
       String code = state.getCode();
 
@@ -52,7 +48,7 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void getCodeClassReturnsFirst2CharsOfCode() {
+  void getCodeClassReturnsFirst2CharsOfCode() {
     for (PSQLState state : PSQLState.values()) {
       assertThat(state.getCodeClass(), allOf(
         not(emptyOrNullString()),
@@ -61,22 +57,25 @@ public class PSQLStateTest {
     }
   }
 
-  @Theory
-  public void containsReturnsFalseForInvalidCode(@FromDataPoints("invalid-codes") String code) {
+  @ParameterizedTest
+  @MethodSource("invalidCodes")
+  void containsReturnsFalseForInvalidCode(String code) {
     boolean contains = PSQLState.contains(code);
 
     assertThat(contains, is(false));
   }
 
-  @Theory
-  public void containsReturnsTrueForValidCode(@FromDataPoints("valid-codes") String code) {
+  @ParameterizedTest
+  @MethodSource("validCodes")
+  void containsReturnsTrueForValidCode(String code) {
     boolean contains = PSQLState.contains(code);
 
     assertThat(contains, is(true));
   }
 
-  @Theory
-  public void containsWorksWithMixedCase(@FromDataPoints("valid-codes") String code) {
+  @ParameterizedTest
+  @MethodSource("validCodes")
+  void containsWorksWithMixedCase(String code) {
     String mixed = mixCase(code);
 
     boolean contains = PSQLState.contains(mixed);
@@ -85,21 +84,23 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void containsReturnsFalseForNull() {
+  void containsReturnsFalseForNull() {
     boolean contains = PSQLState.contains(null);
 
     assertThat(contains, is(false));
   }
 
-  @Theory
-  public void enumOfReturnsEnumForValidCode(@FromDataPoints("valid-codes") String code) {
+  @ParameterizedTest
+  @MethodSource("validCodes")
+  void enumOfReturnsEnumForValidCode(String code) {
     PSQLState state = PSQLState.enumOf(code);
 
     assertThat(state, notNullValue());
   }
 
-  @Theory
-  public void enumOfWorksWithMixedCase(@FromDataPoints("valid-codes") String code) {
+  @ParameterizedTest
+  @MethodSource("validCodes")
+  void enumOfWorksWithMixedCase(String code) {
     String mixed = mixCase(code);
 
     PSQLState state = PSQLState.enumOf(mixed);
@@ -107,24 +108,21 @@ public class PSQLStateTest {
     assertThat(state, notNullValue());
   }
 
-  @Theory
-  public void enumOfFailsForInvalidCode(@FromDataPoints("invalid-codes") String code) {
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(code);
-
-    PSQLState.enumOf(code);
+  @ParameterizedTest
+  @MethodSource("invalidCodes")
+  void enumOfFailsForInvalidCode(String code) {
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> PSQLState.enumOf(code));
+    assertThat(thrown.getMessage(), containsString(code));
   }
 
   @Test
-  public void enumOfFailsForNull() {
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(String.valueOf((Object) null));
-
-    PSQLState.enumOf(null);
+  void enumOfFailsForNull() {
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> PSQLState.enumOf(null));
+    assertThat(thrown.getMessage(), containsString(String.valueOf((Object)null)));
   }
 
   @Test
-  public void belongToClassReturnsTrueIfSameClass() {
+  void belongToClassReturnsTrueIfSameClass() {
     PSQLState classState = PSQLState.INTEGRITY_CONSTRAINT_VIOLATION;
 
     boolean result = classState.belongToClassOf(PSQLState.UNIQUE_VIOLATION);
@@ -133,7 +131,7 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void belongToClassReturnsFalseIfDiffClass() {
+  void belongToClassReturnsFalseIfDiffClass() {
     PSQLState classState = PSQLState.INTEGRITY_CONSTRAINT_VIOLATION;
 
     boolean result = classState.belongToClassOf(PSQLState.ACTIVE_SQL_TRANSACTION);
@@ -142,7 +140,7 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void belongToClassOfCodeReturnsTrueIfSameClass() {
+  void belongToClassOfCodeReturnsTrueIfSameClass() {
     PSQLState classState = PSQLState.INTEGRITY_CONSTRAINT_VIOLATION;
 
     boolean result = classState.belongToClassOf(PSQLState.UNIQUE_VIOLATION.getCode());
@@ -151,7 +149,7 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void belongToClassOfCodeReturnsFalseIfDiffClass() {
+  void belongToClassOfCodeReturnsFalseIfDiffClass() {
     PSQLState classState = PSQLState.INTEGRITY_CONSTRAINT_VIOLATION;
 
     boolean result = classState.belongToClassOf(PSQLState.ACTIVE_SQL_TRANSACTION.getCode());
@@ -160,7 +158,7 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void belongToClassOfCodeReturnsFalseIfNullCode() {
+  void belongToClassOfCodeReturnsFalseIfNullCode() {
     PSQLState classState = PSQLState.INTEGRITY_CONSTRAINT_VIOLATION;
 
     boolean result = classState.belongToClassOf((String) null);
@@ -169,7 +167,7 @@ public class PSQLStateTest {
   }
 
   @Test
-  public void belongToClassOfCodeWorksWithMixedCase() {
+  void belongToClassOfCodeWorksWithMixedCase() {
     PSQLState classState = PSQLState.FDW_ERROR;
 
     String mixed = mixCase(PSQLState.FDW_REPLY_HANDLE.getCode());

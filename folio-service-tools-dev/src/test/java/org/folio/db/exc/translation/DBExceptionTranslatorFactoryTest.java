@@ -1,50 +1,45 @@
 package org.folio.db.exc.translation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import org.folio.test.junit.TestStartLoggingRule;
+class DBExceptionTranslatorFactoryTest {
 
-public class DBExceptionTranslatorFactoryTest {
-
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   @Test
-  public void instanceReturnsNotNullFactory() {
+  void instanceReturnsNotNullFactory() {
     DBExceptionTranslatorFactory factory = DBExceptionTranslatorFactory.instance();
 
-    assertThat(factory, Matchers.notNullValue());
+    assertThat(factory, notNullValue());
   }
 
   @Test
-  public void createFailsIfNameIsNull() {
-    thrown.expect(NullPointerException.class);
-
-    DBExceptionTranslatorFactory.instance().create(null);
+  void createFailsIfNameIsNull() {
+    DBExceptionTranslatorFactory factory = DBExceptionTranslatorFactory.instance();
+    assertThrows(NullPointerException.class, () -> factory.create(null));
   }
 
   @Test
-  public void createFailsIfNameIsUnknown() {
+  void createFailsIfNameIsUnknown() {
     String name = "SomeName";
+    DBExceptionTranslatorFactory factory = DBExceptionTranslatorFactory.instance();
 
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(name);
-
-    DBExceptionTranslatorFactory.instance().create(name);
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> factory.create(name));
+    assertThat(thrown.getMessage(), containsString(name));
   }
 
   @Test
-  public void createReturnsKnownTranslator() {
+  void createReturnsKnownTranslator() {
     DBExceptionTranslator trans = DBExceptionTranslatorFactory.instance().create("postgresql");
 
-    assertThat(trans, Matchers.notNullValue());
+    assertThat(trans, notNullValue());
   }
 }

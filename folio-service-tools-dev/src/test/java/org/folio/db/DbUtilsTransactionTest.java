@@ -8,31 +8,30 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
+import io.vertx.junit5.VertxExtension;
+import io.vertx.junit5.VertxTestContext;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.folio.postgres.testing.PostgresTesterContainer;
 import org.folio.rest.persist.PostgresClient;
 import org.folio.rest.persist.SQLConnection;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-
-@RunWith(VertxUnitRunner.class)
-public class DbUtilsTransactionTest {
+@ExtendWith(VertxExtension.class)
+class DbUtilsTransactionTest {
 
   private static final String TEST_TABLE = "test_table";
   private static final String INVALID_VALUE = "'abc'";
 
   private static final Vertx VERTX = Vertx.vertx();
 
-  @BeforeClass
-  public static void setUpBeforeClass(TestContext context) {
+  @BeforeAll
+  public static void setUpBeforeClass(VertxTestContext context) {
     var schema = PostgresClient.convertToPsqlStandard(STUB_TENANT);
     PostgresClient.setPostgresTester(new PostgresTesterContainer());
     var postgresClient = PostgresClient.getInstance(VERTX);
@@ -42,52 +41,53 @@ public class DbUtilsTransactionTest {
         + "CREATE SCHEMA " + schema + " AUTHORIZATION " + schema + "; "
         + "CREATE TABLE " + schema + "." + TEST_TABLE + " (value INTEGER); "
         + "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA " + schema + " TO " + schema)
-    .onComplete(context.asyncAssertSuccess());
+    .onComplete(context.succeeding(x -> context.completeNow()));
   }
 
-  @AfterClass
+  @AfterAll
   public static void tearDownAfterClass() {
     PostgresClient.stopPostgresTester();
   }
 
-  @Before
-  public void truncate(TestContext context) {
+  @BeforeEach
+  public void truncate(VertxTestContext context) {
     PostgresClient.getInstance(VERTX, STUB_TENANT)
     .execute("TRUNCATE " + TEST_TABLE)
-    .onComplete(context.asyncAssertSuccess());
+    .onComplete(context.succeeding(x -> context.completeNow()));
   }
 
   @Test
-  public void shouldRollbackTransactionIfItFails(TestContext context) {
+  void shouldRollbackTransactionIfItFails(VertxTestContext context) {
     DbUtils.executeInTransactionWithVertxFuture(STUB_TENANT, VERTX, (client, connection) ->
-      executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(5)")
-        .compose(
-          o -> executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(" + INVALID_VALUE + ")")))
-      .onComplete(context.asyncAssertFailure(e -> assertCount(0, context)));
+        executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(5)")
+          .compose(
+            o -> executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(" + INVALID_VALUE + ")")))
+      .onComplete(context.failing(e -> assertCount(0, context)));
   }
 
   @Test
-  public void shouldCommitTransactionIfItSucceeds(TestContext context) {
+  void shouldCommitTransactionIfItSucceeds(VertxTestContext context) {
     DbUtils.executeInTransactionWithVertxFuture(STUB_TENANT, VERTX, (client, connection) ->
       executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(5)"))
-      .onComplete(context.asyncAssertSuccess(x -> assertCount(1, context)));
+      .onComplete(context.succeeding(x -> assertCount(1, context)));
   }
 
   @Test
-  public void shouldNotCommitTransactionIfItStillInProgress(TestContext context) {
+  void shouldNotCommitTransactionIfItStillInProgress(VertxTestContext context) {
     DbUtils.executeInTransactionWithVertxFuture(STUB_TENANT, VERTX, (client, connection) ->
       executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(5)")
         .compose(o -> assertCount(0, context))
         .compose(o -> executeWithConnection(connection, "INSERT INTO " + TEST_TABLE + "(value) values(5)")))
-    .onComplete(context.asyncAssertSuccess(x -> assertCount(2, context)));
+    .onComplete(context.succeeding(x -> assertCount(2, context)));
   }
 
-  private Future<Void> assertCount(int expectedCount, TestContext context) {
+  private Future<Void> assertCount(int expectedCount, VertxTestContext context) {
     return PostgresClient.getInstance(VERTX, STUB_TENANT)
         .selectSingle("SELECT COUNT(*) as count FROM " + TEST_TABLE)
-        .onComplete(context.asyncAssertSuccess(row -> {
+        .onComplete(context.succeeding(row -> context.verify(() -> {
           assertThat(row.getInteger("count"), is(expectedCount));
-        }))
+          context.completeNow();
+        })))
         .mapEmpty();
   }
 

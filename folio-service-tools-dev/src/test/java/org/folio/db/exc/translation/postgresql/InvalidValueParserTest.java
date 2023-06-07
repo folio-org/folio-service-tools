@@ -7,21 +7,20 @@ import static org.folio.db.ErrorFactory.getErrorMapWithDetailOnly;
 import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;
 
 import org.apache.commons.collections4.IterableGet;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.folio.db.ErrorFactory;
-import org.folio.test.junit.TestStartLoggingRule;
 
-public class InvalidValueParserTest {
+class InvalidValueParserTest {
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
 
   @Test
-  public void parsesToSingleValue() {
+  void parsesToSingleValue() {
     PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(
       getErrorMapWithDetailOnly("Key (name)=(John) already exists")));
 
@@ -33,7 +32,7 @@ public class InvalidValueParserTest {
   }
 
   @Test
-  public void parsesToSeveralValues() {
+  void parsesToSeveralValues() {
     PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(getErrorMapWithDetailOnly(
       "Key (parent_id1, parent_id2)=(22222, 813205855) is not present in table \"parent\".")));
 
@@ -49,7 +48,7 @@ public class InvalidValueParserTest {
   }
 
   @Test
-  public void trimExcessiveSpacesFromKeysValues() {
+  void trimExcessiveSpacesFromKeysValues() {
     PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(getErrorMapWithDetailOnly(
       "Key ( parent_id1  , parent_id2  ) = (  22222  , 813205855  ) is not present in table \"parent\".")));
 
@@ -65,7 +64,7 @@ public class InvalidValueParserTest {
   }
 
   @Test
-  public void parsesToNoValuesIfDetailIsEmpty() {
+  void parsesToNoValuesIfDetailIsEmpty() {
     PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(ErrorFactory.getErrorMapWithDetailNull()));
 
     IterableGet<String, String> values = new InvalidValueParser(em).parse();
@@ -74,7 +73,7 @@ public class InvalidValueParserTest {
   }
 
   @Test
-  public void parsesToNoValuesIfPatternDoesntMatch() {
+  void parsesToNoValuesIfPatternDoesntMatch() {
     PgExceptionAdapter em = new PgExceptionAdapter(createPgExceptionFromMap(getErrorMapWithDetailOnly(
       "Failing row contains (1697635108, 858317485, null, 4670207833.23).")));
 

@@ -1,7 +1,7 @@
 package org.folio.service.exc;
 
 import static java.lang.String.format;
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 
 public class ServiceExceptions {
 
