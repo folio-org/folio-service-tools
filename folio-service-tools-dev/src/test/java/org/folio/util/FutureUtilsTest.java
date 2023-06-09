@@ -1,23 +1,23 @@
 package org.folio.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FutureUtilsTest {
+class FutureUtilsTest {
 
   private static final String RESULT_VALUE = "Completed";
   private static final IllegalArgumentException EXCEPTION_VALUE = new IllegalArgumentException();
 
   @Test
-  public void shouldCompleteVertxFutureWhenCompletableFutureSucceeds() {
+  void shouldCompleteVertxFutureWhenCompletableFutureSucceeds() {
     CompletableFuture<Object> completableFuture = new CompletableFuture<>();
     Future<Object> vertxFuture = FutureUtils.mapCompletableFuture(completableFuture);
     completableFuture.complete(RESULT_VALUE);
@@ -27,7 +27,7 @@ public class FutureUtilsTest {
   }
 
   @Test
-  public void shouldFailVertxFutureWhenCompletableFutureFails() {
+  void shouldFailVertxFutureWhenCompletableFutureFails() {
     CompletableFuture<Object> completableFuture = new CompletableFuture<>();
     Future<Object> vertxFuture = FutureUtils.mapCompletableFuture(completableFuture);
     completableFuture.completeExceptionally(EXCEPTION_VALUE);
@@ -39,14 +39,14 @@ public class FutureUtilsTest {
   }
 
   @Test
-  public void shouldNotCompleteVertxFutureWhenCompletableFutureNotCompleted() {
+  void shouldNotCompleteVertxFutureWhenCompletableFutureNotCompleted() {
     CompletableFuture<Object> completableFuture = new CompletableFuture<>();
     Future<Object> vertxFuture = FutureUtils.mapCompletableFuture(completableFuture);
     assertFalse(vertxFuture.isComplete());
   }
 
   @Test
-  public void shouldCompleteCompletableFutureWhenVertxFutureSucceeds() {
+  void shouldCompleteCompletableFutureWhenVertxFutureSucceeds() {
     Future<Object> vertxFuture = Promise.promise().future();
     CompletableFuture<Object> completableFuture = FutureUtils.mapVertxFuture(vertxFuture);
     completableFuture.complete(RESULT_VALUE);
@@ -54,7 +54,7 @@ public class FutureUtilsTest {
   }
 
   @Test
-  public void shouldFailCompletableFutureWhenVertxFutureFails() {
+  void shouldFailCompletableFutureWhenVertxFutureFails() {
     Future<Object> vertxFuture = Promise.promise().future();
     CompletableFuture<Object> completableFuture = FutureUtils.mapVertxFuture(vertxFuture);
     completableFuture.completeExceptionally(EXCEPTION_VALUE);
@@ -66,7 +66,7 @@ public class FutureUtilsTest {
   }
 
   @Test
-  public void shouldNotCompleteCompletableFutureWhenVertxFutureNotCompleted() {
+  void shouldNotCompleteCompletableFutureWhenVertxFutureNotCompleted() {
     Future<Object> vertxFuture = Promise.promise().future();
     CompletableFuture<Object> completableFuture = FutureUtils.mapVertxFuture(vertxFuture);
     assertFalse(completableFuture.isDone());

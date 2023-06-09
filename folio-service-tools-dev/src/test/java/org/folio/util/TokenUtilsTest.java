@@ -3,9 +3,9 @@ package org.folio.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.folio.util.FutureUtils.mapCompletableFuture;
 
@@ -16,20 +16,19 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import javax.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotAuthorizedException;
 
 import io.vertx.core.Future;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.folio.okapi.common.XOkapiHeaders;
-import org.folio.test.junit.TestStartLoggingRule;
 
-public class TokenUtilsTest {
+class TokenUtilsTest {
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9."
     + "eyJzdWIiOiJURVNUX1VTRVJfTkFNRSIsInVzZXJfaWQiOiJURVNUX1VTRVJfSUQiLCJpYXQiOjE1ODU4OTUxNDQsInRlbmFudCI6ImRpa3UifQ."
@@ -42,7 +41,7 @@ public class TokenUtilsTest {
 
 
   @Test
-  public void testValidToken() {
+  void testValidToken() {
     Optional<UserInfo> actual = TokenUtils.userInfoFromToken(VALID_TOKEN);
 
     assertTrue(actual.isPresent());
@@ -51,14 +50,14 @@ public class TokenUtilsTest {
   }
 
   @Test
-  public void testInvalidToken() {
+  void testInvalidToken() {
     Optional<UserInfo> actual = TokenUtils.userInfoFromToken(INVALID_TOKEN);
 
     assertFalse(actual.isPresent());
   }
 
   @Test
-  public void testFetchReturnsUserInfoFromValidToken() throws ExecutionException, InterruptedException {
+  void testFetchReturnsUserInfoFromValidToken() throws ExecutionException, InterruptedException {
     Map<String, String> headers = new HashMap<>();
     headers.put(XOkapiHeaders.TOKEN, VALID_TOKEN);
 
@@ -71,7 +70,7 @@ public class TokenUtilsTest {
   }
 
   @Test
-  public void testFetchIsCaseInsensitiveToHeaderNames() throws ExecutionException, InterruptedException {
+  void testFetchIsCaseInsensitiveToHeaderNames() throws ExecutionException, InterruptedException {
     Map<String, String> headers = new HashMap<>();
     headers.put(XOkapiHeaders.TOKEN.toUpperCase(), VALID_TOKEN);
 
@@ -84,7 +83,7 @@ public class TokenUtilsTest {
   }
 
   @Test
-  public void testFetchFailedWithNotAuthorizedWhenEmptyToken() {
+  void testFetchFailedWithNotAuthorizedWhenEmptyToken() {
     Future<UserInfo> result = mapCompletableFuture(TokenUtils.fetchUserInfo(Collections.emptyMap()));
 
     assertTrue(result.failed());
@@ -95,7 +94,7 @@ public class TokenUtilsTest {
   }
 
   @Test
-  public void testFetchFailedWithNotAuthorizedWhenInvalidToken() {
+  void testFetchFailedWithNotAuthorizedWhenInvalidToken() {
     Map<String, String> headers = new HashMap<>();
     headers.put(XOkapiHeaders.TOKEN, INVALID_TOKEN);
 

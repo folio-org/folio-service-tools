@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import io.vertx.core.json.JsonObject;
 import io.vertx.sqlclient.Row;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.folio.rest.persist.helpers.LocalRowSet;
 
-public class RowSetUtilsTest {
+class RowSetUtilsTest {
 
   @Test
-  public void testStreamOf() {
+  void testStreamOf() {
     LocalRowSet rowSet = getTestRowSet();
 
     Stream<Row> actual = RowSetUtils.streamOf(rowSet);
@@ -43,7 +43,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapRowSet() {
+  void testMapRowSet() {
     LocalRowSet rowSet = getTestRowSet();
 
     List<Integer> ids = RowSetUtils.mapItems(rowSet, row -> row.getInteger("id"));
@@ -52,7 +52,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapFirstItemInRowSet() {
+  void testMapFirstItemInRowSet() {
     LocalRowSet rowSet = getTestRowSet();
 
     Integer id = RowSetUtils.mapFirstItem(rowSet, row -> row.getInteger("id"));
@@ -60,7 +60,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testNullRow() {
+  void testNullRow() {
     LocalRowSet rowSet = new LocalRowSet(0);
 
     Row item = RowSetUtils.firstItem(rowSet);
@@ -79,7 +79,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapFirstItemInEmptyRowSet() {
+  void testMapFirstItemInEmptyRowSet() {
     LocalRowSet emptyRowSet = new LocalRowSet(0);
 
     Integer id = RowSetUtils.mapFirstItem(emptyRowSet, row -> row.getInteger("id"));
@@ -87,7 +87,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testIsEmptyOfEmptyRowSet() {
+  void testIsEmptyOfEmptyRowSet() {
     LocalRowSet emptyRowSet = new LocalRowSet(0);
 
     boolean isEmpty = RowSetUtils.isEmpty(emptyRowSet);
@@ -95,7 +95,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testIsEmptyOfNonEmptyRowSet() {
+  void testIsEmptyOfNonEmptyRowSet() {
     LocalRowSet emptyRowSet = getTestRowSet();
 
     boolean isEmpty = RowSetUtils.isEmpty(emptyRowSet);
@@ -103,7 +103,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapFromNonNullUUID() {
+  void testMapFromNonNullUUID() {
     UUID uuid = UUID.randomUUID();
 
     String stringUUID = RowSetUtils.fromUUID(uuid);
@@ -111,13 +111,13 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapFromNullDate() {
+  void testMapFromNullDate() {
     OffsetDateTime offsetDateTime = RowSetUtils.fromDate(null);
     assertThat(offsetDateTime, nullValue());
   }
 
   @Test
-  public void testMapFromNonNullDate() {
+  void testMapFromNonNullDate() {
     Date date = Date.from(Instant.now());
 
     OffsetDateTime offsetDateTime = RowSetUtils.fromDate(date);
@@ -125,7 +125,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapFromNonNullOffsetDateTime() {
+  void testMapFromNonNullOffsetDateTime() {
     OffsetDateTime offsetDateTime = OffsetDateTime.now();
 
     Date date = RowSetUtils.toDate(offsetDateTime);
@@ -138,7 +138,7 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testToJsonObject() {
+  void testToJsonObject() {
     assertThat(RowSetUtils.toJsonObject(null), nullValue());
 
     Holder holder = new Holder();
@@ -148,13 +148,13 @@ public class RowSetUtilsTest {
   }
 
   @Test
-  public void testMapFromNullUUID() {
+  void testMapFromNullUUID() {
     String stringUUID = RowSetUtils.fromUUID(null);
     assertThat(stringUUID, nullValue());
   }
 
   @Test
-  public void testMapToUUID() {
+  void testMapToUUID() {
     UUID expected = UUID.randomUUID();
 
     UUID actual = RowSetUtils.toUUID(expected.toString());

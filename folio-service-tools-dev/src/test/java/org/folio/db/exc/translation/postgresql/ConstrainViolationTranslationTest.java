@@ -7,8 +7,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.folio.db.ErrorConstants.CHILD_TABLE_NAME;
 import static org.folio.db.ErrorFactory.getCheckViolationErrorMap;
@@ -23,22 +24,21 @@ import static org.folio.db.ErrorFactory.getUniqueViolationErrorMap;
 import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;
 
 import io.vertx.pgclient.PgException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.folio.db.exc.Constraint;
 import org.folio.db.exc.ConstraintViolationException;
 import org.folio.db.exc.DatabaseException;
-import org.folio.test.junit.TestStartLoggingRule;
 
-public class ConstrainViolationTranslationTest {
+class ConstrainViolationTranslationTest {
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   @Test
-  public void shouldReturnDatabaseExceptionWithIntegrityConstraintViolationCode() {
+  void shouldReturnDatabaseExceptionWithIntegrityConstraintViolationCode() {
     PgException exception = createPgExceptionFromMap((getUniqueViolationErrorMap()));
     DatabaseException apply = ConstrainViolationTranslation.asPartial().apply(exception);
 
@@ -46,7 +46,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnTrueWhenExceptionIsDataException() {
+  void shouldReturnTrueWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getUniqueViolationErrorMap()));
     boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
 
@@ -54,7 +54,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnFalseWhenExceptionIsNotDataException() {
+  void shouldReturnFalseWhenExceptionIsNotDataException() {
     PgException exception = createPgExceptionFromMap((getDataLengthMismatch()));
     boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
 
@@ -62,7 +62,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnFalseWhenExceptionIsNull() {
+  void shouldReturnFalseWhenExceptionIsNull() {
     PgException exception = createPgExceptionFromMap((getErrorMapWithSqlStateNull()));
     boolean isDataException = new ConstrainViolationTranslation.TPredicate().test(exception);
 
@@ -70,7 +70,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnUniqueConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+  void shouldReturnUniqueConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getUniqueViolationErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
@@ -79,7 +79,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnNotNullConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+  void shouldReturnNotNullConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getNotNullViolationErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
@@ -88,7 +88,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnCheckConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+  void shouldReturnCheckConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getCheckViolationErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
@@ -97,7 +97,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnPrimaryKeyConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
+  void shouldReturnPrimaryKeyConstraintViolationExceptionWithSqlStateWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getPrimaryKeyErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
@@ -106,7 +106,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnForeignKeyConstraintViolationExceptionWithAllFieldsWhenExceptionIsDataException() {
+  void shouldReturnForeignKeyConstraintViolationExceptionWithAllFieldsWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getForeignKeyErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
@@ -119,7 +119,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnOtherConstraintViolationWithSqlStateWhenExceptionIsDataException() {
+  void shouldReturnOtherConstraintViolationWithSqlStateWhenExceptionIsDataException() {
     PgException exception = createPgExceptionFromMap((getExclusionViolationErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 
@@ -127,14 +127,15 @@ public class ConstrainViolationTranslationTest {
     assertThat(resultException.getConstraintType(), equalTo(Constraint.Type.OTHER));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void shouldThrowExceptionWhenReceivesNotIntegrityConstraintViolation() {
+  @Test
+  void shouldThrowExceptionWhenReceivesNotIntegrityConstraintViolation() {
     PgException exception = createPgExceptionFromMap((getDataTypeMismatchViolation()));
-    new ConstrainViolationTranslation.TFunction().apply(exception);
+    ConstrainViolationTranslation.TFunction func = new ConstrainViolationTranslation.TFunction();
+    assertThrows(IllegalArgumentException.class, () -> func.apply(exception));
   }
 
   @Test
-  public void shouldReturnConstraintViolationExceptionWithInvalidFieldsPopulated() {
+  void shouldReturnConstraintViolationExceptionWithInvalidFieldsPopulated() {
     // detail: "Key (id1, id2)=(22222, 813205855) already exists"
     PgException exception = createPgExceptionFromMap((getPrimaryKeyErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
@@ -146,7 +147,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnConstraintViolationExceptionWithColumnNamesPopulatedFromDetail() {
+  void shouldReturnConstraintViolationExceptionWithColumnNamesPopulatedFromDetail() {
     // detail: "Key (id1, id2)=(22222, 813205855) already exists"
     PgException exception = createPgExceptionFromMap((getPrimaryKeyErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
@@ -156,7 +157,7 @@ public class ConstrainViolationTranslationTest {
   }
 
   @Test
-  public void shouldReturnConstraintViolationExceptionWithSingleColumnPopulatedFromColumnField() {
+  void shouldReturnConstraintViolationExceptionWithSingleColumnPopulatedFromColumnField() {
     PgException exception = createPgExceptionFromMap((getNotNullViolationErrorMap()));
     ConstraintViolationException resultException = new ConstrainViolationTranslation.TFunction().apply(exception);
 

@@ -1,16 +1,14 @@
 package org.folio.db.exc;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-
-import org.folio.test.junit.TestStartLoggingRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
-public class DbExcUtilsTest {
+class DbExcUtilsTest {
 
   private static final String CONS_NAME = "foo_constraint";
   private static final String CONS_TABLE = "foo_table";
@@ -27,12 +25,12 @@ public class DbExcUtilsTest {
       "NOTNULL", "23502", Constraint.notNull(CONS_NAME, CONS_TABLE, CONS_COL_1));
   private static final ConstraintViolationException CHECK_EXCEPTION = new ConstraintViolationException(
       "CHECK", "23514", Constraint.check(CONS_NAME, CONS_TABLE));
-  
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   @Test
-  public void testUniqueViolation() {
+  void testUniqueViolation() {
     assertTrue(DbExcUtils.isUniqueViolation(UNIQUE_EXCEPTION));
 
     assertFalse(DbExcUtils.isUniqueViolation(SOME_EXCEPTION));
@@ -40,7 +38,7 @@ public class DbExcUtilsTest {
   }
 
   @Test
-  public void testPKViolation() {
+  void testPKViolation() {
     assertTrue(DbExcUtils.isPKViolation(PK_EXCEPTION));
 
     assertFalse(DbExcUtils.isPKViolation(SOME_EXCEPTION));
@@ -48,7 +46,7 @@ public class DbExcUtilsTest {
   }
 
   @Test
-  public void testFKViolation() {
+  void testFKViolation() {
     assertTrue(DbExcUtils.isFKViolation(FK_EXCEPTION));
 
     assertFalse(DbExcUtils.isFKViolation(SOME_EXCEPTION));
@@ -56,7 +54,7 @@ public class DbExcUtilsTest {
   }
 
   @Test
-  public void testNotNullViolation() {
+  void testNotNullViolation() {
     assertTrue(DbExcUtils.isNotNullViolation(NN_EXCEPTION));
 
     assertFalse(DbExcUtils.isNotNullViolation(SOME_EXCEPTION));
@@ -64,7 +62,7 @@ public class DbExcUtilsTest {
   }
 
   @Test
-  public void testCheckViolation() {
+  void testCheckViolation() {
     assertTrue(DbExcUtils.isCheckViolation(CHECK_EXCEPTION));
 
     assertFalse(DbExcUtils.isCheckViolation(SOME_EXCEPTION));

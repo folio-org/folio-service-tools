@@ -3,21 +3,21 @@ package org.folio.common;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import org.folio.okapi.common.XOkapiHeaders;
-import org.folio.test.junit.TestStartLoggingRule;
 
 
-public class OkapiParamsTest {
+class OkapiParamsTest {
 
   private static final String TENANT = "TEST";
   private static final String TOKEN = "qRjjl7T3PfnP8wUPhHcVKrnbYZq0rETLg7EcMW7ciF17rE2YD5He0Dj3LfuTRSwX" +
@@ -31,13 +31,13 @@ public class OkapiParamsTest {
   private static final String SOME_HEADER = "SomeHeader";
   private static final String SOME_VALUE = "SomeValue";
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   private Map<String, String> headers;
   private CaseInsensitiveMap<String, String> caseInsensitiveHeaders;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     headers = new HashMap<>();
     headers.put(XOkapiHeaders.URL, URL);
@@ -48,27 +48,26 @@ public class OkapiParamsTest {
     caseInsensitiveHeaders = new CaseInsensitiveMap<>(headers);
   }
 
-  @Test(expected = NullPointerException.class)
-  public void notConstructedIfHeadersNull() {
-    new OkapiParams(null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void notConstructedIfUrlIsMissingInHeaders() {
-    headers.remove(XOkapiHeaders.URL);
-
-    new OkapiParams(headers);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void notConstructedIfUrlIsInvalid() {
-    headers.put(XOkapiHeaders.URL, "Invalid");
-
-    new OkapiParams(headers);
+  @Test
+  void notConstructedIfHeadersNull() {
+    assertThrows(NullPointerException.class, () -> new OkapiParams(null));
   }
 
   @Test
-  public void constructedFromValidHeaders() {
+  void notConstructedIfUrlIsMissingInHeaders() {
+    headers.remove(XOkapiHeaders.URL);
+    assertThrows(IllegalArgumentException.class, () -> new OkapiParams(headers));
+  }
+
+  @Test
+  void notConstructedIfUrlIsInvalid() {
+    headers.put(XOkapiHeaders.URL, "Invalid");
+
+    assertThrows(IllegalArgumentException.class, () -> new OkapiParams(headers));
+  }
+
+  @Test
+  void constructedFromValidHeaders() {
     OkapiParams params = new OkapiParams(headers);
 
     assertThat(params.getHost(), is(HOST));
@@ -78,7 +77,7 @@ public class OkapiParamsTest {
   }
 
   @Test
-  public void constructedIfTokenAndTenantNotProvided() {
+  void constructedIfTokenAndTenantNotProvided() {
     headers.remove(XOkapiHeaders.TENANT);
     headers.remove(XOkapiHeaders.TOKEN);
 
@@ -91,7 +90,7 @@ public class OkapiParamsTest {
   }
 
   @Test
-  public void returnsCaseInsensitiveHeaders() {
+  void returnsCaseInsensitiveHeaders() {
     OkapiParams params = new OkapiParams(headers);
 
     Map<String, String> actual = params.getHeaders();
@@ -101,7 +100,7 @@ public class OkapiParamsTest {
   }
 
   @Test
-  public void returnsACopyOfCaseInsensitiveHeaders() {
+  void returnsACopyOfCaseInsensitiveHeaders() {
     OkapiParams params = new OkapiParams(headers);
 
     Map<String, String> headers = params.getHeaders();

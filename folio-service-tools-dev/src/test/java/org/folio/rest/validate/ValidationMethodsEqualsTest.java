@@ -1,81 +1,78 @@
 package org.folio.rest.validate;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assume.assumeThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
-import org.folio.test.junit.TestStartLoggingRule;
+import java.util.stream.Stream;
+
+import org.folio.test.extensions.TestStartLoggingExtension;
 import org.jeasy.random.randomizers.collection.ListRandomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
-import org.junit.Rule;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Theories.class)
-public class ValidationMethodsEqualsTest {
+class ValidationMethodsEqualsTest {
 
   private static final String NULL = String.valueOf((Object) null);
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
-  @DataPoints
-  public static String[] strings = generateRandoms();
-
-  @Theory
-  public void validateEqualsIsSuccessfulIfObjectsEqual(String actual, String expected) {
-    assumeThat(actual, equalTo(expected));
+  @ParameterizedTest
+  @MethodSource("generateRandoms")
+  void validateEqualsIsSuccessfulIfObjectsEqual(String actual, String expected) {
+    assumeTrue(Objects.nonNull(actual) && Objects.nonNull(expected) && actual.equals(expected));
 
     Consumer<String> method = ValidationMethods.validateEquals(expected);
 
     method.accept(actual);
   }
 
-  @Theory
-  public void validateEqualsFailsIfObjectsNotEqual(String actual, String expected) {
-    assumeThat(actual, not(equalTo(expected)));
+  @ParameterizedTest
+  @MethodSource("generateRandoms")
+  void validateEqualsFailsIfObjectsNotEqual(String actual, String expected) {
+    assumeFalse(Objects.equals(actual, expected));
 
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(allOf(
+    Consumer<String> method = ValidationMethods.validateEquals(expected);
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> method.accept(actual));
+
+    assertThat(thrown.getMessage(), allOf(
       containsString(defaultString(actual, NULL)),
       containsString(defaultString(expected, NULL))));
-
-    Consumer<String> method = ValidationMethods.validateEquals(expected);
-
-    method.accept(actual);
   }
 
-  @Theory
-  public void validateEqualsWithCustomErrMessage(String actual, String expected) {
-    assumeThat(actual, not(equalTo(expected)));
+  @ParameterizedTest
+  @MethodSource("generateRandoms")
+  void validateEqualsWithCustomErrMessage(String actual, String expected) {
+    assumeFalse(Objects.equals(actual, expected));
 
     String msg = String.format("NOT EQUAL: %s, %s", expected, actual);
 
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(msg);
-
     Consumer<String> method = ValidationMethods.validateEquals(expected, "NOT EQUAL: %s, %s", expected, actual);
-
-    method.accept(actual);
+    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> method.accept(actual));
+    assertThat(thrown.getMessage(), containsString(msg));
   }
 
-  private static String[] generateRandoms() {
+  private static Stream<Arguments> generateRandoms() {
     ListRandomizer<String> randomizer = new ListRandomizer<>(new StringRandomizer(), 10);
 
     List<String> list = randomizer.getRandomValue();
-    list.add(null); // include null also 
+    list.add(null); // include null also
 
-    return list.toArray(new String[0]);
+    return list.stream()
+      .flatMap(str1 ->
+        list.stream().map(str2 -> arguments(str1, str2)));
   }
 
 }

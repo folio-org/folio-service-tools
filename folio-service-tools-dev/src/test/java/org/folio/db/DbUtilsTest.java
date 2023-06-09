@@ -3,6 +3,7 @@ package org.folio.db;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.folio.db.DbUtils.createParams;
 import static org.folio.db.DbUtils.createParamsAsJsonArray;
@@ -12,17 +13,17 @@ import java.util.List;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.sqlclient.Tuple;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DbUtilsTest {
+class DbUtilsTest {
 
-  @Test(expected = NullPointerException.class)
-  public void createParamsFailedWithNPEIfParamsNull() {
-    createParams((Iterable<?>) null);
+  @Test
+  void createParamsFailedWithNPEIfParamsNull() {
+    assertThrows(NullPointerException.class, () -> createParams((Iterable<?>) null));
   }
 
   @Test
-  public void createParamsPopulateJsonArray() {
+  void createParamsPopulateJsonArray() {
     List<?> params = Arrays.asList("param1", 0);
 
     Tuple tuple = createParams(params);
@@ -33,7 +34,7 @@ public class DbUtilsTest {
   }
 
   @Test
-  public void createParamsWorksWithNulls() {
+  void createParamsWorksWithNulls() {
     List<?> params = Arrays.asList("param1", null, 0, null);
 
     Tuple tuple = createParams(params);
@@ -46,7 +47,7 @@ public class DbUtilsTest {
   }
 
   @Test
-  public void createParamsVarArgsPopulateTuple() {
+  void createParamsVarArgsPopulateTuple() {
     Tuple tuple = createParams("param1", 0);
 
     assertThat(tuple.size(), is(2));
@@ -55,13 +56,13 @@ public class DbUtilsTest {
   }
 
 
-  @Test(expected = NullPointerException.class)
-  public void createParamsAsJsonArrayFailedWithNPEIfParamsNull() {
-    createParamsAsJsonArray((Iterable<?>) null);
+  @Test
+  void createParamsAsJsonArrayFailedWithNPEIfParamsNull() {
+    assertThrows(NullPointerException.class, () -> createParamsAsJsonArray((Iterable<?>) null));
   }
 
   @Test
-  public void createParamsAsJsonArrayPopulatesArray() {
+  void createParamsAsJsonArrayPopulatesArray() {
     List<?> params = Arrays.asList("param1", 0);
 
     JsonArray jarray = createParamsAsJsonArray(params);
@@ -72,7 +73,7 @@ public class DbUtilsTest {
   }
 
   @Test
-  public void createParamsAsJsonArrayWorksWithNulls() {
+  void createParamsAsJsonArrayWorksWithNulls() {
     List<?> params = Arrays.asList("param1", null, 0, null);
 
     JsonArray jarray = createParamsAsJsonArray(params);
@@ -85,7 +86,7 @@ public class DbUtilsTest {
   }
 
   @Test
-  public void createParamsAsJsonArrayVarArgsPopulatesArray() {
+  void createParamsAsJsonArrayVarArgsPopulatesArray() {
     JsonArray jarray = createParamsAsJsonArray("param1", 0);
 
     assertThat(jarray.size(), is(2));

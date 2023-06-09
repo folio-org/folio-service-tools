@@ -2,37 +2,31 @@ package org.folio.common.pf;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.folio.common.pf.TestData.fPositiveIntMsg;
 import static org.folio.common.pf.TestData.intsOfEveryKind;
 import static org.folio.common.pf.TestData.positiveInt;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import org.folio.common.log.LogHandler;
-import org.folio.test.junit.TestStartLoggingRule;
 
-@RunWith(Theories.class)
-public class LoggedApplicationTest {
+class LoggedApplicationTest {
 
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   private Function<Integer, String> function = fPositiveIntMsg;
   private Predicate<Integer> predicate = positiveInt;
@@ -43,55 +37,48 @@ public class LoggedApplicationTest {
   private LoggedApplication<Integer, String> logged = new LoggedApplication<>(pf, handler);
 
 
-  @DataPoints
   public static Integer[] testData() {
     return intsOfEveryKind();
   }
 
   @Test
-  public void notCreateWithNPEIfPartialFuncIsNull() {
-    thrown.expect(NullPointerException.class);
-
-    new LoggedApplication<>(null, handler);
+  void notCreateWithNPEIfPartialFuncIsNull() {
+    assertThrows(NullPointerException.class, () -> new LoggedApplication<>(null, handler));
   }
 
   @Test
-  public void notCreateWithNPEIfLogHandlerIsNull() {
-    thrown.expect(NullPointerException.class);
-
-    new LoggedApplication<>(pf, null);
+  void notCreateWithNPEIfLogHandlerIsNull() {
+    assertThrows(NullPointerException.class, () -> new LoggedApplication<>(pf, null));
   }
 
-  @Theory
-  public void isDefinedAtEqualesToPartialFuncOne(Integer i) {
+  @ParameterizedTest
+  @MethodSource("testData")
+  void isDefinedAtEqualesToPartialFuncOne(Integer i) {
     assertThat(logged.isDefinedAt(i), is(pf.isDefinedAt(i)));
   }
 
-  @Theory
-  public void logHandlerCalledIfPartialFuncApplied(Integer i) {
-    assumeThat(logged.isDefinedAt(i), is(true));
+  @ParameterizedTest
+  @MethodSource("testData")
+  void logHandlerCalledIfPartialFuncApplied(Integer i) {
+    assumeTrue(logged.isDefinedAt(i));
 
-    String result = logged.apply(i);
-
-    assertThat(result, is(pf.apply(i)));
+    assertThat(logged.apply(i), is(pf.apply(i)));
     assertTrue(handler.logCalled);
   }
 
-  @Theory
-  public void logHandlerCalledIfPartialFuncNotDefined(Integer i) {
-    assumeThat(logged.isDefinedAt(i), is(false));
+  @ParameterizedTest
+  @MethodSource("testData")
+  void logHandlerCalledIfPartialFuncNotDefined(Integer i) {
+    assumeFalse(logged.isDefinedAt(i));
 
-    try {
-      logged.apply(i);
-      fail();
-    } catch (NotDefinedException e) {
-      assertTrue(handler.logCalled);
-    }
+    assertThrows(NotDefinedException.class, () -> logged.apply(i));
+    assertTrue(handler.logCalled);
   }
 
-  @Theory
-  public void logHandlerNotCalledDuringApplySuccessfully(Integer i) {
-    assumeThat(logged.isDefinedAt(i), is(true)); // just to make sure the function doesn't fail
+  @ParameterizedTest
+  @MethodSource("testData")
+  void logHandlerNotCalledDuringApplySuccessfully(Integer i) {
+    assumeTrue(logged.isDefinedAt(i)); // just to make sure the function doesn't fail
 
     logged.applySuccessfully(i);
 

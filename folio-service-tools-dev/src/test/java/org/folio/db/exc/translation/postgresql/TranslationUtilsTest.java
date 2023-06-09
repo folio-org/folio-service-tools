@@ -1,7 +1,7 @@
 package org.folio.db.exc.translation.postgresql;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.folio.db.ErrorFactory.getErrorMapWithPsqlStateNull;
 import static org.folio.db.ErrorFactory.getPrimaryKeyErrorMap;
@@ -10,19 +10,17 @@ import static org.folio.db.exc.translation.postgresql.TranslationUtils.exception
 import static org.folio.rest.persist.PgExceptionUtil.createPgExceptionFromMap;
 
 import io.vertx.pgclient.PgException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import org.folio.test.junit.TestStartLoggingRule;
+class TranslationUtilsTest {
 
-public class TranslationUtilsTest {
-
-  @Rule
-  public TestRule startLogger = TestStartLoggingRule.instance();
+  @RegisterExtension
+  TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
 
   @Test
-  public void shouldReturnTrueWhenPsqlStateBelongsToStateClass() {
+  void shouldReturnTrueWhenPsqlStateBelongsToStateClass() {
     PgException exception = createPgExceptionFromMap(getPrimaryKeyErrorMap());
     boolean isExceptionWithState = exceptionWithSQLStateClass(exception, PSQLState.UNIQUE_VIOLATION);
 
@@ -30,7 +28,7 @@ public class TranslationUtilsTest {
   }
 
   @Test
-  public void shouldReturnFalseWhenPsqlStateDoesNotBelongToStateClass() {
+  void shouldReturnFalseWhenPsqlStateDoesNotBelongToStateClass() {
     PgException exception = createPgExceptionFromMap(getPrimaryKeyErrorMap());
     boolean isExceptionWithState = exceptionWithSQLStateClass(exception, PSQLState.DUPLICATE_COLUMN);
 
@@ -38,7 +36,7 @@ public class TranslationUtilsTest {
   }
 
   @Test
-  public void shouldReturnFalseWhenPsqlStateClassIsNull() {
+  void shouldReturnFalseWhenPsqlStateClassIsNull() {
     PgException exception = createPgExceptionFromMap(getErrorMapWithPsqlStateNull());
     boolean isExceptionWithState = exceptionWithSQLStateClass(exception, PSQLState.INVALID_COLUMN_REFERENCE);
 
@@ -46,7 +44,7 @@ public class TranslationUtilsTest {
   }
 
   @Test
-  public void shouldReturnTrueWhenPsqlStateEqualsToState() {
+  void shouldReturnTrueWhenPsqlStateEqualsToState() {
     PgException exception = createPgExceptionFromMap(getPrimaryKeyErrorMap());
     boolean isExceptionWithState = exceptionWithSQLState(exception, PSQLState.UNIQUE_VIOLATION);
 
@@ -54,7 +52,7 @@ public class TranslationUtilsTest {
   }
 
   @Test
-  public void shouldReturnFalseWhenPsqlStateDoesNotEqualToState() {
+  void shouldReturnFalseWhenPsqlStateDoesNotEqualToState() {
     PgException exception = createPgExceptionFromMap(getPrimaryKeyErrorMap());
     boolean isExceptionWithState = exceptionWithSQLState(exception, PSQLState.DATABASE_DROPPED);
 
@@ -62,7 +60,7 @@ public class TranslationUtilsTest {
   }
 
   @Test
-  public void shouldReturnFalseWhenPsqlStateIsNull() {
+  void shouldReturnFalseWhenPsqlStateIsNull() {
     PgException exception = createPgExceptionFromMap(getErrorMapWithPsqlStateNull());
     boolean isExceptionWithState = exceptionWithSQLState(exception, PSQLState.DUPLICATE_FILE);
 
