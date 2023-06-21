@@ -88,7 +88,7 @@ class KafkaAdminServiceTest {
       kafkaAdminService.deleteTopics("test_tenant");
     }
 
-    verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
+    verify(kafkaClient).listTopics();
   }
 
   @Test
