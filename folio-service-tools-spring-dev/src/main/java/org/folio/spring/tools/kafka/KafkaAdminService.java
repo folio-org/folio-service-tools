@@ -3,11 +3,18 @@ package org.folio.spring.tools.kafka;
 import static java.util.Optional.ofNullable;
 import static org.folio.spring.tools.kafka.KafkaUtils.getTenantTopicName;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.DeleteTopicsResult;
+import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Uuid;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -43,15 +50,43 @@ public class KafkaAdminService {
   }
 
   public void deleteTopics(String tenantId) {
-    var configTopics = kafkaProperties.getTopics();
-    var topicsToDelete = configTopics.stream()
+    if (tenantId == null || tenantId.isEmpty()) {
+      log.warn("Invalid tenantId: {}", tenantId);
+      return;
+    }
+
+    List<String> topicsToDelete = kafkaProperties.getTopics().stream()
       .map(topic -> getTenantTopicName(topic.getName(), tenantId))
       .toList();
+
     log.info("Deleting topics for tenantId {}: [topics: {}]", tenantId, topicsToDelete);
-    try (var kafkaClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-      kafkaClient.deleteTopics(topicsToDelete);
+
+    try (AdminClient kafkaClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+      ListTopicsResult listTopicsResult = kafkaClient.listTopics();
+      if (listTopicsResult == null || listTopicsResult.names() == null) {
+        log.warn("No existing topics to delete for tenantId: {}", tenantId);
+        return;
+      }
+      Set<String> existingTopics = listTopicsResult.names().get();
+      List<String> topicsToBeDeleted = topicsToDelete.stream()
+        .filter(existingTopics::contains)
+        .toList();
+
+      if (topicsToBeDeleted.isEmpty()) {
+        log.warn("No existing topics to delete for tenantId: {}", tenantId);
+        return;
+      }
+
+      DeleteTopicsResult deleteTopicsResult = kafkaClient.deleteTopics(topicsToBeDeleted);
+
+      try {
+        deleteTopicsResult.all().get();
+        log.info("Topics deleted successfully: {}", topicsToBeDeleted);
+      } catch (Exception ex) {
+        log.warn("Unable to delete topics for tenantId: {}", tenantId, ex);
+      }
     } catch (Exception ex) {
-      log.warn("Unable to delete topics: {}", topicsToDelete, ex);
+      log.warn("Error occurred while deleting topics for tenantId: {}", tenantId, ex);
     }
   }
 

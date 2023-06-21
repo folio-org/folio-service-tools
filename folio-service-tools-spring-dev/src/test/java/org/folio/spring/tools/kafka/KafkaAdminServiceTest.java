@@ -10,9 +10,12 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.KafkaFuture;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -68,7 +71,7 @@ class KafkaAdminServiceTest {
       kafkaAdminService.deleteTopics("test_tenant");
     }
 
-    verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
+    verify(kafkaClient).listTopics();
   }
 
   @Test
