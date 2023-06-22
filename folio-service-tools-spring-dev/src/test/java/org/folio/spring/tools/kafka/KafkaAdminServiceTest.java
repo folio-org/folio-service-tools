@@ -66,7 +66,7 @@ class KafkaAdminServiceTest {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
-    var future = KafkaFuture.completedFuture(Set.of("test_topic"));
+    var future = KafkaFuture.completedFuture(Set.of("folio.test_tenant.test_topic"));
     var listTopicResult = mock(ListTopicsResult.class);
     when(listTopicResult.names()).thenReturn(future);
 
@@ -78,7 +78,7 @@ class KafkaAdminServiceTest {
     }
 
     verify(kafkaClient).listTopics();
-    verify(kafkaClient).deleteTopics(List.of("test_topic"));
+    verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
   }
 
   @Test
