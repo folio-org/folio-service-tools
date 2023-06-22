@@ -2,19 +2,21 @@ package org.folio.spring.tools.kafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.*;
-
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.internals.KafkaFutureImpl;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -63,17 +65,20 @@ class KafkaAdminServiceTest {
   void deleteKafkaTopics_positive() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
-    when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
 
-    var listTopicResult = mock(ListTopicsResult.class);
     var future = KafkaFuture.completedFuture(Set.of("test_topic"));
+    var listTopicResult = mock(ListTopicsResult.class);
     when(listTopicResult.names()).thenReturn(future);
-    kafkaAdminService.deleteTopics("test_tenant");
 
-    try(var kafkaClient = mock(KafkaAdminClient.class)) {
-      verify(kafkaClient).listTopics();
-      verify(kafkaClient).deleteTopics(List.of("test_topic"));
+    when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
+    var kafkaClient = mock(AdminClient.class);
+    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+      when(kafkaClient.listTopics()).thenReturn(listTopicResult);
+      kafkaAdminService.deleteTopics("test_tenant");
     }
+
+    verify(kafkaClient).listTopics();
+    verify(kafkaClient).deleteTopics(List.of("test_topic"));
   }
 
   @Test
