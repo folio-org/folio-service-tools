@@ -79,14 +79,20 @@ public class KafkaAdminService {
 
       DeleteTopicsResult deleteTopicsResult = kafkaClient.deleteTopics(topicsToBeDeleted);
 
-      try {
-        deleteTopicsResult.all().get();
-        log.info("Topics deleted successfully: {}", topicsToBeDeleted);
-      } catch (Exception ex) {
-        log.warn("Unable to delete topics for tenantId: {}", tenantId, ex);
-      }
+      processDeleteResult(tenantId, topicsToBeDeleted, deleteTopicsResult);
     } catch (Exception ex) {
       log.warn("Error occurred while deleting topics for tenantId: {}", tenantId, ex);
+    }
+  }
+
+  private static void processDeleteResult(String tenantId,
+                                          List<String> topicsToBeDeleted,
+                                          DeleteTopicsResult deleteTopicsResult) {
+    try {
+      deleteTopicsResult.all().get();
+      log.info("Topics deleted successfully: {}", topicsToBeDeleted);
+    } catch (Exception ex) {
+      log.warn("Unable to delete topics for tenantId: {}", tenantId, ex);
     }
   }
 
