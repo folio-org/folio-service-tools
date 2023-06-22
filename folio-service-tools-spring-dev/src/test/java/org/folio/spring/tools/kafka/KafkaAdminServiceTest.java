@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.KafkaFuture;
@@ -82,6 +83,26 @@ class KafkaAdminServiceTest {
   }
 
   @Test
+  void deleteKafkaTopics_positive_withNoMatchingTopic() {
+    FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
+    kafkaTopic.setName("test_topic");
+
+    var future = KafkaFuture.completedFuture(Set.of("folio.test_tenant.test_topic2"));
+    var listTopicResult = mock(ListTopicsResult.class);
+    when(listTopicResult.names()).thenReturn(future);
+
+    when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
+    var kafkaClient = mock(AdminClient.class);
+    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+      when(kafkaClient.listTopics()).thenReturn(listTopicResult);
+      kafkaAdminService.deleteTopics("test_tenant");
+    }
+
+    verify(kafkaClient).listTopics();
+    verify(kafkaClient, never()).deleteTopics(List.of("folio.test_tenant.test_topic"));
+  }
+
+  @Test
   void deleteKafkaTopics_positive_withNoTopicsFound() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
@@ -113,7 +134,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_negative_shouldCallAnyMethodWithNoTenant() {
+  void deleteKafkaTopics_negative_shouldNotCallAnyMethodWithNoTenant() {
     var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
