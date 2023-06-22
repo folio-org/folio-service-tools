@@ -49,7 +49,7 @@ public class KafkaAdminService {
     kafkaAdmin.initialize();
   }
 
-  public void deleteTopics(String tenantId) {
+  public void deleteTopics(String tenantId) throws Exception {
     if (tenantId == null || tenantId.isEmpty()) {
       log.warn("Invalid tenantId: {}", tenantId);
       return;
@@ -79,21 +79,14 @@ public class KafkaAdminService {
 
       DeleteTopicsResult deleteTopicsResult = kafkaClient.deleteTopics(topicsToBeDeleted);
 
-      processDeleteResult(tenantId, topicsToBeDeleted, deleteTopicsResult);
-    } catch (Exception ex) {
-      log.warn("Error occurred while deleting topics for tenantId: {}", tenantId, ex);
+      processDeleteResult(topicsToBeDeleted, deleteTopicsResult);
     }
   }
 
-  private static void processDeleteResult(String tenantId,
-                                          List<String> topicsToBeDeleted,
-                                          DeleteTopicsResult deleteTopicsResult) {
-    try {
-      deleteTopicsResult.all().get();
-      log.info("Topics deleted successfully: {}", topicsToBeDeleted);
-    } catch (Exception ex) {
-      log.warn("Unable to delete topics for tenantId: {}", tenantId, ex);
-    }
+  private static void processDeleteResult(List<String> topicsToBeDeleted,
+                                          DeleteTopicsResult deleteTopicsResult) throws Exception {
+    deleteTopicsResult.all().get();
+    log.info("Topics deleted successfully: {}", topicsToBeDeleted);
   }
 
   /**
