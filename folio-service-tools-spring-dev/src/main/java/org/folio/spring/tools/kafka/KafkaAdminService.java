@@ -14,6 +14,7 @@ import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,7 @@ public class KafkaAdminService {
         existingTopics = listTopicsResult.names().get();
       } catch (InterruptedException | ExecutionException e) {
         Thread.currentThread().interrupt();
-        throw new RuntimeException(e);
+        throw new KafkaException(String.format("No existing topics to delete for tenantId: %s", tenantId));
       }
       List<String> topicsToBeDeleted = topicsToDelete.stream()
         .filter(existingTopics::contains)

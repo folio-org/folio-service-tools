@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.listener.MessageListenerContainer;
@@ -124,7 +125,7 @@ class KafkaAdminServiceTest {
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
     try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
       when(kafkaClient.deleteTopics(anyCollection()))
-        .thenThrow(new IllegalStateException());
+        .thenThrow(new KafkaException(String.format("No existing topics to delete for tenantId: test_tenant")));
 
       kafkaAdminService.deleteTopics("test_tenant");
     }
