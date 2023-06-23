@@ -1,16 +1,14 @@
 package org.folio.spring.tools.kafka;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsResult;
@@ -83,6 +81,8 @@ class KafkaAdminServiceTest {
 
     verify(kafkaClient).listTopics();
     verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
+    assertThatThrownBy(()->kafkaAdminService.deleteTopics("folio.test_tenant.test_topic"))
+      .isInstanceOf(Exception.class);
   }
 
   @Test

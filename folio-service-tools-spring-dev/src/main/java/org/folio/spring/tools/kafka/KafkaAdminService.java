@@ -64,7 +64,7 @@ public class KafkaAdminService {
         log.warn("No existing topics to delete for tenantId: {}", tenantId);
         return;
       }
-      Set<String> existingTopics = null;
+      Set<String> existingTopics;
       try {
         existingTopics = listTopicsResult.names().get();
       } catch (InterruptedException | ExecutionException e) {
