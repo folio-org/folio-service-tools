@@ -5,6 +5,7 @@ import static org.folio.spring.tools.kafka.KafkaUtils.getTenantTopicName;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -45,7 +46,7 @@ public class KafkaAdminService {
     kafkaAdmin.initialize();
   }
 
-  public void deleteTopics(String tenantId) throws Exception {
+  public void deleteTopics(String tenantId) {
     if (tenantId == null || tenantId.isEmpty()) {
       log.warn("Invalid tenantId: {}", tenantId);
       return;
@@ -63,7 +64,13 @@ public class KafkaAdminService {
         log.warn("No existing topics to delete for tenantId: {}", tenantId);
         return;
       }
-      Set<String> existingTopics = listTopicsResult.names().get();
+      Set<String> existingTopics = null;
+      try {
+        existingTopics = listTopicsResult.names().get();
+      } catch (InterruptedException | ExecutionException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
+      }
       List<String> topicsToBeDeleted = topicsToDelete.stream()
         .filter(existingTopics::contains)
         .toList();
@@ -80,8 +87,13 @@ public class KafkaAdminService {
   }
 
   private static void processDeleteResult(List<String> topicsToBeDeleted,
-                                          DeleteTopicsResult deleteTopicsResult) throws Exception {
-    deleteTopicsResult.all().get();
+                                          DeleteTopicsResult deleteTopicsResult) {
+    try {
+      deleteTopicsResult.all().get();
+    } catch (InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException(e);
+    }
     log.info("Topics deleted successfully: {}", topicsToBeDeleted);
   }
 
@@ -99,7 +111,7 @@ public class KafkaAdminService {
   }
 
   private List<NewTopic> toTenantSpecificTopic(List<FolioKafkaProperties.KafkaTopic> localConfigTopics,
-    String tenantId) {
+                                               String tenantId) {
     return localConfigTopics.stream()
       .map(topic -> toKafkaTopic(topic, tenantId))
       .toList();

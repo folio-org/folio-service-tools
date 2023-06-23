@@ -63,7 +63,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_positive() throws Exception  {
+  void deleteKafkaTopics_positive()  {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
@@ -86,7 +86,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_positive_withNoMatchingTopic() throws Exception  {
+  void deleteKafkaTopics_positive_withNoMatchingTopic()  {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
@@ -106,7 +106,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_positive_withNoTopicsFound() throws Exception  {
+  void deleteKafkaTopics_positive_withNoTopicsFound()  {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
@@ -120,7 +120,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_negative_shouldHandleException() throws Exception {
+  void deleteKafkaTopics_negative_shouldHandleException() {
     var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
@@ -137,7 +137,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_negative_shouldNotCallAnyMethodWithNoTenant() throws Exception  {
+  void deleteKafkaTopics_negative_shouldNotCallAnyMethodWithNoTenant()  {
     var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
