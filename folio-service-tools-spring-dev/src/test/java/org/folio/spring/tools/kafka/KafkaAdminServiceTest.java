@@ -7,8 +7,6 @@ import static org.mockito.Mockito.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsResult;
@@ -81,8 +79,6 @@ class KafkaAdminServiceTest {
 
     verify(kafkaClient).listTopics();
     verify(kafkaClient).deleteTopics(List.of("folio.test_tenant.test_topic"));
-    assertThatThrownBy(()->kafkaAdminService.deleteTopics("folio.test_tenant.test_topic"))
-      .isInstanceOf(Exception.class);
   }
 
   @Test
@@ -129,6 +125,30 @@ class KafkaAdminServiceTest {
     try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
       when(kafkaClient.deleteTopics(anyCollection()))
         .thenThrow(new IllegalStateException());
+
+      kafkaAdminService.deleteTopics("test_tenant");
+    }
+
+    verify(kafkaClient).listTopics();
+  }
+
+  @Test
+  void deleteKafkaTopics_negative_shouldHandleExceptionWithNoDeleteResult() {
+    var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
+    kafkaTopic.setName("test_tenant");
+
+    var future = KafkaFuture.completedFuture(Set.of("folio.test_tenant.test_topic"));
+    var listTopicResult = mock(ListTopicsResult.class);
+    when(listTopicResult.names()).thenReturn(future);
+
+    var kafkaClient = mock(AdminClient.class);
+    when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
+    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+
+      var deleteTopicsResult = mock(DeleteTopicsResult.class);
+      when(kafkaClient.listTopics()).thenReturn(listTopicResult);
+      when(kafkaClient.deleteTopics(anyCollection())).thenReturn(deleteTopicsResult);
+      when(deleteTopicsResult.all()).thenThrow(new RuntimeException());
 
       kafkaAdminService.deleteTopics("test_tenant");
     }
