@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -121,7 +122,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_negative_shouldHandleException() throws ExecutionException, InterruptedException {
+  void deleteKafkaTopics_negative_shouldHandleException() throws ExecutionException, InterruptedException, KafkaException {
     var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
     var future = KafkaFuture.completedFuture(Set.of("folio.test_tenant.test_topic"));
@@ -133,13 +134,12 @@ class KafkaAdminServiceTest {
     try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
 
       when(kafkaClient.listTopics()).thenReturn(listTopicResult);
-      when(listTopicResult.names().get()).thenThrow(new KafkaException("No existing topics to delete for tenantId: test_tenant"));
+      given(listTopicResult.names().get()).willAnswer(invocation -> {throw new InterruptedException();});
 
-      Exception exception = assertThrows(KafkaException.class, ()->{
+      assertThrows(InterruptedException.class, ()->{
         kafkaAdminService.deleteTopics("test_tenant");
       });
 
-      assertEquals("No existing topics to delete for tenantId: test_tenant", exception.getMessage());
     }
 
     verify(kafkaClient).listTopics();
