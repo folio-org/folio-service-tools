@@ -83,17 +83,17 @@ public class KafkaAdminService {
 
       DeleteTopicsResult deleteTopicsResult = kafkaClient.deleteTopics(topicsToBeDeleted);
 
-      processDeleteResult(topicsToBeDeleted, deleteTopicsResult);
+      processDeleteResult(topicsToBeDeleted, deleteTopicsResult, tenantId);
     }
   }
 
   private static void processDeleteResult(List<String> topicsToBeDeleted,
-                                          DeleteTopicsResult deleteTopicsResult) {
+                                          DeleteTopicsResult deleteTopicsResult, String tenantId) {
     try {
       deleteTopicsResult.all().get();
     } catch (InterruptedException | ExecutionException e) {
       Thread.currentThread().interrupt();
-      throw new RuntimeException(e);
+      throw new KafkaException(String.format("There was an error while deleting topics by tenant: %s", tenantId));
     }
     log.info("Topics deleted successfully: {}", topicsToBeDeleted);
   }
