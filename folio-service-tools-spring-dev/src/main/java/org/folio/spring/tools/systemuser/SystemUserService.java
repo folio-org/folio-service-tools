@@ -1,10 +1,16 @@
 package org.folio.spring.tools.systemuser;
 
+import static java.util.Objects.isNull;
+import static org.folio.spring.tools.utils.TokenUtils.encodeRefreshTokenToCookie;
+import static org.folio.spring.tools.utils.TokenUtils.parseUserTokenFromCookies;
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
+
 import com.github.benmanes.caffeine.cache.Cache;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.scope.FolioExecutionContextSetter;
 import org.folio.spring.tools.client.AuthnClient;
 import org.folio.spring.tools.client.AuthnClient.UserCredentials;
@@ -12,7 +18,9 @@ import org.folio.spring.tools.client.UsersClient;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.folio.spring.tools.context.ExecutionContextBuilder;
 import org.folio.spring.tools.model.SystemUser;
+import org.folio.spring.tools.model.UserToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -30,7 +38,9 @@ public class SystemUserService {
   private Cache<String, SystemUser> systemUserCache;
 
   /**
-   * Authenticate system user.
+   * Get authenticate system user.
+   * Get from cache if present (or login otherwise). Call refresh token endpoint in case
+   * access token expired. Call login endpoint in case refresh token expired
    *
    * @param tenantId The tenant name
    * @return {@link org.folio.spring.tools.model.SystemUser} with token value
@@ -38,9 +48,25 @@ public class SystemUserService {
   public SystemUser getAuthedSystemUser(String tenantId) {
     if (systemUserCache == null) {
       return getSystemUser(tenantId);
-    } else {
-      return systemUserCache.get(tenantId, this::getSystemUser);
     }
+
+    var user = systemUserCache.get(tenantId, this::getSystemUser);
+    var userToken = user.token();
+    var now = Instant.now();
+    if (userToken.accessTokenExpiration().isAfter(now)) {
+      return user;
+    }
+
+    systemUserCache.invalidate(tenantId);
+    if (userToken.refreshTokenExpiration().isAfter(now)) {
+      var newToken = refreshUserToken(user.username(), userToken);
+      user = user.withToken(newToken);
+    } else {
+      user = getSystemUser(tenantId);
+    }
+    systemUserCache.put(tenantId, user);
+
+    return user;
   }
 
   /**
@@ -49,13 +75,9 @@ public class SystemUserService {
    * @param user {@link org.folio.spring.tools.model.SystemUser} to log with
    * @return token value
    */
-  public String authSystemUser(SystemUser user) {
-    var response = authnClient.getApiKey(new UserCredentials(user.username(), systemUserProperties.password()));
-
-    return Optional.ofNullable(response.getHeaders().get(XOkapiHeaders.TOKEN))
-      .filter(list -> !CollectionUtils.isEmpty(list))
-      .map(list -> list.get(0))
-      .orElseThrow(() -> new IllegalStateException(String.format("User [%s] cannot log in", user.username())));
+  public UserToken authSystemUser(SystemUser user) {
+    return getToken(() -> authnClient.login(new UserCredentials(user.username(), systemUserProperties.password())),
+      user.username(), "log in");
   }
 
   @Autowired(required = false)
@@ -83,6 +105,27 @@ public class SystemUserService {
         .map(UsersClient.User::id).orElse(null);
       return systemUser.withUserId(userId);
     }
+  }
+
+  private UserToken refreshUserToken(String username, UserToken oldToken) {
+    var refreshTokenCookie = encodeRefreshTokenToCookie(oldToken.refreshToken(), oldToken.refreshTokenExpiration());
+    return getToken(() -> authnClient.refreshTokens(refreshTokenCookie), username, "refresh");
+  }
+
+  private UserToken getToken(Supplier<ResponseEntity<AuthnClient.LoginResponse>> tokenSupplier,
+                             String username, String action) {
+    var response = tokenSupplier.get();
+
+    if (isNull(response.getBody())) {
+      throw new IllegalStateException(String.format(
+        "User [%s] cannot %s because expire times missing for status %s", username, action, response.getStatusCode()));
+    }
+
+    return Optional.ofNullable(response.getHeaders().get(SET_COOKIE))
+      .filter(list -> !CollectionUtils.isEmpty(list))
+      .map(cookieHeaders -> parseUserTokenFromCookies(cookieHeaders, response.getBody()))
+      .orElseThrow(() -> new IllegalStateException(String.format(
+        "User [%s] cannot %s because of missing tokens", username, action)));
   }
 
 }

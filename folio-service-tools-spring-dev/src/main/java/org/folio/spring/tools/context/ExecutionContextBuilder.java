@@ -42,7 +42,7 @@ public class ExecutionContextBuilder {
   public FolioExecutionContext forSystemUser(SystemUser systemUser) {
     var okapiUrl = systemUser.okapiUrl();
     var tenantId = systemUser.tenantId();
-    var token = systemUser.token();
+    var token = systemUser.token() == null ? null : systemUser.token().accessToken();
     var userId = systemUser.userId();
 
     return buildContext(okapiUrl, tenantId, token, userId, null);
