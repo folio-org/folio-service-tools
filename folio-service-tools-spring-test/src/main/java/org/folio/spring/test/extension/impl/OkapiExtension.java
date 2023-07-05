@@ -7,6 +7,7 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.ReflectionUtils.setField;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.extension.Extension;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.PrimitiveIterator;
@@ -18,7 +19,15 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class OkapiExtension implements BeforeAllCallback, AfterAllCallback {
 
   private static final String OKAPI_URL_PROPERTY = "folio.okapi-url";
-  private static final WireMockServer WIRE_MOCK = new WireMockServer(wireMockConfig().port(nextFreePort()));
+  private final WireMockServer wireMock;
+
+  public OkapiExtension() {
+    this(new Extension[0]);
+  }
+
+  public OkapiExtension(Extension... wiremockExtensions) {
+    wireMock = new WireMockServer(wireMockConfig().port(nextFreePort()).extensions(wiremockExtensions));
+  }
 
   private static int nextFreePort() {
     return nextFreePort(ThreadLocalRandom.current() //NOSONAR
@@ -53,15 +62,15 @@ public class OkapiExtension implements BeforeAllCallback, AfterAllCallback {
 
   @Override
   public void afterAll(ExtensionContext extensionContext) {
-    WIRE_MOCK.stop();
+    wireMock.stop();
     System.clearProperty(OKAPI_URL_PROPERTY);
   }
 
   @Override
   public void beforeAll(ExtensionContext extensionContext) {
-    WIRE_MOCK.start();
+    wireMock.start();
 
-    var okapiConfiguration = new OkapiConfiguration(WIRE_MOCK, WIRE_MOCK.port());
+    var okapiConfiguration = new OkapiConfiguration(wireMock, wireMock.port());
     System.setProperty(OKAPI_URL_PROPERTY, okapiConfiguration.getOkapiUrl());
 
     ofNullable(findField(extensionContext.getRequiredTestClass(), null, OkapiConfiguration.class))
