@@ -2,7 +2,7 @@ package org.folio.rest.exc;
 
 import static org.folio.rest.ResponseHelper.statusWithText;
 
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.core.Response;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -45,7 +45,7 @@ public class RestExceptionResponses {
 
       Future<javax.ws.rs.core.Response> future = promise.future();
       if (future.succeeded()) {
-        return asJakartaResponse(future.result());
+        return asJavaxResponse(future.result());
       } else {
         return statusWithText(HttpStatus.SC_INTERNAL_SERVER_ERROR, Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
       }
@@ -62,7 +62,7 @@ public class RestExceptionResponses {
     return responseBuilder.build();
   }
 
-  private static Response asJakartaResponse(javax.ws.rs.core.Response javaxResponse) {
+  private static Response asJavaxResponse(javax.ws.rs.core.Response javaxResponse) {
     Response.ResponseBuilder builder = Response.status(javaxResponse.getStatus());
     Optional.ofNullable(javaxResponse.getHeaderString(CONTENT_TYPE))
       .ifPresent(contentTypeHeader -> builder.header(CONTENT_TYPE, contentTypeHeader));

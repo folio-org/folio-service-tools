@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import jakarta.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotAuthorizedException;
 
 import io.vertx.core.Future;
 import org.folio.test.extensions.TestStartLoggingExtension;

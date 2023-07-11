@@ -1,6 +1,6 @@
 package org.folio.rest.exc;
 
-import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -16,10 +16,10 @@ import java.util.function.Function;
 
 import io.vertx.core.Promise;
 import io.vertx.core.Future;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.NotAuthorizedException;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.Response;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.folio.rest.tools.utils.ValidationHelper;
