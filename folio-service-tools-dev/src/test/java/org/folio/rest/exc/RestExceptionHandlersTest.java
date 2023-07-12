@@ -1,28 +1,21 @@
 package org.folio.rest.exc;
 
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 
-import io.vertx.core.Promise;
-import io.vertx.core.Future;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.folio.rest.tools.utils.ValidationHelper;
 import org.junit.jupiter.api.Test;
 
 import org.folio.common.pf.PartialFunction;
@@ -34,9 +27,6 @@ import org.folio.db.exc.InvalidUUIDException;
 import org.folio.db.exc.translation.postgresql.InformationMessageConstants;
 import org.folio.rest.persist.PgExceptionUtil;
 import org.folio.rest.persist.cql.CQLQueryValidationException;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 
 class RestExceptionHandlersTest {
 
@@ -144,40 +134,13 @@ class RestExceptionHandlersTest {
   }
 
   @Test
-  void generalHandlerCreates500ResponseWhenRunWithJavaVersionLessThan17() {
-    Promise<javax.ws.rs.core.Response> promise = mock(Promise.class);
-    javax.ws.rs.core.Response javaxResponse = mock(javax.ws.rs.core.Response.class);
-    Future<javax.ws.rs.core.Response> future = mock(Future.class);
-    when(javaxResponse.getStatus()).thenReturn(SC_INTERNAL_SERVER_ERROR);
-    when(javaxResponse.getHeaderString("Content-Type")).thenReturn("text/plain");
-    when(javaxResponse.getEntity()).thenReturn("Internal Error");
-
-    try (MockedStatic<Promise> mockPromise = Mockito.mockStatic(Promise.class)) {
-      try (MockedStatic<ValidationHelper> mockedValidation = Mockito.mockStatic(ValidationHelper.class)) {
-        mockedValidation.when(() -> ValidationHelper.handleError(any(), any())).thenAnswer((Answer<Void>) invocation -> null);
-        mockPromise.when(Promise::promise).thenReturn(promise);
-        when(promise.future()).thenReturn(future);
-        when(future.succeeded()).thenReturn(true);
-        when(future.result()).thenReturn(javaxResponse);
-
-        PartialFunction<Throwable, Response> handler = RestExceptionHandlers.generalHandler();
-        Response response = handler.apply(new Exception("GENERAL"));
-
-        assertThat(response, notNullValue());
-        assertThat(response.getStatus(), is(SC_INTERNAL_SERVER_ERROR));
-        assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
-      }
-    }
-  }
-
-  @Test
-  void generalHandlerCreates500ResponseWhenRunWithJavaVersion17OrAbove() {
+  void generalHandlerCreates500Response() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.generalHandler();
 
     Response response = handler.apply(new Exception("GENERAL"));
 
     assertThat(response, notNullValue());
-    assertThat(response.getStatus(), is(SC_INTERNAL_SERVER_ERROR));
+    assertThat(response.getStatus(), is(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     assertThat(response.getMediaType(), is(TEXT_PLAIN_TYPE));
   }
 
