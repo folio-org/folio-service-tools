@@ -5,8 +5,8 @@ import static java.lang.System.setProperty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.folio.spring.tools.config.properties.FolioEnvironment.getFolioEnvName;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
