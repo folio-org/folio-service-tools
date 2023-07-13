@@ -34,7 +34,7 @@
     <vertx.version>4.3.8</vertx.version>
     <raml-module-builder.version>35.0.5</raml-module-builder.version>
     <spring-boot.version>3.0.5</spring-boot.version>
-    <folio-spring-base.version>6.0.1</folio-spring-base.version>
+    <folio-spring-base.version>7.1.2</folio-spring-base.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
