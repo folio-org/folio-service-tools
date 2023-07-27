@@ -1,12 +1,15 @@
 package org.folio.spring.tools.kafka;
 
 import org.apache.commons.lang3.StringUtils;
+import org.folio.spring.tools.config.properties.FolioEnvironment;
 
 public interface FolioKafkaTopic {
 
   String topicName();
 
-  String envId();
+  default String envId() {
+    return FolioEnvironment.getFolioEnvName();
+  }
 
   default String fullTopicName(String tenantId) {
     var envId = envId();

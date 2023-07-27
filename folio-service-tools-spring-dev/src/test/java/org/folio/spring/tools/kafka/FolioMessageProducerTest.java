@@ -59,6 +59,26 @@ class FolioMessageProducerTest {
   }
 
   @Test
+  void sendMessages_withKeyMappers() {
+    var testMessage = new TestMessage("test");
+
+    when(context.getTenantId()).thenReturn(TENANT_ID);
+    when(context.getOkapiHeaders()).thenReturn(Map.of());
+    when(template.send(producerRecordCaptor.capture())).thenReturn(CompletableFuture.completedFuture(null));
+
+    producer.setContext(context);
+    producer.setKeyMapper(TestMessage::getValue);
+    producer.sendMessages(List.of(testMessage));
+
+    var actual = producerRecordCaptor.getValue();
+
+    assertMsgBodyIsValid(actual);
+    assertThat(actual.key()).isEqualTo(testMessage.getValue());
+
+    assertThat(actual.headers()).isEmpty();
+  }
+
+  @Test
   void sendMessages_withHeaders() {
     var testMessage = new TestMessage("test");
 
@@ -104,7 +124,6 @@ class FolioMessageProducerTest {
     assertThat(actual.headers())
       .extracting(Header::key, header -> new String(header.value()))
       .contains(tuple("okapi-header", "okapi"));
-
   }
 
   private void assertMsgBodyIsValid(ProducerRecord<String, TestMessage> actual) {
