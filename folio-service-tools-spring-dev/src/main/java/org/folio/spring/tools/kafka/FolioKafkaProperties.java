@@ -1,12 +1,13 @@
 package org.folio.spring.tools.kafka;
 
-import java.util.List;
-import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Application properties for kafka message consumer.
@@ -15,6 +16,10 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("folio.kafka")
 public class FolioKafkaProperties {
+  /**
+   * Kafka header name for tenant_id
+   */
+  public static final String TENANT_ID = "folio.tenantId";
 
   /**
    * Map with settings for application kafka listeners.
