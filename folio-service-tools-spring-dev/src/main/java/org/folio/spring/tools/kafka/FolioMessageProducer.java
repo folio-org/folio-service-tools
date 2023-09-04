@@ -2,6 +2,7 @@ package org.folio.spring.tools.kafka;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,7 @@ public class FolioMessageProducer<T extends BaseKafkaMessage> {
   private FolioExecutionContext context;
 
   private Predicate<Header> headerPredicate;
+  private Function<T, String> keyMapper;
 
   /**
    * Populates bodies with `tenant` and `ts` fields from {@link BaseKafkaMessage}
@@ -48,13 +50,22 @@ public class FolioMessageProducer<T extends BaseKafkaMessage> {
     this.headerPredicate = headerPredicate;
   }
 
+  public void setKeyMapper(Function<T, String> keyMapper) {
+    this.keyMapper = keyMapper;
+  }
+
   private ProducerRecord<String, T> toProducerRecord(T msgBody) {
     final var tenantId = context.getTenantId();
 
     msgBody.setTenant(tenantId);
     msgBody.setTs(DateUtils.currentTsInString());
 
-    var producerRecord = new ProducerRecord<String, T>(topic.fullTopicName(tenantId), msgBody);
+    ProducerRecord<String, T> producerRecord;
+    if (keyMapper == null) {
+      producerRecord = new ProducerRecord<>(topic.fullTopicName(tenantId), msgBody);
+    } else {
+      producerRecord = new ProducerRecord<>(topic.fullTopicName(tenantId), keyMapper.apply(msgBody), msgBody);
+    }
 
     KafkaUtils.toKafkaHeaders(headerPredicate == null ? context.getOkapiHeaders() : context.getAllHeaders()).stream()
       .filter(header -> headerPredicate == null || headerPredicate.test(header))
