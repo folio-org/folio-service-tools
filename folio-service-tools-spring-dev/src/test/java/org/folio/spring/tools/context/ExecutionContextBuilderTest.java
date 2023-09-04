@@ -3,13 +3,11 @@ package org.folio.spring.tools.context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import org.folio.spring.FolioModuleMetadata;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.tools.model.SystemUser;
-import org.folio.spring.tools.model.UserToken;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.MessageHeaders;
 
@@ -22,7 +20,7 @@ class ExecutionContextBuilderTest {
   void canCreateSystemUserContextForSystemUser() {
     var userId = UUID.randomUUID();
     var systemUser = SystemUser.builder()
-      .token(new UserToken("token", Instant.EPOCH, "", Instant.EPOCH)).username("username")
+      .token("token").username("username")
       .okapiUrl("okapi").tenantId("tenant")
       .userId(userId.toString())
       .build();
