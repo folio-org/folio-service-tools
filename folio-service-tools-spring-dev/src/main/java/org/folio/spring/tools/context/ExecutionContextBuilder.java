@@ -19,7 +19,7 @@ import org.folio.spring.tools.model.SystemUser;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("folioExecutionContextBuilder")
 @RequiredArgsConstructor
 public class ExecutionContextBuilder {
 

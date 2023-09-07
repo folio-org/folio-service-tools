@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient("authn")
+@FeignClient(value = "authnClient", url = "http://authn")
 public interface AuthnClient {
 
   @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE)

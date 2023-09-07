@@ -26,7 +26,7 @@ class SystemUserScopedExecutionServiceTest {
   @InjectMocks
   private SystemUserScopedExecutionService systemUserScopedExecutionService;
   @Mock
-  private ExecutionContextBuilder contextBuilder;
+  private ExecutionContextBuilder folioExecutionContextBuilder;
   @Mock
   private SystemUserService systemUserService;
   @Mock
@@ -36,7 +36,7 @@ class SystemUserScopedExecutionServiceTest {
   void executeSystemUserScoped_positive() {
     var systemUser = SystemUser.builder().build();
     when(systemUserService.getAuthedSystemUser(TENANT_ID)).thenReturn(systemUser);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
+    when(folioExecutionContextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
 
     var actual = systemUserScopedExecutionService.executeSystemUserScoped(TENANT_ID, () -> "result");
 
@@ -47,7 +47,7 @@ class SystemUserScopedExecutionServiceTest {
   void executeAsyncSystemUserScoped_positive() {
     var systemUser = SystemUser.builder().build();
     when(systemUserService.getAuthedSystemUser(TENANT_ID)).thenReturn(systemUser);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
+    when(folioExecutionContextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
     var runnableMock = mock(Runnable.class);
 
     systemUserScopedExecutionService.executeAsyncSystemUserScoped(TENANT_ID, runnableMock);
@@ -60,7 +60,7 @@ class SystemUserScopedExecutionServiceTest {
     var systemUser = SystemUser.builder().build();
     when(folioExecutionContext.getTenantId()).thenReturn(TENANT_ID);
     when(systemUserService.getAuthedSystemUser(TENANT_ID)).thenReturn(systemUser);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
+    when(folioExecutionContextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
 
     var actual = systemUserScopedExecutionService.executeSystemUserScoped(() -> "result");
 
@@ -71,7 +71,7 @@ class SystemUserScopedExecutionServiceTest {
   void executeSystemUserScoped_negative_throwsException() {
     var systemUser = SystemUser.builder().build();
     when(systemUserService.getAuthedSystemUser(TENANT_ID)).thenReturn(systemUser);
-    when(contextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
+    when(folioExecutionContextBuilder.forSystemUser(systemUser)).thenReturn(new DefaultFolioExecutionContext(null, emptyMap()));
 
     Callable<Object> callable = () -> {
       throw new Exception("error");

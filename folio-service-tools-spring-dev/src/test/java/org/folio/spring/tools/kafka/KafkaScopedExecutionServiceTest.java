@@ -24,12 +24,12 @@ class KafkaScopedExecutionServiceTest {
   @InjectMocks
   private KafkaScopedExecutionService kafkaScopedExecutionService;
   @Mock
-  private ExecutionContextBuilder contextBuilder;
+  private ExecutionContextBuilder folioExecutionContextBuilder;
 
   @Test
   void executeKafkaScoped_positive_callable() {
     var messageHeaders = new MessageHeaders(Map.of("header1", "val"));
-    when(contextBuilder.forMessageHeaders(messageHeaders)).thenReturn(
+    when(folioExecutionContextBuilder.forMessageHeaders(messageHeaders)).thenReturn(
       new DefaultFolioExecutionContext(null, emptyMap()));
 
     var actual = kafkaScopedExecutionService.executeKafkaScoped(messageHeaders, () -> "result");
@@ -40,7 +40,7 @@ class KafkaScopedExecutionServiceTest {
   @Test
   void executeKafkaScoped_positive_runnable() {
     var messageHeaders = new MessageHeaders(Map.of("header1", "val"));
-    when(contextBuilder.forMessageHeaders(messageHeaders)).thenReturn(
+    when(folioExecutionContextBuilder.forMessageHeaders(messageHeaders)).thenReturn(
       new DefaultFolioExecutionContext(null, emptyMap()));
     var runnableMock = mock(Runnable.class);
 
@@ -52,7 +52,7 @@ class KafkaScopedExecutionServiceTest {
   @Test
   void executeSystemUserScoped_negative_throwsException() {
     var messageHeaders = new MessageHeaders(Map.of("header1", "val"));
-    when(contextBuilder.forMessageHeaders(messageHeaders)).thenReturn(
+    when(folioExecutionContextBuilder.forMessageHeaders(messageHeaders)).thenReturn(
       new DefaultFolioExecutionContext(null, emptyMap()));
 
     Callable<Object> callable = () -> {

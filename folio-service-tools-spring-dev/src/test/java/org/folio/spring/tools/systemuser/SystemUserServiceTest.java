@@ -35,7 +35,7 @@ class SystemUserServiceTest {
   @Mock
   private AuthnClient authnClient;
   @Mock
-  private ExecutionContextBuilder contextBuilder;
+  private ExecutionContextBuilder folioExecutionContextBuilder;
   @Mock
   private ResponseEntity<String> expectedResponse;
   @Mock
@@ -66,7 +66,7 @@ class SystemUserServiceTest {
     when(prepareSystemUserService.getFolioUser("username")).thenReturn(Optional.of(
       new UsersClient.User(expectedUserId.toString(), "username", true, new UsersClient.User.Personal("last"))));
     when(environment.getOkapiUrl()).thenReturn(OKAPI_URL);
-    when(contextBuilder.forSystemUser(any())).thenReturn(context);
+    when(folioExecutionContextBuilder.forSystemUser(any())).thenReturn(context);
     when(expectedResponse.getHeaders()).thenReturn(expectedHeaders);
 
     var actual = systemUserService(systemUserProperties()).getAuthedSystemUser(TENANT_ID);
@@ -87,7 +87,7 @@ class SystemUserServiceTest {
     verify(userCache).get(eq(TENANT_ID), any());
     verify(authnClient, never()).getApiKey(any());
     verify(environment, never()).getOkapiUrl();
-    verify(contextBuilder, never()).forSystemUser(any());
+    verify(folioExecutionContextBuilder, never()).forSystemUser(any());
   }
 
   @Test
@@ -131,6 +131,6 @@ class SystemUserServiceTest {
   }
 
   private SystemUserService systemUserService(SystemUserProperties properties) {
-    return new SystemUserService(contextBuilder, properties, environment, authnClient, prepareSystemUserService);
+    return new SystemUserService(folioExecutionContextBuilder, properties, environment, authnClient, prepareSystemUserService);
   }
 }
