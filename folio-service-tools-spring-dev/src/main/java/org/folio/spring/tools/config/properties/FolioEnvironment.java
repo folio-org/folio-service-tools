@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 
 @Data
 @Validated
-@Configuration
+@Configuration("folioEnvironmentVariables")
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 @ConfigurationProperties(prefix = "folio")

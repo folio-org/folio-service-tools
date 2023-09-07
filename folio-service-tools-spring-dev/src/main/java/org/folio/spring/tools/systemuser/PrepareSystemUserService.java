@@ -22,7 +22,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Log4j2
-@Service
+@Service("folioPrepareSystemUserService")
 @RequiredArgsConstructor
 public class PrepareSystemUserService {
 

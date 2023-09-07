@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaScopedExecutionService {
 
-  private final ExecutionContextBuilder contextBuilder;
+  private final ExecutionContextBuilder folioExecutionContextBuilder;
 
   /**
    * Executes given action in scope of kafka message.
@@ -56,6 +56,6 @@ public class KafkaScopedExecutionService {
   }
 
   private FolioExecutionContext folioExecutionContext(MessageHeaders headers) {
-    return contextBuilder.forMessageHeaders(headers);
+    return folioExecutionContextBuilder.forMessageHeaders(headers);
   }
 }

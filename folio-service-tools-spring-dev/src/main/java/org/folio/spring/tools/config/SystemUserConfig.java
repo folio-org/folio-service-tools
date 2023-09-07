@@ -27,7 +27,7 @@ public class SystemUserConfig {
 
   @Bean
   @ConditionalOnClass({Caffeine.class, CaffeineCacheManager.class})
-  public Cache<String, SystemUser> systemUserCache() {
+  public Cache<String, SystemUser> folioSystemUserCache() {
     return Caffeine.from("maximumSize=500,expireAfterWrite=3600s").build();
   }
 }

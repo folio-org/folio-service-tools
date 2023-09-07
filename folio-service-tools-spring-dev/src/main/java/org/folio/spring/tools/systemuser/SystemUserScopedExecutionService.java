@@ -9,13 +9,13 @@ import org.folio.spring.tools.context.ExecutionContextBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("folioSystemUserScopedExecutionService")
 @RequiredArgsConstructor
 public class SystemUserScopedExecutionService {
 
   private final FolioExecutionContext executionContext;
-  private final ExecutionContextBuilder contextBuilder;
-  private final SystemUserService systemUserService;
+  private final ExecutionContextBuilder folioExecutionContextBuilder;
+  private final SystemUserService folioSystemUserService;
 
   /**
    * Executes given action in scope of system user.
@@ -62,6 +62,6 @@ public class SystemUserScopedExecutionService {
   }
 
   private FolioExecutionContext folioExecutionContext(String tenantId) {
-    return contextBuilder.forSystemUser(systemUserService.getAuthedSystemUser(tenantId));
+    return folioExecutionContextBuilder.forSystemUser(folioSystemUserService.getAuthedSystemUser(tenantId));
   }
 }

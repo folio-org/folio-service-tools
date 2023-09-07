@@ -17,15 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 @Log4j2
-@Service
+@Service("folioSystemUserService")
 @RequiredArgsConstructor
 public class SystemUserService {
 
-  private final ExecutionContextBuilder contextBuilder;
+  private final ExecutionContextBuilder folioExecutionContextBuilder;
   private final SystemUserProperties systemUserProperties;
-  private final FolioEnvironment environment;
+  private final FolioEnvironment folioEnvironmentVariables;
   private final AuthnClient authnClient;
-  private final PrepareSystemUserService prepareUserService;
+  private final PrepareSystemUserService folioPrepareSystemUserService;
 
   private Cache<String, SystemUser> systemUserCache;
 
@@ -68,18 +68,18 @@ public class SystemUserService {
     var systemUser = SystemUser.builder()
       .tenantId(tenantId)
       .username(systemUserProperties.username())
-      .okapiUrl(environment.getOkapiUrl())
+      .okapiUrl(folioEnvironmentVariables.getOkapiUrl())
       .build();
 
     // create context for authentication
-    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
+    try (var fex = new FolioExecutionContextSetter(folioExecutionContextBuilder.forSystemUser(systemUser))) {
       var token = authSystemUser(systemUser);
       systemUser = systemUser.withToken(token);
       log.info("Token for system user has been issued [tenantId={}]", tenantId);
     }
     // create context for user with token for getting user id
-    try (var fex = new FolioExecutionContextSetter(contextBuilder.forSystemUser(systemUser))) {
-      var userId = prepareUserService.getFolioUser(systemUserProperties.username())
+    try (var fex = new FolioExecutionContextSetter(folioExecutionContextBuilder.forSystemUser(systemUser))) {
+      var userId = folioPrepareSystemUserService.getFolioUser(systemUserProperties.username())
         .map(UsersClient.User::id).orElse(null);
       return systemUser.withUserId(userId);
     }
