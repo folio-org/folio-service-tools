@@ -63,6 +63,12 @@ public class KafkaUtils {
     return String.join(".", envName, tenantToUse, initialName);
   }
 
+  public static String getTenantTopicNameWithNamespace(String initialName, String envName, String tenantId, String namespace) {
+    var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? TENANT_COLLECTION_TOPIC_QUALIFIER : tenantId;
+
+    return String.join(".", envName, namespace, tenantToUse, initialName);
+  }
+
   public static List<Header> toKafkaHeaders(Map<String, Collection<String>> requestHeaders) {
     if (requestHeaders == null || requestHeaders.isEmpty()) {
       return Collections.emptyList();
