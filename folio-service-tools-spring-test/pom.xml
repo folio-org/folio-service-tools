@@ -10,8 +10,8 @@
   <artifactId>folio-service-tools-spring-test</artifactId>
 
   <properties>
-    <testcontainer.version>1.17.6</testcontainer.version>
-    <wiremock.version>2.27.2</wiremock.version>
+    <testcontainer.version>1.19.1</testcontainer.version>
+    <wiremock.version>3.0.1</wiremock.version>
     <awaitility.version>4.2.0</awaitility.version>
 
     <sonar.exclusions>
