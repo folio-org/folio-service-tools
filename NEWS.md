@@ -1,3 +1,25 @@
+## v3.1.0 2023-10-10
+
+### Features
+* Add userId to FolioExecutionContext for system-user ([FST-46](https://issues.folio.org/browse/FST-46))
+* Add common Kafka message producer ([FST-48](https://issues.folio.org/browse/FST-48))
+* Add functionality for Kafka topic deleting ([FST-59](https://issues.folio.org/browse/FST-59))
+* Add tenant identifying header & add tenant collection topics
+
+### Bug fixes 
+* Use lastname property for lastname in system-user creation ([FST-44](https://issues.folio.org/browse/FST-44))
+
+### Tech Dept
+* Fix dependencies and failing tests after migrating to Java 17([FST-58](https://issues.folio.org/browse/FST-58))
+
+### Dependencies
+* Bump `vertx` from `4.3.8` to `4.4.5`
+* Bump `raml-module-builder` from `35.0.5` to `35.1.0`
+* Bump `spring-boot` from `3.0.2` to `3.1.4`
+* Bump `folio-spring-base` from `6.0.1` to `7.2.0`
+* Bump `mod-configuration-client` from `5.9.0` to `5.9.2`
+* Bump `commons-io` from `2.11.0` to `2.14.0`
+
 ## v3.0.0 2023-02-10
 * FST-32 Migrate to Java 17
 * FST-32 Implement Kafka topic creation
