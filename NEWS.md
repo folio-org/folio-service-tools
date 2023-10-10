@@ -1,5 +1,22 @@
-## v3.1.0 2023-10-10
+## v3.2.0 In progress
+### Breaking changes
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
 
+### Features
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+
+### Bug fixes
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+
+### Tech Dept
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+
+### Dependencies
+* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
+* Add `LIB_NAME` `2.7.4`
+* Remove `LIB_NAME`
+
+## v3.1.0 2023-10-10
 ### Features
 * Add userId to FolioExecutionContext for system-user ([FST-46](https://issues.folio.org/browse/FST-46))
 * Add common Kafka message producer ([FST-48](https://issues.folio.org/browse/FST-48))
