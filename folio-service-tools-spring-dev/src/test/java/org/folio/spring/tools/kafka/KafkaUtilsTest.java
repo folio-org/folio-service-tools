@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.folio.spring.tools.kafka.FolioKafkaProperties.TENANT_ID;
 import static org.folio.spring.tools.kafka.KafkaUtils.getTenantTopicName;
+import static org.folio.spring.tools.kafka.KafkaUtils.getTenantTopicNameWithNamespace;
 import static org.folio.spring.tools.kafka.KafkaUtils.isTenantCollectionTopicsEnabled;
 import static org.folio.spring.tools.kafka.KafkaUtils.setTenantCollectionTopicsQualifier;
 import static org.folio.spring.tools.kafka.KafkaUtils.toKafkaHeaders;
@@ -42,15 +43,28 @@ class KafkaUtilsTest {
 
   @Test
   public void shouldFormatTopicName() {
-    String topicName = getTenantTopicName("DI_COMPLETED","folio", "TEST");
+    String initialName = "DI_COMPLETED";
+    String envName = "folio";
+    String namespace = "Default";
+    String tenantId = "TEST";
+
+    String topicName = getTenantTopicName(initialName, envName, tenantId);
     assertNotNull(topicName);
     assertEquals("folio.TEST.DI_COMPLETED", topicName);
 
+    String topicNameWithNamespace = getTenantTopicNameWithNamespace(initialName, envName, tenantId, namespace);
+    assertNotNull(topicNameWithNamespace);
+    assertEquals("folio.Default.TEST.DI_COMPLETED", topicNameWithNamespace);
+
     // enable tenant collection topics
     setTenantCollectionTopicsQualifier("COLLECTION");
-    topicName = getTenantTopicName("DI_COMPLETED","folio", "TEST");
+    topicName = getTenantTopicName(initialName, envName, tenantId);
     assertNotNull(topicName);
     assertEquals("folio.COLLECTION.DI_COMPLETED", topicName);
+
+    topicNameWithNamespace = getTenantTopicNameWithNamespace(initialName, envName, tenantId, namespace);
+    assertNotNull(topicNameWithNamespace);
+    assertEquals("folio.Default.COLLECTION.DI_COMPLETED", topicNameWithNamespace);
   }
 
   @Test
