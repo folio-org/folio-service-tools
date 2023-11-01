@@ -10,7 +10,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 @Configuration
 @ConditionalOnClass({KafkaTemplate.class})
 @Conditional(OnKafkaTopicsPropertyCondition.class)
-@ComponentScan(basePackages = {"org.folio.spring.tools.kafka", "org.folio.spring.tools.context"})
+@ComponentScan(basePackages = {"org.folio.spring.tools.kafka"})
 public class KafkaConfig {
 
 }
