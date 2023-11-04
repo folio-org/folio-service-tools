@@ -2,6 +2,20 @@
 ### Breaking changes
 * Remove system-user related functionality from "folio-service-tools-spring-dev" ([FST-68](https://issues.folio.org/browse/FST-68))
 
+### Features
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+
+### Bug fixes
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+
+### Tech Dept
+* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+
+### Dependencies
+* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
+* Add `LIB_NAME` `VERSION`
+* Remove `LIB_NAME`
+
 ## v3.1.0 2023-10-10
 ### Features
 * Add userId to FolioExecutionContext for system-user ([FST-46](https://issues.folio.org/browse/FST-46))
