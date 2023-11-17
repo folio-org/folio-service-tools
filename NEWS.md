@@ -8,11 +8,14 @@
 ### Bug fixes
 * Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
 
-### Tech Dept
-* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+### Tech Debt
+* Spring Boot 3.1.5, folio-spring-base 7.2.2, Snakeyaml, Snappy ([FST-70](https://issues.folio.org/browse/FST-70))
 
 ### Dependencies
-* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
+* Bump `Spring Boot` from `3.1.4` to `3.1.5`
+* Bump `folio-spring-base` from `7.2.0` to `7.2.2`
+* Bump `snakeyaml` from `1.33` to `2.2`
+* Bump `snappy-java` from `1.1.8.4` to `1.1.10.5`
 * Add `LIB_NAME` `VERSION`
 * Remove `LIB_NAME`
 
