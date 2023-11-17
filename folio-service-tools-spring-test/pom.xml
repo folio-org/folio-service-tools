@@ -26,6 +26,15 @@
       <version>${folio-spring-base.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Remove snakeyaml when folio-spring-base comes with snakeyaml >= 2.0
+         https://security.snyk.io/package/maven/org.yaml:snakeyaml
+    -->
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
