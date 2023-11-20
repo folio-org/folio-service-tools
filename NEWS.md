@@ -3,7 +3,7 @@
 * Remove system-user related functionality from "folio-service-tools-spring-dev" ([FST-68](https://issues.folio.org/browse/FST-68))
 
 ### Features
-* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+* Implement `TESTCONTAINERS_POSTGRES_IMAGE` build time env variable ([FST-69](https://issues.folio.org/browse/FST-69))
 
 ### Bug fixes
 * Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
