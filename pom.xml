@@ -31,7 +31,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <log4j.version>2.22.1</log4j.version>
-    <vertx.version>4.4.5</vertx.version>
+    <vertx.version>4.5.3</vertx.version>
     <raml-module-builder.version>35.1.0</raml-module-builder.version>
     <spring-boot.version>3.1.5</spring-boot.version>
     <!-- Remove snakeyaml.version when spring-boot comes with snakeyaml >= 2.0
