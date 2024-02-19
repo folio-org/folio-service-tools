@@ -33,7 +33,7 @@
     <log4j.version>2.22.1</log4j.version>
     <vertx.version>4.5.3</vertx.version>
     <raml-module-builder.version>35.1.1</raml-module-builder.version>
-    <spring-boot.version>3.1.5</spring-boot.version>
+    <spring-boot.version>3.2.2</spring-boot.version>
     <!-- Remove snakeyaml.version when spring-boot comes with snakeyaml >= 2.0
          This fixes https://security.snyk.io/package/maven/org.yaml:snakeyaml
     -->
