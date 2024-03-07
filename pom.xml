@@ -48,7 +48,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- Test dependencies versions -->
-    <mockito.version>5.10.0</mockito.version>
+    <mockito.version>5.11.0</mockito.version>
     <wiremock.version>2.35.2</wiremock.version>
     <jetty.version>9.4.49.v20220914</jetty.version>
     <rest-assured.version>5.4.0</rest-assured.version>
