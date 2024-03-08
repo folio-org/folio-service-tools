@@ -1,9 +1,7 @@
 ## v4.0.0 In progress
 ### Breaking changes
 * Remove system-user related functionality from "folio-service-tools-spring-dev" ([FST-68](https://issues.folio.org/browse/FST-68))
-
-### Features
-* Implement `TESTCONTAINERS_POSTGRES_IMAGE` build time env variable ([FST-69](https://issues.folio.org/browse/FST-69))
+* Remove "folio-service-tools-spring-test" submodule ([FST-74](https://issues.folio.org/browse/FST-74))
 
 ### Bug fixes
 * Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
