@@ -1,6 +1,7 @@
 ## v4.0.0 In progress
 ### Breaking changes
 * Remove system-user related functionality from "folio-service-tools-spring-dev" ([FST-68](https://issues.folio.org/browse/FST-68))
+* Delete TestSetUpHelper.getPgClient() method ([FST-73](https://issues.folio.org/browse/FST-73))
 
 ### Features
 * Implement `TESTCONTAINERS_POSTGRES_IMAGE` build time env variable ([FST-69](https://issues.folio.org/browse/FST-69))
