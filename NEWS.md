@@ -1,6 +1,7 @@
 ## v4.0.0 In progress
 ### Breaking changes
 * Remove system-user related functionality from "folio-service-tools-spring-dev" ([FST-68](https://issues.folio.org/browse/FST-68))
+* Delete TestSetUpHelper.getPgClient() method ([FST-73](https://issues.folio.org/browse/FST-73))
 * Remove "folio-service-tools-spring-test" submodule ([FST-74](https://issues.folio.org/browse/FST-74))
 
 ### Bug fixes

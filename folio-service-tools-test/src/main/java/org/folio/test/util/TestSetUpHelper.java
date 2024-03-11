@@ -28,7 +28,6 @@ public class TestSetUpHelper {
   private static String host;
   private static boolean started;
   private static Vertx vertx;
-  private static PostgresClient pgClient;
 
   public static void startVertxAndPostgres(Map<String, String> configProperties) {
     vertx = Vertx.vertx();
@@ -74,11 +73,7 @@ public class TestSetUpHelper {
 
   public static void stopVertxAndPostgres() {
     CompletableFuture<Void> future = new CompletableFuture<>();
-    vertx.close(res -> {
-      pgClient = null;
-
-      future.complete(null);
-    });
+    vertx.close(res -> future.complete(null));
     future.join();
     started = false;
   }
@@ -97,10 +92,6 @@ public class TestSetUpHelper {
 
   public static Vertx getVertx() {
     return vertx;
-  }
-
-  public static PostgresClient getPgClient() {
-    return pgClient;
   }
 
   private static DeploymentOptions getDeploymentOptions(Map<String, String> configProperties) {
