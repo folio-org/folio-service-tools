@@ -10,7 +10,6 @@
     <module>folio-service-tools-dev</module>
     <module>folio-service-tools-test</module>
     <module>folio-service-tools-spring-dev</module>
-    <module>folio-service-tools-spring-test</module>
   </modules>
 
   <name>folio-service-tools</name>
