@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.folio</groupId>
     <artifactId>folio-service-tools</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>folio-service-tools-dev</artifactId>
@@ -14,7 +14,7 @@
 
   <properties>
     <httpcore.version>4.4.16</httpcore.version>
-    <mod-configuration-client.version>5.9.2</mod-configuration-client.version>
+    <mod-configuration-client.version>5.10.0</mod-configuration-client.version>
     <sonar.exclusions>
       src/main/java/**/PartialFunctions.*,
       src/main/java/**/service/exc/*,
@@ -75,9 +75,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-jre8-standalone</artifactId>
-      <version>${wiremock.version}</version>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock-standalone</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
