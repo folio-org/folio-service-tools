@@ -1,22 +1,21 @@
-## v4.0.0 In progress
+## v4.0.0 2024-03-18
 ### Breaking changes
 * Remove system-user related functionality from "folio-service-tools-spring-dev" ([FST-68](https://issues.folio.org/browse/FST-68))
 * Delete TestSetUpHelper.getPgClient() method ([FST-73](https://issues.folio.org/browse/FST-73))
 * Remove "folio-service-tools-spring-test" submodule ([FST-74](https://issues.folio.org/browse/FST-74))
 
 ### Bug fixes
-* Description ([ISSUE_NUMBER](https://issues.folio.org/browse/ISSUE_NUMBER))
+* Avoid additional totalRecords SQL query for offset=0 limit=MAX_INT ([FST-72](https://issues.folio.org/browse/FST-72))
 
 ### Tech Debt
 * Spring Boot 3.1.5, folio-spring-base 7.2.2, Snakeyaml, Snappy ([FST-70](https://issues.folio.org/browse/FST-70))
 
 ### Dependencies
-* Bump `Spring Boot` from `3.1.4` to `3.1.5`
-* Bump `folio-spring-base` from `7.2.0` to `7.2.2`
-* Bump `snakeyaml` from `1.33` to `2.2`
-* Bump `snappy-java` from `1.1.8.4` to `1.1.10.5`
-* Add `LIB_NAME` `VERSION`
-* Remove `LIB_NAME`
+* Bump `Spring Boot` from `3.1.4` to `3.2.3`
+* Bump `folio-spring-base` from `7.2.0` to `8.1.0`
+* Bump `log4j` from `2.19.0` to `2.23.1`
+* Bump `vertx` from `4.4.5` to `4.5.5`
+* Bump `raml-module-builder` from `35.1.0` to `35.2.0`
 
 ## v3.1.0 2023-10-10
 ### Features
