@@ -53,7 +53,7 @@ class ModConfigurationTest {
     .options(WireMockConfiguration.wireMockConfig()
       .dynamicPort()
       .notifier(new Slf4jNotifier(true))
-      .extensions(new ResponseTemplateTransformer(true)))
+      .globalTemplating(true))
     .configureStaticDsl(true)
     .build();
 
