@@ -32,20 +32,10 @@
     <log4j.version>2.23.1</log4j.version>
     <vertx.version>4.5.6</vertx.version>
     <raml-module-builder.version>35.2.0</raml-module-builder.version>
-    <spring-boot.version>3.2.3</spring-boot.version>
 
-    <!-- Remove snakeyaml.version when spring-boot comes with snakeyaml >= 2.0
-         This fixes https://security.snyk.io/package/maven/org.yaml:snakeyaml
-    -->
-    <snakeyaml.version>2.2</snakeyaml.version>
-    <!-- Remove snappy-java when spring-kafka comes with snappy-java >= 1.1.10.4:
-         https://security.snyk.io/package/maven/org.xerial.snappy:snappy-java
-    -->
-    <snappy.version>1.1.10.5</snappy.version>
+    <spring-boot.version>3.2.4</spring-boot.version>
+
     <folio-spring-base.version>8.1.0</folio-spring-base.version>
-
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- Test dependencies versions -->
     <mockito.version>5.11.0</mockito.version>
