@@ -1,6 +1,6 @@
 ## v3.1.1 2024-04-10
 ### Bug fixes
-* Do not delete kafka topics if collection topic is enabled ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+* Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
 
 ## v3.1.0 2023-10-10
 ### Features
