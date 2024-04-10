@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.folio</groupId>
   <artifactId>folio-service-tools</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.1</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -229,7 +229,7 @@
     <url>https://github.com/folio-org/folio-service-tools</url>
     <connection>scm:git:git://github.com/folio-org/folio-service-tools</connection>
     <developerConnection>scm:git:git@github.com:folio-org/folio-service-tools.git</developerConnection>
-    <tag>release/v4.0</tag>
+    <tag>v4.0.1</tag>
   </scm>
 
   <repositories>
