@@ -1,24 +1,6 @@
-## v4.1.0 YYYY-mm-DD - In progress
-### Breaking changes
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### New APIs versions
-* Provides `API_NAME vX.Y`
-* Requires `API_NAME vX.Y`
-
-### Features
-* Description ([ISSUE](https://folio-org.atlassian.net//browse/ISSUE))
-
+## v4.0.1 2024-04-10
 ### Bug fixes
-* Do not delete kafka topics if collection topic is enabled ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### Tech Dept
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### Dependencies
-* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
-* Add `LIB_NAME` `VERSION`
-* Remove `LIB_NAME`
+* Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
 
 ## v4.0.0 2024-03-18
 ### Breaking changes
