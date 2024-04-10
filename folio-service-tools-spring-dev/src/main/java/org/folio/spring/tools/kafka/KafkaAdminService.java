@@ -48,6 +48,10 @@ public class KafkaAdminService {
   }
 
   public void deleteTopics(String tenantId) {
+    if (KafkaUtils.isTenantCollectionTopicsEnabled()) {
+      log.warn("Topics will not be deleted tenant collection topic feature is enabled");
+      return;
+    }
     if (tenantId == null || tenantId.isEmpty()) {
       log.warn("Invalid tenantId: {}", tenantId);
       return;
