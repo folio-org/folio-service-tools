@@ -1,5 +1,8 @@
-## v3.1.0 2023-10-10
+## v3.1.1 2024-04-10
+### Bug fixes
+* Do not delete kafka topics if collection topic is enabled ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
 
+## v3.1.0 2023-10-10
 ### Features
 * Add userId to FolioExecutionContext for system-user ([FST-46](https://issues.folio.org/browse/FST-46))
 * Add common Kafka message producer ([FST-48](https://issues.folio.org/browse/FST-48))
