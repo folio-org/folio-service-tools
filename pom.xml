@@ -33,9 +33,9 @@
     <vertx.version>4.5.8</vertx.version>
     <raml-module-builder.version>35.2.2</raml-module-builder.version>
 
-    <spring-boot.version>3.2.5</spring-boot.version>
+    <spring-boot.version>3.3.0</spring-boot.version>
 
-    <folio-spring-base.version>8.1.0</folio-spring-base.version>
+    <folio-spring-base.version>8.2.0-SNAPSHOT</folio-spring-base.version>
 
     <!-- Test dependencies versions -->
     <mockito.version>5.12.0</mockito.version>
