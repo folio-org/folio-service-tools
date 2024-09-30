@@ -38,7 +38,7 @@
     <folio-spring-base.version>8.2.0-SNAPSHOT</folio-spring-base.version>
 
     <!-- Test dependencies versions -->
-    <mockito.version>5.13.0</mockito.version>
+    <mockito.version>5.14.0</mockito.version>
     <wiremock.version>3.9.1</wiremock.version>
     <rest-assured.version>5.5.0</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
