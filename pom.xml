@@ -31,11 +31,11 @@
 
     <log4j.version>2.24.0</log4j.version>
     <vertx.version>4.5.10</vertx.version>
-    <raml-module-builder.version>35.2.2</raml-module-builder.version>
+    <raml-module-builder.version>35.3.0</raml-module-builder.version>
 
     <spring-boot.version>3.3.4</spring-boot.version>
 
-    <folio-spring-base.version>8.2.0-SNAPSHOT</folio-spring-base.version>
+    <folio-spring-base.version>8.2.0</folio-spring-base.version>
 
     <!-- Test dependencies versions -->
     <mockito.version>5.14.0</mockito.version>

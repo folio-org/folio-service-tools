@@ -17,7 +17,8 @@
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
 
 ### Dependencies
-* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
+* Bump `RMB` from `35.2.2` to Ramsons version `35.3.0`.
+* Bump `folio-spring-support`/`folio-spring-base` from `8.2.0-SNAPSHOT` to Ramsons final version `8.2.0`.
 * Add `LIB_NAME` `VERSION`
 * Remove `LIB_NAME`
 
