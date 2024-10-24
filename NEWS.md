@@ -1,5 +1,4 @@
-## v4.1.0 2024-10-25 - Ramsons release
-
+## v4.1.0 2024-10-25
 ### Bug fixes
 * Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
 * Fix incorrect base64 decoding in TokenUtils ([FST-80](https://folio-org.atlassian.net/browse/FST-80))
