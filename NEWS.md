@@ -1,26 +1,16 @@
-## v4.1.0 YYYY-mm-DD - In progress
-### Breaking changes
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### New APIs versions
-* Provides `API_NAME vX.Y`
-* Requires `API_NAME vX.Y`
-
-### Features
-* Description ([ISSUE](https://folio-org.atlassian.net//browse/ISSUE))
-
+## v4.1.0 2024-10-25
 ### Bug fixes
 * Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
 * Fix incorrect base64 decoding in TokenUtils ([FST-80](https://folio-org.atlassian.net/browse/FST-80))
 
-### Tech Dept
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
 ### Dependencies
 * Bump `RMB` from `35.2.2` to Ramsons version `35.3.0`.
+* Bump `Vertx` from `4.5.5` to Ramsons version `4.5.10`.
 * Bump `folio-spring-support`/`folio-spring-base` from `8.2.0-SNAPSHOT` to Ramsons final version `8.2.0`.
-* Add `LIB_NAME` `VERSION`
-* Remove `LIB_NAME`
+* Bump Spring Boot from `3.2.3` to Ramsons version `3.3.4`.
+* Bump `log4j-slf4j-impl` to `log4j-slf4j2-impl`.
+* Bump `log4j` from `2.23.1` to `2.24.1`.
+* Bump `commons-io` from `2.15.1` to `2.17.0`.
 
 ## v4.0.0 2024-03-18
 ### Breaking changes
