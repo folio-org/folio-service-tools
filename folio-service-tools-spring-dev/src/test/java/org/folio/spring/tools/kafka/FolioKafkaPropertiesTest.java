@@ -13,6 +13,8 @@ class FolioKafkaPropertiesTest {
     kafkaListenerProperties.setConcurrency(5);
     kafkaListenerProperties.setTopicPattern("test-topic");
     kafkaListenerProperties.setGroupId("test-group");
+    kafkaListenerProperties.setMaxPollRecords(200);
+    kafkaListenerProperties.setMaxPollIntervalMs(60_000L);
 
     var folioKafkaProperties = new FolioKafkaProperties();
     folioKafkaProperties.setListener(Map.of("events", kafkaListenerProperties));
