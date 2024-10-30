@@ -70,7 +70,7 @@ public class FolioKafkaProperties {
     /**
      * Max processing time for a single poll.
      */
-    private Long maxPollIntervalMs;
+    private Integer maxPollIntervalMs;
   }
 
   @Data
