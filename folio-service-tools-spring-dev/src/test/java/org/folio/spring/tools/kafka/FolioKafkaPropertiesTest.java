@@ -14,7 +14,7 @@ class FolioKafkaPropertiesTest {
     kafkaListenerProperties.setTopicPattern("test-topic");
     kafkaListenerProperties.setGroupId("test-group");
     kafkaListenerProperties.setMaxPollRecords(200);
-    kafkaListenerProperties.setMaxPollIntervalMs(60_000L);
+    kafkaListenerProperties.setMaxPollIntervalMs(60_000);
 
     var folioKafkaProperties = new FolioKafkaProperties();
     folioKafkaProperties.setListener(Map.of("events", kafkaListenerProperties));
