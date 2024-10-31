@@ -61,6 +61,16 @@ public class FolioKafkaProperties {
      * The group id.
      */
     private String groupId;
+
+    /**
+     * Max amount of record for a single poll.
+     */
+    private Integer maxPollRecords;
+
+    /**
+     * Max processing time for a single poll.
+     */
+    private Integer maxPollIntervalMs;
   }
 
   @Data

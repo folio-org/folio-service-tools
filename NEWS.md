@@ -1,3 +1,7 @@
+## v4.1.1 2024-10-31
+### Tech Debt
+* Add `maxPollRecords` and `maxPollIntervalMs` to `KafkaListenerProperties` ([FST-85](https://folio-org.atlassian.net/browse/FST-85))
+
 ## v4.1.0 2024-10-25
 ### Bug fixes
 * Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
