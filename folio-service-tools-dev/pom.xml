@@ -16,7 +16,7 @@
     <httpcore.version>4.4.16</httpcore.version>
     <mod-configuration-client.version>5.11.0</mod-configuration-client.version>
     <resteasy-jaxrs.version>3.15.6.Final</resteasy-jaxrs.version>
-    <commons-io.version>2.17.0</commons-io.version>
+    <commons-io.version>2.18.0</commons-io.version>
     <sonar.exclusions>
       src/main/java/**/PartialFunctions.*,
       src/main/java/**/service/exc/*,
