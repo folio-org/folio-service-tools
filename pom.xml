@@ -35,7 +35,7 @@
 
     <spring-boot.version>3.4.0</spring-boot.version>
 
-    <folio-spring-base.version>8.2.2</folio-spring-base.version>
+    <folio-spring-base.version>8.3.0-SNAPSHOT</folio-spring-base.version>
 
     <!-- Test dependencies versions -->
     <mockito.version>5.14.2</mockito.version>
