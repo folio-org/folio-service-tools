@@ -33,7 +33,7 @@
     <vertx.version>4.5.11</vertx.version>
     <raml-module-builder.version>35.3.0</raml-module-builder.version>
 
-    <spring-boot.version>3.4.0</spring-boot.version>
+    <spring-boot.version>3.4.1</spring-boot.version>
 
     <folio-spring-base.version>8.3.0-SNAPSHOT</folio-spring-base.version>
 
