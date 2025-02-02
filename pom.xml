@@ -39,7 +39,7 @@
 
     <!-- Test dependencies versions -->
     <mockito.version>5.15.2</mockito.version>
-    <wiremock.version>3.10.0</wiremock.version>
+    <wiremock.version>3.11.0</wiremock.version>
     <rest-assured.version>5.5.0</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
 
