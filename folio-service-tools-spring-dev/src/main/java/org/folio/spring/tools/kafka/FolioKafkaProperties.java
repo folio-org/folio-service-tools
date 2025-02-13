@@ -3,6 +3,7 @@ package org.folio.spring.tools.kafka;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -71,6 +72,12 @@ public class FolioKafkaProperties {
      * Max processing time for a single poll.
      */
     private Integer maxPollIntervalMs;
+
+    /**
+     * Specifies what offset to set in case there's no commited offset.
+     * Either earliest available to read all messages still present in topic or latest to read only new messages.
+     */
+    private OffsetResetStrategy autoOffsetReset;
   }
 
   @Data

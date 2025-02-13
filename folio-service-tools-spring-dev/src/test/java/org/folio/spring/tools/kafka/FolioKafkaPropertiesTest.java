@@ -3,6 +3,7 @@ package org.folio.spring.tools.kafka;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
+import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.junit.jupiter.api.Test;
 
 class FolioKafkaPropertiesTest {
@@ -15,6 +16,7 @@ class FolioKafkaPropertiesTest {
     kafkaListenerProperties.setGroupId("test-group");
     kafkaListenerProperties.setMaxPollRecords(200);
     kafkaListenerProperties.setMaxPollIntervalMs(60_000);
+    kafkaListenerProperties.setAutoOffsetReset(OffsetResetStrategy.LATEST);
 
     var folioKafkaProperties = new FolioKafkaProperties();
     folioKafkaProperties.setListener(Map.of("events", kafkaListenerProperties));
