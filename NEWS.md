@@ -1,3 +1,7 @@
+## v5.0.0 In progress
+### Breaking changes
+* Remove TokenUtils and UserInfo classes ([FST-89](https://folio-org.atlassian.net/browse/FST-89))
+
 ## v4.1.0 2024-10-25
 ### Bug fixes
 * Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
