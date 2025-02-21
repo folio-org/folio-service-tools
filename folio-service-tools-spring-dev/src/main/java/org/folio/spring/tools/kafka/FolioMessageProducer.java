@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
@@ -23,7 +24,9 @@ public class FolioMessageProducer<T extends BaseKafkaMessage> {
   @Autowired
   private FolioExecutionContext context;
 
+  @Setter
   private Predicate<Header> headerPredicate;
+  @Setter
   private Function<T, String> keyMapper;
 
   /**
@@ -44,14 +47,6 @@ public class FolioMessageProducer<T extends BaseKafkaMessage> {
   public void setContext(FolioExecutionContext context) {
     Objects.requireNonNull(context);
     this.context = context;
-  }
-
-  public void setHeaderPredicate(Predicate<Header> headerPredicate) {
-    this.headerPredicate = headerPredicate;
-  }
-
-  public void setKeyMapper(Function<T, String> keyMapper) {
-    this.keyMapper = keyMapper;
   }
 
   private ProducerRecord<String, T> toProducerRecord(T msgBody) {

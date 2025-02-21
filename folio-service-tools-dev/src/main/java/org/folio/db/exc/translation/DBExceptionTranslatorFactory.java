@@ -8,10 +8,10 @@ import org.folio.db.exc.translation.postgresql.PostgreSQLExceptionTranslator;
 
 public class DBExceptionTranslatorFactory {
 
-  private static final DBExceptionTranslatorFactory factory = new DBExceptionTranslatorFactory();
+  private static final DBExceptionTranslatorFactory INSTANCE = new DBExceptionTranslatorFactory();
 
   // simple registry of translators
-  private Map<String, DBExceptionTranslator> dbeTranslators;
+  private final Map<String, DBExceptionTranslator> dbeTranslators;
 
 
   private DBExceptionTranslatorFactory() {
@@ -22,7 +22,7 @@ public class DBExceptionTranslatorFactory {
   }
 
   public static DBExceptionTranslatorFactory instance() {
-    return factory;
+    return INSTANCE;
   }
 
   public DBExceptionTranslator create(String translatorName) {

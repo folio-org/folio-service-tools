@@ -1,28 +1,28 @@
 package org.folio.spring.tools.kafka;
 
+import static org.folio.spring.tools.kafka.FolioKafkaProperties.TENANT_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.helpers.MessageFormatter;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.folio.spring.tools.kafka.FolioKafkaProperties.TENANT_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class TenantIdCheckInterceptorTest {
+class TenantIdCheckInterceptorTest {
 
   private static TestAppender appender;
 
   @BeforeAll
-  public static void classSetup() {
+  static void classSetup() {
     Logger logger = LogManager.getLogger(TenantIdCheckInterceptor.class.getName());
     appender = new TestAppender("TestAppender", null);
     ((LoggerContext) LogManager.getContext(false)).getConfiguration().addAppender(appender);
@@ -31,7 +31,7 @@ public class TenantIdCheckInterceptorTest {
   }
 
   @Test
-  public void onSend() {
+  void onSend() {
     String topicName = "topicName";
     String key = "key-0";
     String value = "value-0";
@@ -43,8 +43,8 @@ public class TenantIdCheckInterceptorTest {
     tenantIdCheckInterceptor.onSend(kafkaRecord);
 
     assertEquals(1, appender.getMessages().size());
-    assertEquals(MessageFormatter.format(TenantIdCheckInterceptor.TENANT_ID_ERROR_MESSAGE, topicName).getMessage()
-      , appender.getMessages().get(0));
+    assertEquals(MessageFormatter.format(TenantIdCheckInterceptor.TENANT_ID_ERROR_MESSAGE, topicName).getMessage(),
+      appender.getMessages().getFirst());
 
     // clear logged messages
     appender.clear();
@@ -63,7 +63,7 @@ public class TenantIdCheckInterceptorTest {
     private final List<String> messages = new ArrayList<>();
 
     TestAppender(String name, org.apache.logging.log4j.core.Filter filter) {
-      super(name, filter, null);
+      super(name, filter, null, true, Property.EMPTY_ARRAY);
     }
 
     @Override

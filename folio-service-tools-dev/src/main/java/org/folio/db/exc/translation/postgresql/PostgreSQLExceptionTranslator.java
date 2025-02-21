@@ -1,7 +1,6 @@
 package org.folio.db.exc.translation.postgresql;
 
 import io.vertx.pgclient.PgException;
-
 import org.folio.common.pf.PartialFunction;
 import org.folio.db.exc.DatabaseException;
 import org.folio.db.exc.translation.DBExceptionTranslator;
@@ -25,9 +24,9 @@ public class PostgreSQLExceptionTranslator extends DBExceptionTranslator {
 
   @Override
   protected DatabaseException doTranslation(Throwable exc) {
-    return (exc instanceof PgException)
-      ? fTranslation.apply((PgException) exc) // operates with PgException at the moment
-      : new DatabaseException(exc); // the rest is just wrapped into DatabaseException
+    return (exc instanceof PgException pgException)
+           ? fTranslation.apply(pgException) // operates with PgException at the moment
+           : new DatabaseException(exc); // the rest is just wrapped into DatabaseException
   }
 
 }

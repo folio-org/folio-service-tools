@@ -5,39 +5,35 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.Objects;
-import java.util.function.Consumer;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.vertx.core.Future;
+import java.util.Objects;
+import java.util.function.Consumer;
 import org.apache.commons.lang3.Validate;
 import org.folio.test.extensions.TestStartLoggingExtension;
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
 
 class ValidationTest {
 
   private static final Randomizer<String> stringRandomizer = new StringRandomizer();
 
-  private Validation validation;
-
   @RegisterExtension
   TestStartLoggingExtension startLoggingExtension = TestStartLoggingExtension.instance();
-
+  private Validation validation;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     validation = Validation.instance();
   }
 
   @Test
-  void addTestsFailedwithNPEIfTestMethodNull() {
+  void addTestsFailedWithNPEIfTestMethodNull() {
     assertThrows(NullPointerException.class, () -> validation.addTest("test", null));
   }
 
@@ -55,7 +51,7 @@ class ValidationTest {
     String testValue = stringRandomizer.getRandomValue();
 
     validation
-      .addTest(testValue, Validate::notNull)
+      .addTest(testValue, Objects::requireNonNull)
       .addTest(testValue, new TestEqual<>(testValue));
 
     Future<Void> result = validation.validate();
@@ -77,7 +73,7 @@ class ValidationTest {
     String testValue = null;
 
     validation
-      .addTest(testValue, Validate::notNull)
+      .addTest(testValue, Objects::requireNonNull)
       .addTest(testValue, new TestEqual<>(testValue));
 
     Future<Void> result = validation.validate();
@@ -92,8 +88,9 @@ class ValidationTest {
     String testValue = stringRandomizer.getRandomValue();
 
     validation
-      .addTest(testValue, Validate::notNull)
-      .addTest(testValue, new TestEqual<>(stringRandomizer.getRandomValue())); // should fail with IllegalArgumentException
+      .addTest(testValue, Objects::requireNonNull)
+      .addTest(testValue,
+        new TestEqual<>(stringRandomizer.getRandomValue())); // should fail with IllegalArgumentException
 
     Future<Void> result = validation.validate();
 
@@ -105,16 +102,11 @@ class ValidationTest {
   private static class AcceptAll<T> implements Consumer<T> {
     @Override
     public void accept(T t) {
+      // do nothing
     }
   }
 
-  private static class TestEqual<T> implements Consumer<T> {
-
-    private T expected;
-
-    TestEqual(T expected) {
-      this.expected = expected;
-    }
+  private record TestEqual<T>(T expected) implements Consumer<T> {
 
     @Override
     public void accept(T t) {

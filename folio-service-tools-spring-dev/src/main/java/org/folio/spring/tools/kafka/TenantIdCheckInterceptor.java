@@ -28,8 +28,8 @@ public class TenantIdCheckInterceptor implements ProducerInterceptor<String, Str
   protected static final String TENANT_ID_ERROR_MESSAGE = "Kafka record does not have a tenant identifying header: " + TENANT_ID + ". " +
     "Use FolioMessageProducer<T extends BaseKafkaMessage> to build the record. TopicName={}";
   @Override
-  public ProducerRecord<String, String> onSend(ProducerRecord<String, String> record) {
-    Headers headers = record.headers();
+  public ProducerRecord<String, String> onSend(ProducerRecord<String, String> producerRecord) {
+    Headers headers = producerRecord.headers();
     boolean isTenantIdHeaderExist = false;
     for (Header header : headers) {
       if (header.key().equals(TENANT_ID)) {
@@ -38,24 +38,24 @@ public class TenantIdCheckInterceptor implements ProducerInterceptor<String, Str
       }
     }
     if (!isTenantIdHeaderExist) {
-      log.error(TENANT_ID_ERROR_MESSAGE, record.topic());
+      log.error(TENANT_ID_ERROR_MESSAGE, producerRecord.topic());
     }
 
-    return record;
+    return producerRecord;
   }
 
   @Override
   public void onAcknowledgement(RecordMetadata metadata, Exception exception) {
-
+    // no-op
   }
 
   @Override
   public void close() {
-
+    // no-op
   }
 
   @Override
   public void configure(Map<String, ?> configs) {
-
+    // no-op
   }
 }

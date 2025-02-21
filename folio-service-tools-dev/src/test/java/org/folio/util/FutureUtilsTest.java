@@ -2,6 +2,7 @@ package org.folio.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +34,7 @@ class FutureUtilsTest {
     completableFuture.completeExceptionally(EXCEPTION_VALUE);
     assertTrue(vertxFuture.failed());
     vertxFuture.onComplete(result -> {
-      assertTrue(result.cause() instanceof CompletionException);
+      assertInstanceOf(CompletionException.class, result.cause());
       assertEquals(EXCEPTION_VALUE, result.cause().getCause());
     });
   }

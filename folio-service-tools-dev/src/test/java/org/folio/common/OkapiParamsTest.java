@@ -38,7 +38,7 @@ class OkapiParamsTest {
   private CaseInsensitiveMap<String, String> caseInsensitiveHeaders;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     headers = new HashMap<>();
     headers.put(XOkapiHeaders.URL, URL);
     headers.put(XOkapiHeaders.TOKEN, TOKEN);
@@ -103,10 +103,10 @@ class OkapiParamsTest {
   void returnsACopyOfCaseInsensitiveHeaders() {
     OkapiParams params = new OkapiParams(headers);
 
-    Map<String, String> headers = params.getHeaders();
-    headers.remove(SOME_HEADER);
+    Map<String, String> paramsHeaders = params.getHeaders();
+    paramsHeaders.remove(SOME_HEADER);
 
-    headers = params.getHeaders();
-    assertThat(headers.get(SOME_HEADER), is(SOME_VALUE));
+    paramsHeaders = params.getHeaders();
+    assertThat(paramsHeaders.get(SOME_HEADER), is(SOME_VALUE));
   }
 }

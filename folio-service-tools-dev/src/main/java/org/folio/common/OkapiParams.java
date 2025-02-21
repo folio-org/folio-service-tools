@@ -1,6 +1,8 @@
 package org.folio.common;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
@@ -28,21 +30,21 @@ public class OkapiParams {
       throw new IllegalArgumentException(XOkapiHeaders.URL + " header is missing");
     }
 
-    URL url;
+    URL okapiUrl;
     try {
-      url = new URL(headers.get(XOkapiHeaders.URL));
-    } catch (MalformedURLException e) {
+      okapiUrl = new URI(headers.get(XOkapiHeaders.URL)).toURL();
+    } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
       throw new IllegalArgumentException("Okapi url header contains invalid value: " + headers.get(XOkapiHeaders.URL));
     }
 
-    this.url = url.toString();
+    this.url = okapiUrl.toString();
     this.headers = new CaseInsensitiveMap<>(headers);
 
     this.token = headers.get(XOkapiHeaders.TOKEN);
     this.tenant = headers.get(XOkapiHeaders.TENANT);
 
-    this.host = url.getHost();
-    this.port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
+    this.host = okapiUrl.getHost();
+    this.port = okapiUrl.getPort() != -1 ? okapiUrl.getPort() : okapiUrl.getDefaultPort();
   }
 
   public Map<String, String> getHeaders() {

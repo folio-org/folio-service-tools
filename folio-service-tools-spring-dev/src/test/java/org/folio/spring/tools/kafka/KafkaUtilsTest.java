@@ -24,25 +24,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KafkaUtilsTest {
   @AfterEach
-  public void tearDown(){
+  void tearDown(){
     // revert qualifier since KafkaTopicNameHelper is static and can affect other tests
     setTenantCollectionTopicsQualifier(null);
   }
 
   @Test
-  public void isTenantCollectionEnabled(){
+  void isTenantCollectionEnabled(){
     assertFalse(isTenantCollectionTopicsEnabled());
     setTenantCollectionTopicsQualifier("COLLECTION");
     assertTrue(isTenantCollectionTopicsEnabled());
   }
 
   @Test
-  public void shouldErrorWhenBadTenantCollectionQualifier() {
+  void shouldErrorWhenBadTenantCollectionQualifier() {
     assertThrows(RuntimeException.class, () -> setTenantCollectionTopicsQualifier("diku"));
   }
 
   @Test
-  public void shouldFormatTopicName() {
+  void shouldFormatTopicName() {
     String initialName = "DI_COMPLETED";
     String envName = "folio";
     String namespace = "Default";

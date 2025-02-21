@@ -1,9 +1,11 @@
 package org.folio.service.exc;
 
+import java.io.Serial;
 import org.apache.commons.lang3.StringUtils;
 
 public class InvalidFieldValueException extends InvalidDataException {
 
+  @Serial
   private static final long serialVersionUID = 7995122190288101587L;
 
   private final String field;

@@ -4,7 +4,6 @@ public class DatabaseException extends RuntimeException {
 
   private final String sqlState;
 
-
   public DatabaseException(String message) {
    this(message, null, null);
   }

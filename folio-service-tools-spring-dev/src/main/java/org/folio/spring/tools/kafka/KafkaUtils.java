@@ -22,20 +22,21 @@ public class KafkaUtils {
   private static final String TENANT_COLLECTION_TOPICS_ENV_VAR_NAME = "KAFKA_PRODUCER_TENANT_COLLECTION";
   private static final String TENANT_COLLECTION_MATCH_REGEX = "[A-Z][A-Z0-9]{0,30}";
   private static boolean TENANT_COLLECTION_TOPICS_ENABLED;
-  private static String TENANT_COLLECTION_TOPIC_QUALIFIER;
+
+  private static String tenantCollectionTopicQualifier;
 
   static {
-    TENANT_COLLECTION_TOPIC_QUALIFIER = System.getenv(TENANT_COLLECTION_TOPICS_ENV_VAR_NAME);
-    setTenantCollectionTopicsQualifier(TENANT_COLLECTION_TOPIC_QUALIFIER);
+    tenantCollectionTopicQualifier = System.getenv(TENANT_COLLECTION_TOPICS_ENV_VAR_NAME);
+    setTenantCollectionTopicsQualifier(tenantCollectionTopicQualifier);
   }
 
   static void setTenantCollectionTopicsQualifier(String value) {
-    TENANT_COLLECTION_TOPIC_QUALIFIER = value;
-    TENANT_COLLECTION_TOPICS_ENABLED = !StringUtils.isEmpty(TENANT_COLLECTION_TOPIC_QUALIFIER);
+    tenantCollectionTopicQualifier = value;
+    TENANT_COLLECTION_TOPICS_ENABLED = !StringUtils.isEmpty(tenantCollectionTopicQualifier);
 
     if(TENANT_COLLECTION_TOPICS_ENABLED &&
-      !TENANT_COLLECTION_TOPIC_QUALIFIER.matches(TENANT_COLLECTION_MATCH_REGEX)){
-      throw new RuntimeException(
+      !tenantCollectionTopicQualifier.matches(TENANT_COLLECTION_MATCH_REGEX)){
+      throw new IllegalArgumentException(
         String.format("%s environment variable does not match %s",
           TENANT_COLLECTION_TOPICS_ENV_VAR_NAME,
           TENANT_COLLECTION_MATCH_REGEX));
@@ -58,13 +59,13 @@ public class KafkaUtils {
   }
 
   public static String getTenantTopicName(String initialName, String envName, String tenantId) {
-    var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? TENANT_COLLECTION_TOPIC_QUALIFIER : tenantId;
+    var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? tenantCollectionTopicQualifier : tenantId;
 
     return String.join(".", envName, tenantToUse, initialName);
   }
 
   public static String getTenantTopicNameWithNamespace(String initialName, String envName, String tenantId, String namespace) {
-    var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? TENANT_COLLECTION_TOPIC_QUALIFIER : tenantId;
+    var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? tenantCollectionTopicQualifier : tenantId;
 
     return String.join(".", envName, namespace, tenantToUse, initialName);
   }

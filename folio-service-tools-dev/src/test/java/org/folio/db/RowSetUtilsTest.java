@@ -1,8 +1,8 @@
 package org.folio.db;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
@@ -12,19 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.vertx.core.json.JsonObject;
+import io.vertx.sqlclient.Row;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import io.vertx.core.json.JsonObject;
-import io.vertx.sqlclient.Row;
-import org.junit.jupiter.api.Test;
-
 import org.folio.rest.persist.helpers.LocalRowSet;
+import org.junit.jupiter.api.Test;
 
 class RowSetUtilsTest {
 
@@ -34,12 +32,12 @@ class RowSetUtilsTest {
 
     Stream<Row> actual = RowSetUtils.streamOf(rowSet);
 
-    List<Row> rowList = actual.collect(Collectors.toList());
+    List<Row> rowList = actual.toList();
     assertThat(rowList, hasSize(2));
-    assertThat(rowList.get(0).getColumnName(0), equalTo("id"));
-    assertThat(rowList.get(0).getColumnName(1), equalTo("name"));
-    assertThat(rowList.get(0).getInteger("id"), equalTo(1));
-    assertThat(rowList.get(0).getString("name"), equalTo("test name1"));
+    assertThat(rowList.getFirst().getColumnName(0), equalTo("id"));
+    assertThat(rowList.getFirst().getColumnName(1), equalTo("name"));
+    assertThat(rowList.getFirst().getInteger("id"), equalTo(1));
+    assertThat(rowList.getFirst().getString("name"), equalTo("test name1"));
   }
 
   @Test
@@ -132,11 +130,6 @@ class RowSetUtilsTest {
     assertThat(date, notNullValue());
   }
 
-  class Holder {
-    public String a;
-    public String b;
-  }
-
   @Test
   void testToJsonObject() {
     assertThat(RowSetUtils.toJsonObject(null), nullValue());
@@ -171,5 +164,10 @@ class RowSetUtilsTest {
     when(row1.getColumnName(0)).thenReturn("id");
     when(row1.getColumnName(1)).thenReturn("name");
     return new LocalRowSet(2).withRows(Arrays.asList(row1, row2)).withColumns(List.of("id", "name"));
+  }
+
+  static class Holder {
+    public String a;
+    public String b;
   }
 }

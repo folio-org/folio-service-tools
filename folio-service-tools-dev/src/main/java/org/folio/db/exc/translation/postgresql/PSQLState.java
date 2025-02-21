@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * https://www.postgresql.org/docs/current/errcodes-appendix.html
+ * <a href="https://www.postgresql.org/docs/current/errcodes-appendix.html">Error codes</a>
  */
 public enum PSQLState {
 
@@ -295,10 +295,10 @@ public enum PSQLState {
   DATA_CORRUPTED("XX001"),
   INDEX_CORRUPTED("XX002");
 
-  private static Map<String, PSQLState> codesToEnums;
+  private static final Map<String, PSQLState> CODES_TO_ENUMS;
 
   static {
-    codesToEnums = Arrays.stream(values()).collect(toMap(state -> normalizeCode(state.code), state -> state));
+    CODES_TO_ENUMS = Arrays.stream(values()).collect(toMap(state -> normalizeCode(state.code), state -> state));
   }
 
   private final String code;
@@ -324,12 +324,12 @@ public enum PSQLState {
   }
 
   public static boolean contains(String code) {
-    return codesToEnums.containsKey(normalizeCode(code));
+    return CODES_TO_ENUMS.containsKey(normalizeCode(code));
   }
 
   public static PSQLState enumOf(String code) {
     if (contains(code)) {
-      return codesToEnums.get(normalizeCode(code));
+      return CODES_TO_ENUMS.get(normalizeCode(code));
     } else {
       throw new IllegalArgumentException("No PSQLState enum with code: " + code);
     }

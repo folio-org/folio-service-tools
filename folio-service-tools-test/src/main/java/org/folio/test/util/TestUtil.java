@@ -77,7 +77,7 @@ public class TestUtil {
       .willReturn(new ResponseDefinitionBuilder().withStatus(status)));
   }
 
-  public static void mockPost(StringValuePattern urlPattern, ContentPattern body, String response, int status) throws IOException, URISyntaxException {
+  public static void mockPost(StringValuePattern urlPattern, ContentPattern<?> body, String response, int status) throws IOException, URISyntaxException {
     stubFor(post(new UrlPathPattern(urlPattern, (urlPattern instanceof RegexPattern)))
       .withRequestBody(body)
       .willReturn(new ResponseDefinitionBuilder()
@@ -85,7 +85,7 @@ public class TestUtil {
         .withStatus(status)));
   }
 
-  public static void mockPut(StringValuePattern urlPattern, ContentPattern content, int status) {
+  public static void mockPut(StringValuePattern urlPattern, ContentPattern<?> content, int status) {
     stubFor(put(new UrlPathPattern(urlPattern, (urlPattern instanceof RegexPattern)))
       .withRequestBody(content)
       .willReturn(new ResponseDefinitionBuilder()

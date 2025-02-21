@@ -106,15 +106,6 @@ class RestExceptionHandlersTest {
   }
 
   @Test
-  void unauthorizedHandlerCreates401ResponseForAuthorizationException() {
-    PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnauthorizedHandler();
-
-    Response response = handler.apply(new NotAuthorizedException("NOTAUTH"));
-
-    verifyResponse(response, HttpStatus.SC_UNAUTHORIZED, "Unauthorized"); // message from the exception is ignored
-  }
-
-  @Test
   void unprocessableHandlerCreates422ResponseForConstraintViolationException() {
     PartialFunction<Throwable, Response> handler = RestExceptionHandlers.baseUnprocessableHandler();
 

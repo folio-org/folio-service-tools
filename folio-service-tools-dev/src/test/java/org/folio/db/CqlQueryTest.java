@@ -35,7 +35,7 @@ class CqlQueryTest {
     var postgresClient = mock(PostgresClient.class);
     when(postgresClient.get(any(), eq(String.class), any(CQLWrapper.class), eq(false)))
       .thenReturn(results);
-    var cqlQuery = new CqlQuery<String>(postgresClient, "t", String.class);
+    var cqlQuery = new CqlQuery<>(postgresClient, "t", String.class);
     cqlQuery.get("some cql", 0, Integer.MAX_VALUE)
     .onComplete(vtc.succeeding(result -> {
       assertThat(result.getResultInfo().getTotalRecords(), is(3));
@@ -58,7 +58,7 @@ class CqlQueryTest {
     var postgresClient = mock(PostgresClient.class);
     when(postgresClient.get(any(), eq(String.class), any(CQLWrapper.class), eq(true)))
     .thenReturn(results(fooBarBaz, 7));
-    var cqlQuery = new CqlQuery<String>(postgresClient, "t", String.class);
+    var cqlQuery = new CqlQuery<>(postgresClient, "t", String.class);
     cqlQuery.get("some cql", offset, limit)
     .onComplete(vtc.succeeding(result -> {
       assertThat(result.getResultInfo().getTotalRecords(), is(7));

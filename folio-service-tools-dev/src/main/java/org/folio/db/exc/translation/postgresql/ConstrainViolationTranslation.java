@@ -67,40 +67,29 @@ class ConstrainViolationTranslation {
     }
 
     private Constraint createConstraint(PSQLState sqlState, String constName, String table, String[] columns) {
-      Constraint constraint;
-      switch (sqlState) {
-        case NOT_NULL_VIOLATION:
+      return switch (sqlState) {
+        case NOT_NULL_VIOLATION -> {
           // for this type of constraint single column is expected
           String column = columns.length == 1 ? columns[0] : null;
-          constraint = Constraint.notNull(constName, table, column);
-          break;
-        case FOREIGN_KEY_VIOLATION:
-          constraint = Constraint.foreignKey(constName, table, columns);
-          break;
-        case UNIQUE_VIOLATION:
+          yield Constraint.notNull(constName, table, column);
+        }
+        case FOREIGN_KEY_VIOLATION -> Constraint.foreignKey(constName, table, columns);
+        case UNIQUE_VIOLATION ->
           // !!!!! Note:
           // There is no difference in postgresql-async lib between "Primary Key" Constraint and "Unique" Constraint
           // although in PostgreSQL they are defined with different keywords:
           //    - PRIMARY KEY
           //    - UNIQUE.
           // So to differentiate them somehow the name of PK constraint should start with "pk_"
-          constraint = defaultString(constName).toLowerCase().startsWith(PK_PREFIX)
-            ? Constraint.primaryKey(constName, table, columns)
-            : Constraint.unique(constName, table, columns);
-          break;
-        case CHECK_VIOLATION:
-          constraint = Constraint.check(constName, table);
-          break;
+          defaultString(constName).toLowerCase().startsWith(PK_PREFIX)
+          ? Constraint.primaryKey(constName, table, columns)
+          : Constraint.unique(constName, table, columns);
+        case CHECK_VIOLATION -> Constraint.check(constName, table);
         // the rest goes as OTHER constraint type for now
-        case INTEGRITY_CONSTRAINT_VIOLATION:
-        case RESTRICT_VIOLATION:
-        case EXCLUSION_VIOLATION:
-          constraint = Constraint.other(constName, table);
-          break;
-        default:
-          throw new IllegalArgumentException("No constraint defined for SQLState: " + sqlState.getCode());
-      }
-      return constraint;
+        case INTEGRITY_CONSTRAINT_VIOLATION, RESTRICT_VIOLATION, EXCLUSION_VIOLATION ->
+          Constraint.other(constName, table);
+        default -> throw new IllegalArgumentException("No constraint defined for SQLState: " + sqlState.getCode());
+      };
     }
   }
 
