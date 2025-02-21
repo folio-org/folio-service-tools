@@ -31,8 +31,7 @@ public class FolioMessageProducer<T extends BaseKafkaMessage> {
 
   /**
    * Populates bodies with `tenant` and `ts` fields from {@link BaseKafkaMessage}
-   * If no headerPredicate was set via {@link org.folio.spring.tools.kafka.FolioMessageProducer#setHeaderPredicate}
-   * then all Okapi headers added to the Kafka message
+   * If no headerPredicate was set via setHeaderPredicate then all Okapi headers added to the Kafka message
    *
    * @param msgBodies msg bodies that will be sent via KafkaTemplate
    */
