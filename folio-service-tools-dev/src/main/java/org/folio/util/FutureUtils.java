@@ -1,15 +1,13 @@
 package org.folio.util;
 
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 
 public final class FutureUtils {
@@ -33,7 +31,7 @@ public final class FutureUtils {
           try {
             exc = ConstructorUtils.invokeConstructor(wrapperExcClass, ar.cause());
           } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-            | InvocationTargetException e) {
+                   | InvocationTargetException e) {
             exc = e;
           }
         }
@@ -103,7 +101,7 @@ public final class FutureUtils {
           }))
           .filter(future -> !future.isCompletedExceptionally())
           .map(CompletableFuture::join)
-          .collect(Collectors.toList())
+          .toList()
       );
   }
 }

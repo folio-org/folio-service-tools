@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 @SuppressWarnings("java:S3740")
 public class Validation {
 
-  private List<Pair<Object, Consumer>> tests = new ArrayList<>();
+  private final List<Pair<Object, Consumer>> tests = new ArrayList<>();
 
 
   private Validation() {

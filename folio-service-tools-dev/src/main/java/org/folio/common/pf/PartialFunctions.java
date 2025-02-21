@@ -7,7 +7,7 @@ import org.folio.common.log.LogHandler;
 
 public final class PartialFunctions {
 
-  private static final PartialFunction EMPTY = new Empty<>();
+  private static final PartialFunction<?, ?> EMPTY = new Empty<>();
 
   private PartialFunctions() {
   }

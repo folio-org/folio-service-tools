@@ -186,7 +186,7 @@ class PSQLStateTest {
     char[] chars = code.toCharArray();
 
     for (char c : chars) {
-      char updated = RandomUtils.nextBoolean() ? Character.toUpperCase(c) : Character.toLowerCase(c);
+      char updated = RandomUtils.insecure().randomBoolean() ? Character.toUpperCase(c) : Character.toLowerCase(c);
       result.append(updated);
     }
 
@@ -219,7 +219,7 @@ class PSQLStateTest {
         String code;
 
         do {
-          code = RandomStringUtils.randomAlphanumeric(5, 6);
+          code = RandomStringUtils.insecure().nextAlphanumeric(5, 6);
         } while (ArrayUtils.contains(allValidCodes, code));
 
         return code;
@@ -231,7 +231,7 @@ class PSQLStateTest {
 
       @Override
       public String getRandomValue() {
-        int i = RandomUtils.nextInt(0, allValidCodes.length);
+        int i = RandomUtils.insecure().randomInt(0, allValidCodes.length);
 
         return allValidCodes[i];
       }

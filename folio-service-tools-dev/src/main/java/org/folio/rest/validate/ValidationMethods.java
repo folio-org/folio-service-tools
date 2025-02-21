@@ -20,7 +20,7 @@ public class ValidationMethods {
   /**
    * Returns test method which verifies if passed String value can be converted to an enum item of {@code enumClass} class.
    * If validation failed, the method throws {@code java.lang.IllegalArgumentException}, otherwise finishes silently.
-   *
+   * <p>
    * Method ignores the case of String value. To take it into account use {@link #validateEnum(Class, boolean)}.
    *
    * @param enumClass enum class

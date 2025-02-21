@@ -1,17 +1,21 @@
 package org.folio.spring.tools.kafka;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsResult;
@@ -22,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -30,6 +33,7 @@ import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.listener.MessageListenerContainer;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @Import(KafkaAdminServiceTest.KafkaAdminServiceTestConfiguration.class)
 @SpringBootTest(classes = KafkaAdminService.class)
@@ -41,11 +45,11 @@ class KafkaAdminServiceTest {
   private KafkaAdminService kafkaAdminService;
   @Autowired
   private ApplicationContext applicationContext;
-  @MockBean
+  @MockitoBean
   private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
-  @MockBean
+  @MockitoBean
   private KafkaAdmin kafkaAdmin;
-  @MockBean
+  @MockitoBean
   private FolioKafkaProperties kafkaProperties;
 
   @Test
@@ -67,7 +71,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_positive()  {
+  void deleteKafkaTopics_positive() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
@@ -77,7 +81,7 @@ class KafkaAdminServiceTest {
 
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
     var kafkaClient = mock(AdminClient.class);
-    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+    try (var ignored = mockStatic(AdminClient.class, invocation -> kafkaClient)) {
       var deleteTopicsResult = mock(DeleteTopicsResult.class);
       when(kafkaClient.listTopics()).thenReturn(listTopicResult);
       when(kafkaClient.deleteTopics(anyCollection())).thenReturn(deleteTopicsResult);
@@ -90,7 +94,7 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_positive_withNoMatchingTopic()  {
+  void deleteKafkaTopics_positive_withNoMatchingTopic() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
@@ -100,7 +104,7 @@ class KafkaAdminServiceTest {
 
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
     var kafkaClient = mock(AdminClient.class);
-    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+    try (var ignored = mockStatic(AdminClient.class, invocation -> kafkaClient)) {
       when(kafkaClient.listTopics()).thenReturn(listTopicResult);
       kafkaAdminService.deleteTopics(TEST_TENANT);
     }
@@ -110,13 +114,13 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_positive_withNoTopicsFound()  {
+  void deleteKafkaTopics_positive_withNoTopicsFound() {
     FolioKafkaProperties.KafkaTopic kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
     var kafkaClient = mock(AdminClient.class);
-    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+    try (var ignored = mockStatic(AdminClient.class, invocation -> kafkaClient)) {
       kafkaAdminService.deleteTopics(TEST_TENANT);
     }
 
@@ -124,7 +128,8 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_negative_shouldHandleException() throws ExecutionException, InterruptedException, KafkaException {
+  void deleteKafkaTopics_negative_shouldHandleException()
+    throws ExecutionException, InterruptedException, KafkaException {
     var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
     var future = KafkaFuture.completedFuture(Set.of("folio.test_tenant.test_topic"));
@@ -133,14 +138,12 @@ class KafkaAdminServiceTest {
 
     var kafkaClient = mock(AdminClient.class);
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
-    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+    try (var ignored = mockStatic(AdminClient.class, invocation -> kafkaClient)) {
 
       when(kafkaClient.listTopics()).thenReturn(listTopicResult);
-      given(listTopicResult.names().get()).willAnswer(invocation -> {throw new InterruptedException();});
+      given(listTopicResult.names().get()).willAnswer(invocation -> { throw new InterruptedException(); });
 
-      assertThrows(InterruptedException.class, ()->{
-        kafkaAdminService.deleteTopics(TEST_TENANT);
-      });
+      assertThrows(InterruptedException.class, () -> kafkaAdminService.deleteTopics(TEST_TENANT));
 
     }
 
@@ -158,16 +161,15 @@ class KafkaAdminServiceTest {
 
     var kafkaClient = mock(AdminClient.class);
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
-    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+    try (var ignored = mockStatic(AdminClient.class, invocation -> kafkaClient)) {
 
       var deleteTopicsResult = mock(DeleteTopicsResult.class);
       when(kafkaClient.listTopics()).thenReturn(listTopicResult);
       when(kafkaClient.deleteTopics(anyCollection())).thenReturn(deleteTopicsResult);
-      when(deleteTopicsResult.all()).thenThrow(new KafkaException("There was an error while deleting topics by tenant: test_tenant"));
+      when(deleteTopicsResult.all()).thenThrow(
+        new KafkaException("There was an error while deleting topics by tenant: test_tenant"));
 
-      Exception exception = assertThrows(KafkaException.class, ()->{
-        kafkaAdminService.deleteTopics(TEST_TENANT);
-      });
+      Exception exception = assertThrows(KafkaException.class, () -> kafkaAdminService.deleteTopics(TEST_TENANT));
 
       assertEquals("There was an error while deleting topics by tenant: test_tenant", exception.getMessage());
     }
@@ -176,13 +178,13 @@ class KafkaAdminServiceTest {
   }
 
   @Test
-  void deleteKafkaTopics_negative_shouldNotCallAnyMethodWithNoTenant()  {
+  void deleteKafkaTopics_negative_shouldNotCallAnyMethodWithNoTenant() {
     var kafkaTopic = new FolioKafkaProperties.KafkaTopic();
     kafkaTopic.setName("test_topic");
 
     var kafkaClient = mock(AdminClient.class);
     when(kafkaProperties.getTopics()).thenReturn(List.of(kafkaTopic));
-    try (var ignored = mockStatic(AdminClient.class, (invocation) -> kafkaClient)) {
+    try (var ignored = mockStatic(AdminClient.class, invocation -> kafkaClient)) {
       when(kafkaClient.deleteTopics(anyCollection()))
         .thenThrow(new IllegalStateException());
 
@@ -192,9 +194,8 @@ class KafkaAdminServiceTest {
     verify(kafkaClient, never()).listTopics();
   }
 
-
   @Test
-  void deleteKafkaTopics_positive_shouldNotDeleteTopics_whenTenantCollectionFeatureIsEnabled()  {
+  void deleteKafkaTopics_positive_shouldNotDeleteTopics_whenTenantCollectionFeatureIsEnabled() {
     try (var ignored = mockStatic(KafkaUtils.class)) {
       when(KafkaUtils.isTenantCollectionTopicsEnabled()).thenReturn(true);
 

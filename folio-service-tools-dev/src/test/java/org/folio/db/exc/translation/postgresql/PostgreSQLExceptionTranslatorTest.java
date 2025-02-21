@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,7 +44,7 @@ class PostgreSQLExceptionTranslatorTest {
   private PostgreSQLExceptionTranslator translator;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     translator = new PostgreSQLExceptionTranslator();
   }
 
@@ -73,7 +74,7 @@ class PostgreSQLExceptionTranslatorTest {
     DatabaseException databaseException = translator.doTranslation(exception);
 
     assertThat(databaseException.getSqlState(), equalTo(FOREIGN_KEY_VIOLATION_ERROR_CODE));
-    assertTrue(databaseException instanceof ConstraintViolationException);
+    assertInstanceOf(ConstraintViolationException.class, databaseException);
 
   }
 
@@ -83,7 +84,7 @@ class PostgreSQLExceptionTranslatorTest {
     DatabaseException databaseException = translator.doTranslation(exception);
 
     assertThat(databaseException.getSqlState(), equalTo(INVALID_TEXT_REPRESENTATION_ERROR_CODE));
-    assertTrue(databaseException instanceof InvalidUUIDException);
+    assertInstanceOf(InvalidUUIDException.class, databaseException);
 
   }
 
@@ -102,7 +103,7 @@ class PostgreSQLExceptionTranslatorTest {
     DatabaseException databaseException = translator.doTranslation(exception);
 
     assertThat(databaseException.getSqlState(), equalTo(INVALID_PASSWORD_ERROR_CODE));
-    assertTrue(databaseException instanceof AuthorizationException);
+    assertInstanceOf(AuthorizationException.class, databaseException);
   }
 
   @Test
@@ -110,7 +111,7 @@ class PostgreSQLExceptionTranslatorTest {
     DatabaseException databaseException = translator.doTranslation(new IllegalArgumentException());
 
     assertNull(databaseException.getSqlState());
-    assertTrue(databaseException.getCause() instanceof IllegalArgumentException);
+    assertInstanceOf(IllegalArgumentException.class, databaseException.getCause());
 
   }
 
@@ -138,7 +139,7 @@ class PostgreSQLExceptionTranslatorTest {
     Function<Throwable, Future<Object>> throwableFutureFunction = translator.translateOrPassBy();
     Future<Object> apply = throwableFutureFunction.apply(new IndexOutOfBoundsException());
 
-    assertTrue(apply.cause() instanceof IndexOutOfBoundsException);
+    assertInstanceOf(IndexOutOfBoundsException.class, apply.cause());
   }
 
   @Test
@@ -148,7 +149,7 @@ class PostgreSQLExceptionTranslatorTest {
     Function<Throwable, Future<Object>> throwableFutureFunction = translator.translateOrPassBy();
     Future<Object> apply = throwableFutureFunction.apply(exception);
 
-    assertTrue(apply.cause() instanceof InvalidUUIDException);
+    assertInstanceOf(InvalidUUIDException.class, apply.cause());
   }
 
 }

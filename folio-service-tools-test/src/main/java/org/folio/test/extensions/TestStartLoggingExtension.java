@@ -11,8 +11,9 @@ public class TestStartLoggingExtension implements BeforeEachCallback {
   public static TestStartLoggingExtension instance() {
     return new TestStartLoggingExtension();
   }
+
   @Override
-  public void beforeEach(ExtensionContext extensionContext) throws Exception {
+  public void beforeEach(ExtensionContext extensionContext) {
     TestUtil.logger().info("********** Running test method: {}.{} ********** ",
       extensionContext.getRequiredTestClass().getName(),
       extensionContext.getRequiredTestMethod().getName());

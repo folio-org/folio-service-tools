@@ -1,6 +1,5 @@
 package org.folio.rest.validate;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
 import org.folio.test.extensions.TestStartLoggingExtension;
 import org.jeasy.random.randomizers.collection.ListRandomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
@@ -48,8 +46,8 @@ class ValidationMethodsEqualsTest {
     IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> method.accept(actual));
 
     assertThat(thrown.getMessage(), allOf(
-      containsString(defaultString(actual, NULL)),
-      containsString(defaultString(expected, NULL))));
+      containsString(Objects.toString(actual, NULL)),
+      containsString(Objects.toString(expected, NULL))));
   }
 
   @ParameterizedTest

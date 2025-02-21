@@ -25,7 +25,7 @@ class DBExceptionTranslatorTest {
   private TestTranslator translator;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     translator = new TestTranslator(true, TRANSLATED_EXC);
   }
 

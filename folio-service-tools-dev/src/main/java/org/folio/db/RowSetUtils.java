@@ -11,7 +11,6 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -38,7 +37,7 @@ public final class RowSetUtils {
 
     return streamOf(rowSet)
       .map(mapper)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   public static Row firstItem(RowSet<Row> rowSet) {
@@ -83,7 +82,7 @@ public final class RowSetUtils {
 
   private static class NullRow implements Row {
 
-    static final NullRow INSTANCE = new NullRow();
+    public static final NullRow INSTANCE = new NullRow();
 
     private NullRow() {}
 

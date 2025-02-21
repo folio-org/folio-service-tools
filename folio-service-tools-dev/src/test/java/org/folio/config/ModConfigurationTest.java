@@ -1,37 +1,34 @@
 package org.folio.config;
 
+import static org.folio.test.util.TestUtil.mockGet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-
-import static org.folio.test.util.TestUtil.mockGet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.http.HttpStatus;
-import org.folio.test.extensions.TestStartLoggingExtension;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
 import org.folio.common.OkapiParams;
 import org.folio.okapi.common.XOkapiHeaders;
+import org.folio.test.extensions.TestStartLoggingExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @ExtendWith(VertxExtension.class)
 class ModConfigurationTest {
@@ -60,9 +57,8 @@ class ModConfigurationTest {
   private OkapiParams okapiParams;
   private ModConfiguration configuration;
 
-
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     Map<String, String> headers = new HashMap<>();
     headers.put(XOkapiHeaders.TENANT, STUB_TENANT);
     headers.put(XOkapiHeaders.TOKEN, STUB_TOKEN);
@@ -199,7 +195,7 @@ class ModConfigurationTest {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, "responses/configuration/get-note-type-limit-empty-response.json");
 
     Handler<AsyncResult<String>> verify = context.failing(ex -> context.verify(() -> {
-      assertTrue(ex instanceof PropertyNotFoundException);
+      assertInstanceOf(PropertyNotFoundException.class, ex);
       assertEquals(CONFIG_PROP_CODE, ((PropertyNotFoundException) ex).getPropertyCode());
       context.completeNow();
     }));
@@ -212,7 +208,7 @@ class ModConfigurationTest {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, "responses/configuration/get-note-type-limit-disabled-response.json");
 
     Handler<AsyncResult<String>> verify = context.failing(ex -> context.verify(() -> {
-      assertTrue(ex instanceof PropertyNotFoundException);
+      assertInstanceOf(PropertyNotFoundException.class, ex);
       assertEquals(CONFIG_PROP_CODE, ((PropertyNotFoundException) ex).getPropertyCode());
       context.completeNow();
     }));
@@ -225,7 +221,7 @@ class ModConfigurationTest {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, HttpStatus.SC_BAD_REQUEST);
 
     Handler<AsyncResult<String>> verify = context.failing(ex -> context.verify(() -> {
-      assertTrue(ex instanceof ConfigurationException);
+      assertInstanceOf(ConfigurationException.class, ex);
       assertThat(ex.getMessage(), containsString(String.valueOf(HttpStatus.SC_BAD_REQUEST)));
       context.completeNow();
     }));
@@ -238,7 +234,7 @@ class ModConfigurationTest {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, "responses/configuration/get-note-type-limit-no-value-response.json");
 
     Handler<AsyncResult<String>> verify = context.failing(ex -> context.verify(() -> {
-      assertTrue(ex instanceof ValueNotDefinedException);
+      assertInstanceOf(ValueNotDefinedException.class, ex);
       assertEquals(CONFIG_PROP_CODE, ((ValueNotDefinedException) ex).getPropertyCode());
       context.completeNow();
     }));
@@ -251,7 +247,7 @@ class ModConfigurationTest {
     mockGet(CONFIG_NOTE_TYPE_LIMIT_URL_PATTERN, "responses/configuration/get-note-type-limit-not-unique-response.json");
 
     Handler<AsyncResult<String>> verify = context.failing(ex -> context.verify(() -> {
-      assertTrue(ex instanceof PropertyException);
+      assertInstanceOf(PropertyException.class, ex);
       assertEquals(CONFIG_PROP_CODE, ((PropertyException) ex).getPropertyCode());
       assertThat(ex.getMessage(), containsString("more than one configuration properties found"));
       context.completeNow();

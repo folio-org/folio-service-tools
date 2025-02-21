@@ -15,13 +15,13 @@ class OnKafkaTopicsPropertyConditionTest {
 
   @Test
   void propertyNotDefined() {
-    this.contextRunner.run((context) -> assertThat(context).doesNotHaveBean("foo"));
+    this.contextRunner.run(context -> assertThat(context).doesNotHaveBean("foo"));
   }
 
   @Test
   void propertyDefined() {
     this.contextRunner.withPropertyValues("folio.kafka.topics[0].name=value1")
-      .run((context) -> assertThat(context).hasBean("foo"));
+      .run(context -> assertThat(context).hasBean("foo"));
   }
 
   @Configuration(proxyBeanMethods = false)

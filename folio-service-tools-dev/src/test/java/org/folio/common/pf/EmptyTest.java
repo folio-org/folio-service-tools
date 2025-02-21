@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import static org.folio.common.pf.TestData.fOtherwise;
+import static org.folio.common.pf.TestData.FUNC_OTHERWISE;
 import static org.folio.common.pf.TestData.intsOfEveryKind;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -41,6 +41,6 @@ class EmptyTest {
   @ParameterizedTest
   @MethodSource("testData")
   void applyOrElseAlwaysReturnsOtherwiseResult(Integer i) {
-    assertThat(empty.applyOrElse(i, fOtherwise), is(fOtherwise.apply(i)));
+    assertThat(empty.applyOrElse(i, FUNC_OTHERWISE), is(FUNC_OTHERWISE.apply(i)));
   }
 }

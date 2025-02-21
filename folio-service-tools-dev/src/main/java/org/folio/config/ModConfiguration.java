@@ -8,7 +8,6 @@ import static org.folio.util.FutureUtils.wrapExceptions;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -29,8 +28,7 @@ public class ModConfiguration implements Configuration {
   private static final String PROP_VALUE = "value";
   private static final String PROP_BY_CODE_QUERY = "module==%s AND code==%s";
 
-  private String module;
-
+  private final String module;
 
   public ModConfiguration(String module) {
     if (StringUtils.isBlank(module)) {
@@ -172,16 +170,13 @@ public class ModConfiguration implements Configuration {
     List<JsonObject> enabled = configs.stream()
       .map(JsonObject.class::cast)
       .filter(config -> config.getBoolean("enabled", true))
-      .collect(Collectors.toList());
+      .toList();
 
-    switch (enabled.size()) {
-      case 0:
-        throw new PropertyNotFoundException(code);
-      case 1:
-        return enabled.get(0);
-      default:
-        throw new PropertyException(code, "more than one configuration properties found");
-    }
+    return switch (enabled.size()) {
+      case 0 -> throw new PropertyNotFoundException(code);
+      case 1 -> enabled.getFirst();
+      default -> throw new PropertyException(code, "more than one configuration properties found");
+    };
   }
 
 }

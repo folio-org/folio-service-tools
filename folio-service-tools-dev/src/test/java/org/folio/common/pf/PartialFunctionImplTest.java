@@ -4,10 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-import static org.folio.common.pf.TestData.fOtherwise;
+import static org.folio.common.pf.TestData.FUNC_OTHERWISE;
 import static org.folio.common.pf.TestData.fPositiveIntMsg;
 import static org.folio.common.pf.TestData.intsOfEveryKind;
-import static org.folio.common.pf.TestData.otherwiseResult;
+import static org.folio.common.pf.TestData.OTHERWISE_RESULT;
 import static org.folio.common.pf.TestData.positiveInt;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -90,7 +90,7 @@ class PartialFunctionImplTest {
   void applyOrElseEqualToApplyIfPartialFunctionDefined(Integer i) {
     assumeTrue(pf.isDefinedAt(i));
 
-    assertThat(pf.applyOrElse(i, fOtherwise), is(pf.apply(i)));
+    assertThat(pf.applyOrElse(i, FUNC_OTHERWISE), is(pf.apply(i)));
   }
 
   @ParameterizedTest
@@ -98,6 +98,6 @@ class PartialFunctionImplTest {
   void applyOrElseFallbackToOtherwiseIfPartialFunctionDefined(Integer i) {
     assumeFalse(pf.isDefinedAt(i));
 
-    assertThat(pf.applyOrElse(i, fOtherwise), is(otherwiseResult));
+    assertThat(pf.applyOrElse(i, FUNC_OTHERWISE), is(OTHERWISE_RESULT));
   }
 }

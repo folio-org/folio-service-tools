@@ -2,15 +2,13 @@ package org.folio.db.exc;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang3.Validate;
 
 public class ConstraintViolationException extends DatabaseException {
 
-  private String detailedMessage;
-  private Constraint constraint;
-  private Map<String, String> invalidValues;
-
+  private final String detailedMessage;
+  private final Constraint constraint;
+  private final Map<String, String> invalidValues;
 
   public ConstraintViolationException(String message, String sqlState, Constraint constraint) {
     this(message, sqlState, null, constraint);

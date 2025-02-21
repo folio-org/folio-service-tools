@@ -2,8 +2,7 @@ package org.folio.db.exc;
 
 public class InvalidUUIDException extends DataException {
 
-  private String invalidValue;
-
+  private final String invalidValue;
 
   public InvalidUUIDException(String message, String sqlState, String invalidValue) {
     this(message, null, sqlState, invalidValue);

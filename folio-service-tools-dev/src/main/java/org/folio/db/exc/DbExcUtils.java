@@ -28,8 +28,8 @@ public final class DbExcUtils {
   }
 
   private static Constraint.Type getConstraintType(Throwable t) {
-    return (t instanceof ConstraintViolationException)
-      ? ((ConstraintViolationException) t).getConstraintType()
+    return (t instanceof ConstraintViolationException constraintViolationException)
+      ? constraintViolationException.getConstraintType()
       : null;
   }
 

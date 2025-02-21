@@ -18,8 +18,8 @@ class TestData {
   static final Function<Integer, Integer> fNegate = i -> -i;
 
 
-  static final String otherwiseResult = "OTHERWISE";
-  static final Function<Integer, String> fOtherwise = integer -> otherwiseResult;
+  static final String OTHERWISE_RESULT = "OTHERWISE";
+  static final Function<Integer, String> FUNC_OTHERWISE = integer -> OTHERWISE_RESULT;
 
   private TestData() {
   }

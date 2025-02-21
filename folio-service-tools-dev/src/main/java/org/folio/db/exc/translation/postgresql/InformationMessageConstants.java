@@ -15,4 +15,8 @@ public class InformationMessageConstants {
   public static final Character  FILE = 'F';
   public static final Character  LINE = 'L';
   public static final Character  ROUTINE = 'R';
+
+  private InformationMessageConstants() {
+    throw new IllegalStateException("Utility class");
+  }
 }
