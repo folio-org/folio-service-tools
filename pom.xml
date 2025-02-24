@@ -33,7 +33,7 @@
     <vertx.version>4.5.13</vertx.version>
     <raml-module-builder.version>35.3.0</raml-module-builder.version>
 
-    <spring-boot.version>3.4.2</spring-boot.version>
+    <spring-boot.version>3.4.3</spring-boot.version>
 
     <folio-spring-base.version>9.0.0-SNAPSHOT</folio-spring-base.version>
 
@@ -46,7 +46,7 @@
     <!-- Plugins versions -->
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
-    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
