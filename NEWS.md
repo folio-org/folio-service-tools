@@ -1,3 +1,27 @@
+## v5.1.0 YYYY-mm-DD
+### Breaking changes
+* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+
+### New APIs versions
+* Provides `API_NAME vX.Y`
+* Requires `API_NAME vX.Y`
+
+### Features
+* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+
+### Bug fixes
+* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+
+### Tech Dept
+* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+
+### Dependencies
+* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
+* Add `LIB_NAME VERSION`
+* Remove `LIB_NAME`
+
+---
+
 ## v5.0.0 2025-02-28
 ### Breaking changes
 * Upgrade to Java 21 ([FST-88](https://folio-org.atlassian.net/browse/FST-88))
@@ -6,6 +30,14 @@
 ### Features
 Add `autoOffsetReset` to `KafkaListenerProperties` ([FST-87](https://folio-org.atlassian.net/browse/FST-87))
 Add `maxPollRecords` and `maxPollIntervalMs` to `KafkaListenerProperties` ([FST-85](https://folio-org.atlassian.net/browse/FST-85))
+
+### Dependencies
+* Bump `RMB` from `35.3.0` to `35.4.0`
+* Bump `folio-spring-support` from `8.2.0` to `9.0.0`
+* Bump `spring-boot` from `3.3.4` to `3.4.3`
+* Bump `Vertx` from `4.5.10` to `4.5.13`
+
+---
 
 ## v4.1.0 2024-10-25
 ### Bug fixes
