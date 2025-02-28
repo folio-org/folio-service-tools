@@ -1,7 +1,11 @@
-## v5.0.0 In progress
+## v5.0.0 2025-02-28
 ### Breaking changes
 * Upgrade to Java 21 ([FST-88](https://folio-org.atlassian.net/browse/FST-88))
 * Remove TokenUtils and UserInfo classes ([FST-89](https://folio-org.atlassian.net/browse/FST-89))
+
+### Features
+Add `autoOffsetReset` to `KafkaListenerProperties` ([FST-87](https://folio-org.atlassian.net/browse/FST-87))
+Add `maxPollRecords` and `maxPollIntervalMs` to `KafkaListenerProperties` ([FST-85](https://folio-org.atlassian.net/browse/FST-85))
 
 ## v4.1.0 2024-10-25
 ### Bug fixes
