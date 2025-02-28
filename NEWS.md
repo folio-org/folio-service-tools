@@ -7,6 +7,14 @@
 Add `autoOffsetReset` to `KafkaListenerProperties` ([FST-87](https://folio-org.atlassian.net/browse/FST-87))
 Add `maxPollRecords` and `maxPollIntervalMs` to `KafkaListenerProperties` ([FST-85](https://folio-org.atlassian.net/browse/FST-85))
 
+### Dependencies
+* Bump `RMB` from `35.3.0` to `35.4.0`
+* Bump `folio-spring-support` from `8.2.0` to `9.0.0`
+* Bump `spring-boot` from `3.3.4` to `3.4.3`
+* Bump `Vertx` from `4.5.10` to `4.5.13`
+
+---
+
 ## v4.1.0 2024-10-25
 ### Bug fixes
 * Do not delete kafka topics if collection topic is enabled ([FST-77](https://folio-org.atlassian.net/browse/FST-77))
