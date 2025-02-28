@@ -31,7 +31,7 @@
 
     <log4j.version>2.24.3</log4j.version>
     <vertx.version>4.5.13</vertx.version>
-    <raml-module-builder.version>35.3.0</raml-module-builder.version>
+    <raml-module-builder.version>35.4.0</raml-module-builder.version>
 
     <spring-boot.version>3.4.3</spring-boot.version>
 
