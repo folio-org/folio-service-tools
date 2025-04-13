@@ -13,7 +13,7 @@
   <name>folio-service-tools-test</name>
 
   <properties>
-    <commons-io.version>2.18.0</commons-io.version>
+    <commons-io.version>2.19.0</commons-io.version>
     <sonar.exclusions>src/main/**/*</sonar.exclusions>
   </properties>
 
