@@ -30,7 +30,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <log4j.version>2.24.3</log4j.version>
-    <vertx.version>5.0.0</vertx.version>
+    <vertx.version>4.5.14</vertx.version>
     <raml-module-builder.version>35.4.0</raml-module-builder.version>
 
     <spring-boot.version>3.5.0</spring-boot.version>
