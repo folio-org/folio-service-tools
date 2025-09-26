@@ -2,12 +2,8 @@
 ### Breaking changes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
 
-### New APIs versions
-* Provides `API_NAME vX.Y`
-* Requires `API_NAME vX.Y`
-
 ### Features
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+* Introduce sharedGroup property to control Kafka consumer group behavior ([FST-95](https://folio-org.atlassian.net/browse/FST-95))
 
 ### Bug fixes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))

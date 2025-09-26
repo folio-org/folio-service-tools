@@ -1,14 +1,16 @@
 package org.folio.spring.tools.kafka;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Application properties for kafka message consumer.
@@ -49,7 +51,7 @@ public class FolioKafkaProperties {
   public static class KafkaListenerProperties {
 
     /**
-     * List of topic to listen.
+     * Topic pattern for listener.
      */
     private String topicPattern;
 
@@ -59,7 +61,7 @@ public class FolioKafkaProperties {
     private Integer concurrency = 5;
 
     /**
-     * The group id.
+     * Consumer group id.
      */
     private String groupId;
 
@@ -78,6 +80,23 @@ public class FolioKafkaProperties {
      * Either earliest available to read all messages still present in topic or latest to read only new messages.
      */
     private OffsetResetStrategy autoOffsetReset;
+
+    /**
+     * Determines if the consumer group should be shared between multiple instances of the same module.
+     */
+    private boolean sharedGroup = true;
+
+    public String getGroupId() {
+      return sharedGroup ? groupId : groupId + "-" + getUniqueValue();
+    }
+
+    private String getUniqueValue() {
+      try {
+        return InetAddress.getLocalHost().getHostName();
+      } catch (UnknownHostException e) {
+        return UUID.randomUUID().toString();
+      }
+    }
   }
 
   @Data

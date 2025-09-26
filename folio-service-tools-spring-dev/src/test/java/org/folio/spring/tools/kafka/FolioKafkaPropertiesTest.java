@@ -10,17 +10,38 @@ class FolioKafkaPropertiesTest {
 
   @Test
   void constructorTest() {
-    var kafkaListenerProperties = new FolioKafkaProperties.KafkaListenerProperties();
-    kafkaListenerProperties.setConcurrency(5);
-    kafkaListenerProperties.setTopicPattern("test-topic");
-    kafkaListenerProperties.setGroupId("test-group");
-    kafkaListenerProperties.setMaxPollRecords(200);
-    kafkaListenerProperties.setMaxPollIntervalMs(60_000);
-    kafkaListenerProperties.setAutoOffsetReset(OffsetResetStrategy.LATEST);
+    var initialValues = new FolioKafkaProperties.KafkaListenerProperties();
+    initialValues.setConcurrency(5);
+    initialValues.setTopicPattern("test-topic");
+    initialValues.setGroupId("test-group");
+    initialValues.setMaxPollRecords(200);
+    initialValues.setMaxPollIntervalMs(60_000);
+    initialValues.setAutoOffsetReset(OffsetResetStrategy.LATEST);
 
     var folioKafkaProperties = new FolioKafkaProperties();
-    folioKafkaProperties.setListener(Map.of("events", kafkaListenerProperties));
+    folioKafkaProperties.setListener(Map.of("events", initialValues));
 
     assertThat(folioKafkaProperties).isNotNull();
+    assertThat(folioKafkaProperties.getListener().get("events").getConcurrency()).isEqualTo(initialValues.getConcurrency());
+    assertThat(folioKafkaProperties.getListener().get("events").getTopicPattern()).isEqualTo(initialValues.getTopicPattern());
+    assertThat(folioKafkaProperties.getListener().get("events").getGroupId()).isEqualTo(initialValues.getGroupId());
+    assertThat(folioKafkaProperties.getListener().get("events").getMaxPollRecords()).isEqualTo(initialValues.getMaxPollRecords());
+    assertThat(folioKafkaProperties.getListener().get("events").getMaxPollIntervalMs()).isEqualTo(initialValues.getMaxPollIntervalMs());
+    assertThat(folioKafkaProperties.getListener().get("events").getAutoOffsetReset()).isEqualTo(initialValues.getAutoOffsetReset());
+    assertThat(folioKafkaProperties.getListener().get("events").isSharedGroup()).isTrue();
+  }
+
+  @Test
+  void constructorTestWithSharedGroupFalse() {
+    var initialValues = new FolioKafkaProperties.KafkaListenerProperties();
+    initialValues.setGroupId("test-group");
+    initialValues.setSharedGroup(false);
+
+    var folioKafkaProperties = new FolioKafkaProperties();
+    folioKafkaProperties.setListener(Map.of("events", initialValues));
+
+    assertThat(folioKafkaProperties).isNotNull();
+    assertThat(folioKafkaProperties.getListener().get("events").getGroupId()).startsWith("test-group-");
+    assertThat(folioKafkaProperties.getListener().get("events").isSharedGroup()).isFalse();
   }
 }
