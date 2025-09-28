@@ -29,28 +29,28 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <log4j.version>2.24.3</log4j.version>
-    <vertx.version>4.5.14</vertx.version>
+    <log4j.version>2.25.2</log4j.version>
+    <vertx.version>5.0.4</vertx.version>
     <raml-module-builder.version>35.4.0</raml-module-builder.version>
 
-    <spring-boot.version>3.5.0</spring-boot.version>
+    <spring-boot.version>3.5.6</spring-boot.version>
 
     <folio-spring-base.version>10.0.0-SNAPSHOT</folio-spring-base.version>
 
     <!-- Test dependencies versions -->
-    <mockito.version>5.18.0</mockito.version>
-    <wiremock.version>3.13.0</wiremock.version>
-    <rest-assured.version>5.5.5</rest-assured.version>
+    <mockito.version>5.20.0</mockito.version>
+    <wiremock.version>3.13.1</wiremock.version>
+    <rest-assured.version>5.5.6</rest-assured.version>
     <easy-random.version>5.0.0</easy-random.version>
 
     <!-- Plugins versions -->
     <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-    <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
-    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <versions-maven-plugin.version>2.19.1</versions-maven-plugin.version>
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
-    <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
   </properties>
 
