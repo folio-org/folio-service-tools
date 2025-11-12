@@ -3,13 +3,11 @@ package org.folio.test.util;
 import static org.folio.test.util.TestUtil.STUB_TENANT;
 import static org.folio.test.util.TestUtil.STUB_TOKEN;
 
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import org.folio.postgres.testing.PostgresTesterContainer;
 import org.folio.rest.RestVerticle;
 import org.folio.rest.client.TenantClient;
@@ -44,28 +42,29 @@ public class TestSetUpHelper {
     }
 
     CompletableFuture<Void> future = new CompletableFuture<>();
-    vertx.deployVerticle(RestVerticle.class.getName(), getDeploymentOptions(configProperties), event -> {
-      TenantClient tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN, vertx.createHttpClient());
-      try {
-        TenantAttributes tenantAttributes = new TenantAttributes().withModuleTo(MODULE_TO_VERSION);
-        tenantClient.postTenant(tenantAttributes, res1 -> {
-          if (res1.succeeded()) {
-            String jobId = res1.result().bodyAsJson(TenantJob.class).getId();
-            tenantClient.getTenantByOperationId(jobId, TENANT_OP_WAITINGTIME, res2 -> {
-              if (res2.succeeded()) {
-                future.complete(null);
-              } else {
-                future.completeExceptionally(new IllegalStateException("Failed to get tenant"));
-              }
-            });
-          } else {
-            future.completeExceptionally(new IllegalStateException("Failed to create tenant job"));
-          }
-        });
-      } catch (Exception e) {
-        future.completeExceptionally(e);
-      }
-    });
+    vertx.deployVerticle(RestVerticle.class.getName(), getDeploymentOptions(configProperties))
+      .onComplete(event -> {
+        var tenantClient = new TenantClient(host + ":" + port, STUB_TENANT, STUB_TOKEN, vertx.createHttpClient());
+        try {
+          var tenantAttributes = new TenantAttributes().withModuleTo(MODULE_TO_VERSION);
+          tenantClient.postTenant(tenantAttributes, res1 -> {
+            if (res1.succeeded()) {
+              String jobId = res1.result().bodyAsJson(TenantJob.class).getId();
+              tenantClient.getTenantByOperationId(jobId, TENANT_OP_WAITINGTIME, res2 -> {
+                if (res2.succeeded()) {
+                  future.complete(null);
+                } else {
+                  future.completeExceptionally(new IllegalStateException("Failed to get tenant"));
+                }
+              });
+            } else {
+              future.completeExceptionally(new IllegalStateException("Failed to create tenant job"));
+            }
+          });
+        } catch (Exception e) {
+          future.completeExceptionally(e);
+        }
+      });
     future.join();
 
     started = true;
@@ -73,7 +72,7 @@ public class TestSetUpHelper {
 
   public static void stopVertxAndPostgres() {
     CompletableFuture<Void> future = new CompletableFuture<>();
-    vertx.close(res -> future.complete(null));
+    vertx.close().onComplete(res -> future.complete(null));
     future.join();
     started = false;
   }

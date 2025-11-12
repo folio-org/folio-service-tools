@@ -1,6 +1,6 @@
-## v5.1.0 YYYY-mm-DD
+## v6.0.0 YYYY-mm-DD
 ### Breaking changes
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+* Upgrade the module for Vert.X 5.0.x ([FST-94](https://issues.folio.org/browse/FST-94))
 
 ### Features
 * Introduce sharedGroup property to control Kafka consumer group behavior ([FST-95](https://folio-org.atlassian.net/browse/FST-95))
@@ -12,9 +12,8 @@
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
 
 ### Dependencies
-* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
-* Add `LIB_NAME VERSION`
-* Remove `LIB_NAME`
+* Bump `vertx` from `4.5.13` to `5.0.5`
+* Bump `RMB` from `35.4.0` to `36.0.0`
 
 ---
 
