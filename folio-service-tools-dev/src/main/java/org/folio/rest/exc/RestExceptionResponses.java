@@ -34,7 +34,7 @@ public class RestExceptionResponses {
   public static Response toGeneral(Throwable t) {
     Promise<Response> promise = Promise.promise();
 
-    ValidationHelper.handleError(t, promise);
+    ValidationHelper.handleError(t, promise::handle);
 
     Future<Response> future = promise.future();
     if (future.succeeded()) {
