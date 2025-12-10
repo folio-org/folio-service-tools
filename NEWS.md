@@ -1,4 +1,11 @@
 ## v4.1.1 2024-10-31
+### Dependencies
+* Bump `RMB` from `35.3.0` to Ramsons version `35.3.1`. ([FST-97](https://folio-org.atlassian.net/browse/FST-97))
+* Bump `Vertx` from `4.5.10` to Ramsons version `4.5.22`.
+
+---
+
+## v4.1.1 2024-10-31
 ### Tech Debt
 * Add `maxPollRecords` and `maxPollIntervalMs` to `KafkaListenerProperties` ([FST-85](https://folio-org.atlassian.net/browse/FST-85))
 
