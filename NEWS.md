@@ -1,3 +1,10 @@
+## v5.0.1 2025-12-11
+### Dependencies
+* Bump `RMB` from `35.4.0` to `35.4.1` ([FST-98](https://folio-org.atlassian.net/browse/FST-98))
+* Bump `Vertx` from `4.5.13` to `4.5.22`
+
+---
+
 ## v5.0.0 2025-02-28
 ### Breaking changes
 * Upgrade to Java 21 ([FST-88](https://folio-org.atlassian.net/browse/FST-88))
