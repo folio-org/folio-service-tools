@@ -9,7 +9,7 @@
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
 
 ### Tech Dept
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+* Improve KafkaAdminService extensibility ([FST-99](https://folio-org.atlassian.net/browse/FST-99))
 
 ### Dependencies
 * Bump `vertx` from `4.5.13` to `5.0.5`
