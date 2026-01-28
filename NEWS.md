@@ -10,6 +10,7 @@
 
 ### Tech Dept
 * Improve KafkaAdminService extensibility ([FST-99](https://folio-org.atlassian.net/browse/FST-99))
+* Use GitHub workflow for CI/CD ([FST-100](https://folio-org.atlassian.net/browse/FST-100))
 
 ### Dependencies
 * Bump `vertx` from `4.5.13` to `5.0.5`
