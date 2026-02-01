@@ -1,12 +1,14 @@
 package org.folio.spring.tools.config;
 
+import java.time.Duration;
 import org.folio.spring.tools.kafka.FolioKafkaProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.support.RetryTemplate;
+import org.springframework.core.retry.RetryPolicy;
+import org.springframework.core.retry.RetryTemplate;
 
 @Configuration
 @ComponentScan(basePackages = "org.folio.spring.tools.batch")
@@ -18,18 +20,18 @@ public class RetryTemplateConfiguration {
 
   @Bean(name = DEFAULT_RETRY_TEMPLATE_NAME)
   public RetryTemplate defaultRetryTemplate() {
-    return RetryTemplate.builder()
-      .maxAttempts(5)
-      .fixedBackoff(1000)
-      .build();
+    return new RetryTemplate(RetryPolicy.builder()
+      .maxRetries(5)
+      .delay(Duration.ofMillis(1000))
+      .build());
   }
 
   @Bean(name = DEFAULT_KAFKA_RETRY_TEMPLATE_NAME)
   @ConditionalOnBean(FolioKafkaProperties.class)
   public RetryTemplate defaultKafkaRetryTemplate(FolioKafkaProperties folioKafkaProperties) {
-    return RetryTemplate.builder()
-      .maxAttempts((int) folioKafkaProperties.getRetryDeliveryAttempts())
-      .fixedBackoff(folioKafkaProperties.getRetryIntervalMs())
-      .build();
+    return new RetryTemplate(RetryPolicy.builder()
+      .maxRetries(folioKafkaProperties.getRetryDeliveryAttempts())
+      .delay(Duration.ofMillis(folioKafkaProperties.getRetryIntervalMs()))
+      .build());
   }
 }

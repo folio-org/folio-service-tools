@@ -8,6 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,19 +17,27 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.retry.support.RetryTemplate;
+import org.springframework.core.retry.RetryException;
+import org.springframework.core.retry.RetryPolicy;
+import org.springframework.core.retry.RetryTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class MessageBatchProcessorTest {
 
-  private final RetryTemplate retryTemplate = spy(RetryTemplate.builder().maxAttempts(3).fixedBackoff(1).build());
-  private final RetryTemplate customRetryTemplate = spy(RetryTemplate.builder().maxAttempts(5).fixedBackoff(1).build());
+  private final RetryTemplate retryTemplate = spy(new RetryTemplate(RetryPolicy.builder()
+    .maxRetries(3)
+    .delay(Duration.ofMillis(1))
+    .build()));
+  private final RetryTemplate customRetryTemplate = spy(new RetryTemplate(RetryPolicy.builder()
+    .maxRetries(5)
+    .delay(Duration.ofMillis(1))
+    .build()));
 
   private final MessageBatchProcessor folioMessageBatchProcessor = new MessageBatchProcessor(
     Map.of("default", retryTemplate, "custom", customRetryTemplate), retryTemplate);
 
   @Test
-  void consumeBatchWithFallback_positive() {
+  void consumeBatchWithFallback_positive() throws RetryException {
     var consumedMessages = new ArrayList<Integer>();
     var failedMessages = new ArrayList<Pair>();
     folioMessageBatchProcessor.consumeBatchWithFallback(List.of(1, 2, 3), "custom",
@@ -41,7 +50,7 @@ class MessageBatchProcessorTest {
   }
 
   @Test
-  void consumeBatchWithFallback_positive_batchIsNull() {
+  void consumeBatchWithFallback_positive_batchIsNull() throws RetryException {
     var consumedMessages = new ArrayList<Integer>();
     var failedMessages = new ArrayList<Pair>();
     folioMessageBatchProcessor.consumeBatchWithFallback((List<Integer>) null, "custom",
@@ -54,7 +63,7 @@ class MessageBatchProcessorTest {
   }
 
   @Test
-  void consumeBatchWithFallback_positive_noBeanName() {
+  void consumeBatchWithFallback_positive_noBeanName() throws RetryException {
     var consumedMessages = new ArrayList<Integer>();
     var failedMessages = new ArrayList<Pair>();
     folioMessageBatchProcessor.consumeBatchWithFallback(List.of(1, 2, 3), null,
@@ -72,7 +81,7 @@ class MessageBatchProcessorTest {
     var failedMessages = new ArrayList<Pair>();
     var attemptsCounter = new AtomicInteger(1);
     folioMessageBatchProcessor.consumeBatchWithFallback(List.of(1, 2, 3), "custom",
-      attemptThrowingConsumer(consumedMessages, attemptsCounter, 2),
+      attemptThrowingConsumer(consumedMessages, attemptsCounter, 5),
       (value, err) -> failedMessages.add(Pair.of(value, err)));
     assertThat(consumedMessages).containsExactly(1, 2, 3);
     assertThat(failedMessages).isEmpty();
@@ -84,7 +93,7 @@ class MessageBatchProcessorTest {
     var failedMessages = new ArrayList<Pair>();
     var attemptsCounter = new AtomicInteger(1);
     folioMessageBatchProcessor.consumeBatchWithFallback(List.of(1, 2, 3), null,
-      attemptThrowingConsumer(consumedMessages, attemptsCounter, 3),
+      attemptThrowingConsumer(consumedMessages, attemptsCounter, 4),
       (value, err) -> failedMessages.add(Pair.of(value, err)));
     assertThat(consumedMessages).containsExactly(1, 2, 3);
     assertThat(failedMessages).isEmpty();
@@ -96,7 +105,7 @@ class MessageBatchProcessorTest {
     var failedMessages = new ArrayList<Pair>();
     var attemptsCounter = new AtomicInteger(1);
     folioMessageBatchProcessor.consumeBatchWithFallback(singletonList(1), null,
-      attemptThrowingConsumer(consumedMessages, attemptsCounter, 3),
+      attemptThrowingConsumer(consumedMessages, attemptsCounter, 4),
       (value, err) -> failedMessages.add(Pair.of(value, err)));
     assertThat(consumedMessages).isEmpty();
     assertThat(failedMessages).hasSize(1).satisfies(list -> verifyFailedMessage(list.getFirst(), 1));
@@ -108,7 +117,7 @@ class MessageBatchProcessorTest {
     var failedMessages = new ArrayList<Pair>();
     var attemptsCounter = new AtomicInteger(1);
     folioMessageBatchProcessor.consumeBatchWithFallback(List.of(1, 2, 3), null,
-      attemptThrowingConsumer(consumedMessages, attemptsCounter, 12),
+      attemptThrowingConsumer(consumedMessages, attemptsCounter, 16),
       (value, err) -> failedMessages.add(Pair.of(value, err)));
     assertThat(failedMessages).hasSize(3).satisfies(list -> {
       verifyFailedMessage(list.get(0), 1);
@@ -122,9 +131,9 @@ class MessageBatchProcessorTest {
     assertThat(pair.exception()).isInstanceOf(RuntimeException.class);
   }
 
-  record Pair(int value, Exception exception) {
+  record Pair(int value, Throwable exception) {
 
-    static Pair of(int value, Exception e) {
+    static Pair of(int value, Throwable e) {
       return new Pair(value, e);
     }
 

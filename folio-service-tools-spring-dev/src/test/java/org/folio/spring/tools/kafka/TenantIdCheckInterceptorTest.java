@@ -38,22 +38,23 @@ class TenantIdCheckInterceptorTest {
     //
     // create a record with no headers, message should be logged
     ProducerRecord<String, String> kafkaRecord = new ProducerRecord<>(topicName, 0, key, value);
-    TenantIdCheckInterceptor tenantIdCheckInterceptor = new TenantIdCheckInterceptor();
+    try (TenantIdCheckInterceptor tenantIdCheckInterceptor = new TenantIdCheckInterceptor()) {
 
-    tenantIdCheckInterceptor.onSend(kafkaRecord);
+      tenantIdCheckInterceptor.onSend(kafkaRecord);
 
-    assertEquals(1, appender.getMessages().size());
-    assertEquals(MessageFormatter.format(TenantIdCheckInterceptor.TENANT_ID_ERROR_MESSAGE, topicName).getMessage(),
-      appender.getMessages().getFirst());
+      assertEquals(1, appender.getMessages().size());
+      assertEquals(MessageFormatter.format(TenantIdCheckInterceptor.TENANT_ID_ERROR_MESSAGE, topicName).getMessage(),
+        appender.getMessages().getFirst());
 
-    // clear logged messages
-    appender.clear();
+      // clear logged messages
+      appender.clear();
 
-    // create record with necessary headers, message should not be logged
-    kafkaRecord = new ProducerRecord<>(topicName, 0, key, value);
-    kafkaRecord.headers().add(TENANT_ID, value.getBytes(StandardCharsets.UTF_8));
+      // create record with necessary headers, message should not be logged
+      kafkaRecord = new ProducerRecord<>(topicName, 0, key, value);
+      kafkaRecord.headers().add(TENANT_ID, value.getBytes(StandardCharsets.UTF_8));
 
-    tenantIdCheckInterceptor.onSend(kafkaRecord);
+      tenantIdCheckInterceptor.onSend(kafkaRecord);
+    }
 
     assertEquals(0, appender.getMessages().size());
   }

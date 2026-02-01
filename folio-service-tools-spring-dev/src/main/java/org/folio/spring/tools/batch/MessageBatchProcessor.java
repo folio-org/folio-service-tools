@@ -10,7 +10,8 @@ import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.retry.support.RetryTemplate;
+import org.springframework.core.retry.RetryException;
+import org.springframework.core.retry.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 @Log4j2
@@ -37,7 +38,7 @@ public class MessageBatchProcessor {
    */
   public <T> void consumeBatchWithFallback(List<T> batch, String retryBeanName,
                                            Consumer<List<T>> batchConsumer,
-                                           BiConsumer<T, Exception> failedValueConsumer) {
+                                           BiConsumer<T, Throwable> failedValueConsumer) {
     var beanName = retryBeanName == null ? "" : retryBeanName;
     var retryTemplate = retryTemplateBeans.getOrDefault(beanName, defaultRetryTemplate);
     if (batch == null || batch.isEmpty()) {
@@ -47,9 +48,9 @@ public class MessageBatchProcessor {
 
     try {
       executeWithRetryTemplate(retryTemplate, batch, batchConsumer);
-    } catch (Exception e) {
+    } catch (RetryException e) {
       if (batch.size() == 1) {
-        failedValueConsumer.accept(batch.getFirst(), e);
+        failedValueConsumer.accept(batch.getFirst(), e.getLastException());
       } else {
         log.warn("Failed to process batch, attempting to process resources one by one", e);
         processMessagesOneByOne(batch, retryTemplate, batchConsumer, failedValueConsumer);
@@ -59,18 +60,19 @@ public class MessageBatchProcessor {
 
   private <T> void processMessagesOneByOne(List<T> batch, RetryTemplate retryTemplate,
                                            Consumer<List<T>> batchConsumer,
-                                           BiConsumer<T, Exception> failedValueConsumer) {
+                                           BiConsumer<T, Throwable> failedValueConsumer) {
     for (T batchValue : batch) {
       try {
         executeWithRetryTemplate(retryTemplate, singletonList(batchValue), batchConsumer);
-      } catch (Exception e) {
-        failedValueConsumer.accept(batchValue, e);
+      } catch (RetryException e) {
+        failedValueConsumer.accept(batchValue, e.getLastException());
       }
     }
   }
 
-  private <T> void executeWithRetryTemplate(RetryTemplate retryTemplate, List<T> batch, Consumer<List<T>> consumer) {
-    retryTemplate.execute(ctx -> {
+  private <T> void executeWithRetryTemplate(RetryTemplate retryTemplate, List<T> batch, Consumer<List<T>> consumer)
+    throws RetryException {
+    retryTemplate.execute(() -> {
       consumer.accept(batch);
       return null;
     });
