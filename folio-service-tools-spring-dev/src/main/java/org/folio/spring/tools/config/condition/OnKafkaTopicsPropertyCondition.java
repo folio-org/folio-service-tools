@@ -5,6 +5,7 @@ import static org.springframework.boot.autoconfigure.condition.ConditionOutcome.
 
 import java.util.List;
 import org.folio.spring.tools.kafka.FolioKafkaProperties.KafkaTopic;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
@@ -20,7 +21,7 @@ public class OnKafkaTopicsPropertyCondition extends SpringBootCondition {
   private static final Bindable<List<KafkaTopic>> KAFKA_TOPIC_LIST = Bindable.listOf(KafkaTopic.class);
 
   @Override
-  public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+  public @NonNull ConditionOutcome getMatchOutcome(ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
     var property = Binder.get(context.getEnvironment()).bind(PROPERTY_NAME, KAFKA_TOPIC_LIST);
     return property.isBound()
            ? match(MESSAGE_BUILDER.found("property").items(PROPERTY_NAME))

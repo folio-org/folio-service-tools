@@ -1,6 +1,7 @@
 ## v6.0.0 YYYY-mm-DD
 ### Breaking changes
 * Upgrade the module for Vert.X 5.0.x ([FST-94](https://issues.folio.org/browse/FST-94))
+* Upgrade the module for Spring Boot 4.0.x ([FST-102](https://issues.folio.org/browse/FST-102))
 
 ### Features
 * Introduce sharedGroup property to control Kafka consumer group behavior ([FST-95](https://folio-org.atlassian.net/browse/FST-95))

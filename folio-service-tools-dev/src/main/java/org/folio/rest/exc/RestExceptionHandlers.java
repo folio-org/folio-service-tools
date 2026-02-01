@@ -81,7 +81,7 @@ public class RestExceptionHandlers {
   }
 
   public static PartialFunction<Throwable, Response> logged(PartialFunction<Throwable, Response> pf) {
-    return PartialFunctions.logged(pf, t -> LOGGER.error("Execution failed with: " + t.getMessage(), t));
+    return PartialFunctions.logged(pf, t -> LOGGER.error("Execution failed with: {}", t.getMessage(), t));
   }
 
   /**

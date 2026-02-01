@@ -29,14 +29,17 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
+      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-codegen</artifactId>
+      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
+      <version>${vertx.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -50,7 +53,14 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-unit</artifactId>
+      <version>${vertx.version}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.1</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

@@ -3,12 +3,12 @@ package org.folio.spring.tools.kafka;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -118,5 +118,14 @@ public class FolioKafkaProperties {
      * Replication factor for topic.
      */
     private Short replicationFactor;
+  }
+
+  public enum OffsetResetStrategy {
+    LATEST, EARLIEST, NONE;
+
+    @Override
+    public String toString() {
+      return super.toString().toLowerCase(Locale.ROOT);
+    }
   }
 }
