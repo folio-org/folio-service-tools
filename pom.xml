@@ -30,10 +30,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <log4j.version>2.25.3</log4j.version>
-    <vertx.version>5.0.7</vertx.version>
+    <vertx.version>5.0.8</vertx.version>
     <raml-module-builder.version>36.0.0-SNAPSHOT</raml-module-builder.version>
 
-    <spring-boot.version>4.0.2</spring-boot.version>
+    <spring-boot.version>4.0.3</spring-boot.version>
 
     <folio-spring-base.version>10.0.0-RC1</folio-spring-base.version>
 
