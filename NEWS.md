@@ -5,6 +5,7 @@
 
 ### Features
 * Introduce sharedGroup property to control Kafka consumer group behavior ([FST-95](https://folio-org.atlassian.net/browse/FST-95))
+* Introduce topicPrefix property to control Kafka topic name creation ([FST-103](https://folio-org.atlassian.net/browse/FST-103))
 
 ### Bug fixes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))

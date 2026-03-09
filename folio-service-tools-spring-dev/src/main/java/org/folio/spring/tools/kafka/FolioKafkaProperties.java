@@ -1,5 +1,6 @@
 package org.folio.spring.tools.kafka;
 
+import jakarta.annotation.Nullable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -38,6 +39,12 @@ public class FolioKafkaProperties {
    * How many delivery attempts to perform when message failed.
    */
   private long retryDeliveryAttempts = 5;
+
+  /**
+   * Prefix for all topics created by the module. Will be separated from the topic name by dot.
+   */
+  @Nullable
+  private String topicPrefix;
 
   /**
    * What topics should be created by module.
