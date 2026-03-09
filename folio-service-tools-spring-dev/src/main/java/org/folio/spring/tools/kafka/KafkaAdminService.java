@@ -12,6 +12,8 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.folio.spring.tools.config.properties.FolioEnvironment;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.kafka.KafkaException;
@@ -34,7 +36,7 @@ public class KafkaAdminService {
    */
   public void createTopics(String tenantId) {
     var configTopics = kafkaProperties.getTopics();
-    var newTopics = toTenantSpecificTopic(configTopics, tenantId);
+    var newTopics = toTenantSpecificTopic(kafkaProperties.getTopicPrefix(), configTopics, tenantId);
 
     log.info("Creating topics for kafka [topics: {}]", newTopics);
     var configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
@@ -57,8 +59,9 @@ public class KafkaAdminService {
       return;
     }
 
+    var topicPrefix = kafkaProperties.getTopicPrefix();
     List<String> topicsToDelete = kafkaProperties.getTopics().stream()
-      .map(topic -> getTenantTopicName(topic.getName(), tenantId))
+      .map(topic -> getTenantTopicName(topicPrefix, topic.getName(), FolioEnvironment.getFolioEnvName(), tenantId))
       .toList();
 
     log.info("Deleting topics for tenantId {}: [topics: {}]", tenantId, topicsToDelete);
@@ -115,16 +118,17 @@ public class KafkaAdminService {
     );
   }
 
-  protected List<NewTopic> toTenantSpecificTopic(List<FolioKafkaProperties.KafkaTopic> localConfigTopics,
-                                               String tenantId) {
+  protected List<NewTopic> toTenantSpecificTopic(@Nullable String topicPrefix,
+                                                 List<FolioKafkaProperties.KafkaTopic> localConfigTopics,
+                                                 String tenantId) {
     return localConfigTopics.stream()
-      .map(topic -> toKafkaTopic(topic, tenantId))
+      .map(topic -> toKafkaTopic(topicPrefix, topic, tenantId))
       .toList();
   }
 
-  private NewTopic toKafkaTopic(FolioKafkaProperties.KafkaTopic topic, String tenantId) {
+  private NewTopic toKafkaTopic(String topicPrefix, FolioKafkaProperties.KafkaTopic topic, String tenantId) {
     return new NewTopic(
-      getTenantTopicName(topic.getName(), tenantId),
+      getTenantTopicName(topicPrefix, topic.getName(), FolioEnvironment.getFolioEnvName(), tenantId),
       ofNullable(topic.getNumPartitions()),
       ofNullable(topic.getReplicationFactor())
     );

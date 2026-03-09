@@ -6,6 +6,7 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.folio.spring.tools.config.properties.FolioEnvironment;
+import org.jspecify.annotations.Nullable;
 import org.springframework.messaging.MessageHeaders;
 
 import java.nio.charset.StandardCharsets;
@@ -62,6 +63,16 @@ public class KafkaUtils {
     var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? tenantCollectionTopicQualifier : tenantId;
 
     return String.join(".", envName, tenantToUse, initialName);
+  }
+
+  public static String getTenantTopicName(@Nullable String prefix, String initialName, String envName, String tenantId) {
+    var tenantToUse = TENANT_COLLECTION_TOPICS_ENABLED ? tenantCollectionTopicQualifier : tenantId;
+
+    if (StringUtils.isNotBlank(prefix)) {
+      return String.join(".", envName, tenantToUse, prefix, initialName);
+    } else {
+      return String.join(".", envName, tenantToUse, initialName);
+    }
   }
 
   public static String getTenantTopicNameWithNamespace(String initialName, String envName, String tenantId, String namespace) {
