@@ -100,7 +100,7 @@
     </dependency>
     <dependency>
       <groupId>org.jeasy</groupId>
-      <artifactId>easy-random-core</artifactId>
+      <artifactId>easy-random</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

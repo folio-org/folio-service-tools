@@ -41,7 +41,7 @@
     <mockito.version>5.23.0</mockito.version>
     <wiremock.version>3.13.2</wiremock.version>
     <rest-assured.version>6.0.0</rest-assured.version>
-    <easy-random.version>5.0.0</easy-random.version>
+    <easy-random.version>6.0.0</easy-random.version>
 
     <!-- Plugins versions -->
     <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
@@ -115,8 +115,7 @@
         <groupId>org.jeasy</groupId>
         <artifactId>easy-random</artifactId>
         <version>${easy-random.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
