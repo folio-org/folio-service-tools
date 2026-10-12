@@ -1,24 +1,7 @@
-## vX.Y.Z YYYY-mm-DD
-### Breaking changes
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### New APIs versions
-* Provides `API_NAME vX.Y`
-* Requires `API_NAME vX.Y`
-
-### Features
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### Bug fixes
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
-### Tech Dept
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
-
+## v6.0.1 2026-10-12
 ### Dependencies
-* Bump `LIB_NAME` from `OLD_VERSION` to `NEW_VERSION`
-* Add `LIB_NAME VERSION`
-* Remove `LIB_NAME`
+* Bump `folio-spring-support` from `10.0.0` to `10.0.1`
+* Bump `spring-boot` from `4.0.5` to `4.1.1`
 
 ## v6.0.0 2026-04-14
 ### Breaking changes
